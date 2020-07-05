@@ -20,9 +20,12 @@ defmodule PappapWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", PappapWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", PappapWeb do
+    pipe_through :api
+
+    post "/signup", AuthController, :signup
+    #post "/signin", AuthController, :signin
+  end
 
   # Enables LiveDashboard only for development
   #
