@@ -9,12 +9,28 @@ defmodule PappapWeb.AuthController do
 
   def signup(conn, params) do
     url = @db_domain_url <> @api_url <> @signup_url
-    attrs = Poison.encode!(params)
 
-    {:ok, response} = HTTPoison.post(url, attrs, @content_type)
-    b = Poison.decode!(response.body)
+    with {:ok, attrs} <- Poison.encode(params),
+      {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
+      {:ok, body} <- Poison.decode(response.body) do
+      json(conn, body)
+    else
+      {:error, reason} ->
+        map = %{
+          "result" => false,
+          "reason" => reason,
+          "error_no" => 10000
+        }
+        json(conn, map)
 
-    json(conn, b)
+      _ ->
+        map = %{
+          "result" => false,
+          "reason" => "Unexpected error",
+          "error_no" => 10000
+        }
+        json(conn, map)
+    end
   end
 
   def signin(conn, params) do
