@@ -24,7 +24,7 @@ defmodule PappapWeb.Router do
     pipe_through :api
 
     post "/signup", AuthController, :signup
-    #post "/signin", AuthController, :signin
+    post "/signin", AuthController, :signin
   end
 
   # Enables LiveDashboard only for development
