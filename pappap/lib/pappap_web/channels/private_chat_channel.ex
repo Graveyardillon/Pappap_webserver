@@ -6,8 +6,8 @@ defmodule PappapWeb.PrivateChatChannel do
     {:ok, socket}
   end
 
-  def join("private_chat:" <> _private_room_id, _auth_msg, _socket) do
-    {:error, %{reason: "unauthorized"}}
+  def join("private_chat:" <> _private_room_id, _auth_msg, socket) do
+    {:ok, socket}
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
