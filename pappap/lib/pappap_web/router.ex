@@ -25,6 +25,7 @@ defmodule PappapWeb.Router do
 
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
+    post "/upload/image", ImageController, :upload
   end
 
   # Enables LiveDashboard only for development
