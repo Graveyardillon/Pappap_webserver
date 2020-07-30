@@ -3,7 +3,7 @@ defmodule PappapWeb.ImageController do
 
   def upload(conn, %{"image_b64" => image_b64}) do
     "data:image/png;base64," <> raw = image_b64
-    File.write!("./a.png", Base.decode64!(raw))
+    File.write!("./static/image/a.png", Base.decode64!(raw))
 
     json(conn, %{message: "done"})
   end
