@@ -16,4 +16,11 @@ defmodule PappapWeb.ImageController do
       json(conn, %{local_path: uuid})
     end
   end
+
+  def load(conn, %{"path" => path}) do
+    b64 = File.read!("./static/image/#{path}.png")
+          |> Base.encode64()
+
+    json(conn, %{b64: b64})
+  end
 end

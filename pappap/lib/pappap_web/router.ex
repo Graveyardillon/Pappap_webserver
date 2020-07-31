@@ -23,6 +23,8 @@ defmodule PappapWeb.Router do
   scope "/api", PappapWeb do
     pipe_through :api
 
+    get "/load/image", ImageController, :load
+
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
     post "/upload/image", ImageController, :upload
