@@ -14,9 +14,9 @@ defmodule Pappap.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Pappap.PubSub},
       # Start the Endpoint (http/https)
-      PappapWeb.Endpoint
+      PappapWeb.Endpoint,
       # Start a worker by calling: Pappap.Worker.start_link(arg)
-      # {Pappap.Worker, arg}
+      {Task, fn -> Pappap.connect() end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

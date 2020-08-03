@@ -16,9 +16,9 @@ config :pappap, Pappap.Repo,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :pappap, PappapWeb.Endpoint,
-  http: [port: 4000],
+  http: [port: 4001],
   https: [
-    port: 4001,
+    port: 4002,
     cipher_suite: :strong,
     certfile: "priv/cert/selfsigned.pem",
     keyfile: "priv/cert/selfsigned_key.pem"
