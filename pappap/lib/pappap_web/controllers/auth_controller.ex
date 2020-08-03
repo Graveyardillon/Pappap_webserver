@@ -3,7 +3,7 @@ defmodule PappapWeb.AuthController do
 
   @db_domain_url "http://localhost:4001"
   @api_url "/api"
-  @signup_url "/signup"
+  @signup_url "/user"
   @signin_url "/signin"
   @content_type [{"Content-Type", "application/json"}]
 

@@ -19,7 +19,7 @@ defmodule Pappap do
   defp send_messages(socket) do
     :timer.sleep(1000)
     :ok = :gen_tcp.send(socket, @msg)
-    Logger.info(@msg)
+    #Logger.info(@msg)
     {:ok, _data} = :gen_tcp.recv(socket, 0)
     send_messages(socket)
   end
