@@ -1,6 +1,8 @@
 defmodule PappapWeb.PrivateChatChannel do
   use Phoenix.Channel
 
+  alias Pappap.Accounts
+
   # This function is called when client connects to this server.
   def join("private_chat:lobby", _msg, socket) do
     {:ok, socket}
