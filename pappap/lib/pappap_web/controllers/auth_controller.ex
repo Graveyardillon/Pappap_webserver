@@ -1,7 +1,7 @@
 defmodule PappapWeb.AuthController do
   use PappapWeb, :controller
 
-  @db_domain_url "http://localhost:4001"
+  @db_domain_url "http://localhost:4000"
   @api_url "/api"
   @signup_url "/user"
   @signin_url "/signin"
