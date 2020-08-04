@@ -13,8 +13,12 @@ defmodule Pappap do
     {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
     Logger.info("Connected to DB Server in TCP")
 
-    :gen_tcp.recv(socket, 0)
-    #:gen_tcp.send(socket, "close")
+    loop_receiver(socket)
+  end
+
+  defp loop_receiver(socket) do
+    {:ok, _data} = :gen_tcp.recv(socket, 0)
+    loop_receiver(socket)
   end
 
   def sync_users() do
@@ -22,7 +26,18 @@ defmodule Pappap do
     Logger.info("User Sync Connected")
 
     :ok = :gen_tcp.send(socket, "user_sync")
+    loop_id_receiver(socket)
+
+    close_socket(socket)
+  end
+
+  defp loop_id_receiver(socket) do
     {:ok, data} = :gen_tcp.recv(socket, 0)
-    #:gen_tcp.send(socket, "close")
+    Logger.info("ID: #{data}")
+    loop_id_receiver(socket)
+  end
+
+  defp close_socket(socket) do
+    :gen_tcp.send(socket, "close")
   end
 end
