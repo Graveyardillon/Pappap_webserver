@@ -3,6 +3,7 @@ defmodule Pappap.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    field :user_id, :string
     field :is_online, :boolean, default: false
 
     timestamps()
@@ -11,7 +12,6 @@ defmodule Pappap.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:is_online])
-    |> validate_required([:is_online])
+    |> cast(attrs, [:user_id, :is_online])
   end
 end

@@ -9,6 +9,8 @@ defmodule Pappap do
 
   require Logger
 
+  alias Pappap.Accounts
+
   def connect() do
     {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
     Logger.info("Connected to DB Server in TCP")
@@ -33,7 +35,7 @@ defmodule Pappap do
 
   defp loop_id_receiver(socket) do
     {:ok, data} = :gen_tcp.recv(socket, 0)
-    Logger.info("ID: #{data}")
+    _pid = spawn(Accounts, :create_user, [%{user_id: data}])
     loop_id_receiver(socket)
   end
 
