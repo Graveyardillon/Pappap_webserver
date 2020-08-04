@@ -11,23 +11,18 @@ defmodule Pappap do
 
   def connect() do
     {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
-    Logger.info("Connected")
+    Logger.info("Connected to DB Server in TCP")
+
     :gen_tcp.recv(socket, 0)
-    #send_messages(socket, 0)
+    #:gen_tcp.send(socket, "close")
   end
 
-  defp send_messages(socket, num) do
-    :timer.sleep(1000)
-    :ok = :gen_tcp.send(socket, Integer.to_string(num))
-    #Logger.info(@msg)
-    {:ok, _data} = :gen_tcp.recv(socket, 0)
-    send_messages(socket, num+1)
-  end
-
-  def debug_connect() do
-    Logger.info("debug")
+  def sync_users() do
     {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
-    Logger.info("Connected")
-    send_messages(socket, 0)
+    Logger.info("User Sync Connected")
+
+    :ok = :gen_tcp.send(socket, "user_sync")
+    {:ok, data} = :gen_tcp.recv(socket, 0)
+    #:gen_tcp.send(socket, "close")
   end
 end
