@@ -11,7 +11,9 @@ defmodule Pappap do
 
   def connect() do
     {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
-    send_messages(socket, 0)
+    Logger.info("Connected")
+    :gen_tcp.recv(socket, 0)
+    #send_messages(socket, 0)
   end
 
   defp send_messages(socket, num) do
@@ -20,5 +22,12 @@ defmodule Pappap do
     #Logger.info(@msg)
     {:ok, _data} = :gen_tcp.recv(socket, 0)
     send_messages(socket, num+1)
+  end
+
+  def debug_connect() do
+    Logger.info("debug")
+    {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
+    Logger.info("Connected")
+    send_messages(socket, 0)
   end
 end

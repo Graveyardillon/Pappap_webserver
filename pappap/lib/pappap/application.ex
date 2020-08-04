@@ -16,7 +16,8 @@ defmodule Pappap.Application do
       # Start the Endpoint (http/https)
       PappapWeb.Endpoint,
       # Start a worker by calling: Pappap.Worker.start_link(arg)
-      {Task, fn -> Pappap.connect() end}
+      Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
+      Supervisor.child_spec({Task, fn -> Pappap.debug_connect() end}, id: :debug_connector),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
