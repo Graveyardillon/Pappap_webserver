@@ -119,7 +119,7 @@ defmodule Pappap.Accounts do
   def get_user_by_user_id(id) do
     User
     |> where([u], u.user_id in ^[id])
-    |> Repo.all
+    |> Repo.all()
   end
 
   defp do_nothing() do

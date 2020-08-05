@@ -1,15 +1,7 @@
 defmodule PappapWeb.PrivateChatChannel do
   use Phoenix.Channel
 
-  alias Pappap.Accounts
-
-  def join("private_chat:" <> _private_room_id, payload, socket) do
-    id = payload["sender"]
-
-    Accounts.get_user_by_user_id(id)
-    |> hd()
-    |> Accounts.update_user(%{is_online: true})
-    
+  def join("private_chat:" <> _private_room_id, _payload, socket) do
     {:ok, socket}
   end
 
