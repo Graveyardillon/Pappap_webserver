@@ -3,6 +3,9 @@ defmodule Pappap.Accounts do
   The Accounts context.
   """
 
+  require Logger
+  #require IEx
+
   import Ecto.Query, warn: false
   alias Pappap.Repo
 
@@ -100,5 +103,25 @@ defmodule Pappap.Accounts do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def create_new_user(attrs \\ %{}) do
+    IO.inspect("#{attrs.user_id}")
+    user = User
+          |> where([u], u.user_id in ^[attrs.user_id])
+          |> Repo.all
+
+    case user do
+      [] ->
+        %User{}
+        |> User.changeset(attrs)
+        |> Repo.insert()
+      _ ->
+        do_nothing()
+    end
+  end
+
+  defp do_nothing() do
+    # do nothing
   end
 end
