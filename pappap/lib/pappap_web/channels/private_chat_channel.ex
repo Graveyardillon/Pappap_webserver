@@ -3,12 +3,13 @@ defmodule PappapWeb.PrivateChatChannel do
 
   alias Pappap.Accounts
 
-  # This function is called when client connects to this server.
-  def join("private_chat:lobby", _msg, socket) do
-    {:ok, socket}
-  end
+  def join("private_chat:" <> _private_room_id, payload, socket) do
+    id = payload["sender"]
 
-  def join("private_chat:" <> _private_room_id, _auth_msg, socket) do
+    Accounts.get_user_by_user_id(id)
+    |> hd()
+    |> Accounts.update_user(%{is_online: true})
+    
     {:ok, socket}
   end
 

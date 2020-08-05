@@ -35,7 +35,9 @@ defmodule Pappap do
 
   defp loop_id_receiver(socket) do
     {:ok, data} = :gen_tcp.recv(socket, 0)
-    _pid = spawn(Accounts, :create_new_user, [%{user_id: data}])
+    #_pid = spawn(Accounts, :create_new_user, [%{user_id: data}])
+    # 非同期にすると正常にデータが受け取れない。
+    Accounts.create_new_user(%{user_id: data})
     loop_id_receiver(socket)
   end
 

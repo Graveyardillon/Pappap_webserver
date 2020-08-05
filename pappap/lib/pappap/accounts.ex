@@ -106,12 +106,7 @@ defmodule Pappap.Accounts do
   end
 
   def create_new_user(attrs \\ %{}) do
-    IO.inspect("#{attrs.user_id}")
-    user = User
-          |> where([u], u.user_id in ^[attrs.user_id])
-          |> Repo.all
-
-    case user do
+    case get_user_by_user_id(attrs.user_id) do
       [] ->
         %User{}
         |> User.changeset(attrs)
@@ -119,6 +114,12 @@ defmodule Pappap.Accounts do
       _ ->
         do_nothing()
     end
+  end
+
+  def get_user_by_user_id(id) do
+    User
+    |> where([u], u.user_id in ^[id])
+    |> Repo.all
   end
 
   defp do_nothing() do
