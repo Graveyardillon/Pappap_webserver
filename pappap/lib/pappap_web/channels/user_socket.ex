@@ -5,7 +5,7 @@ defmodule PappapWeb.UserSocket do
   # channel "room:*", PappapWeb.RoomChannel
   channel "private_chat:*", PappapWeb.PrivateChatChannel
   channel "public_chat:*", PappapWeb.PublicChatChannel
-  channel "online:*", PappapWeb.OnlineChannel
+  channel "online", PappapWeb.OnlineChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

@@ -5,19 +5,24 @@ defmodule PappapWeb.OnlineChannel do
 
   alias Pappap.Accounts
 
-  def join("online:online", payload, socket) do
+  def join("online", _payload, socket) do
+    {:ok, socket}
+  end
+
+  def handle_in("online", payload, socket) do
     %{"sender" => sender} = payload
 
     case Accounts.get_user_by_user_id(sender) do
       [] ->
-        Logger.info("Unknown user to go online")
+        Logger.info("Unknown user")
       user ->
         user
         |> hd()
         |> Accounts.update_user(%{is_online: true})
     end
 
-    {:ok, socket}
+    broadcast!(socket, "online", %{user: sender})
+    {:noreply, socket}
   end
 
   def handle_in("offline", payload, socket) do
@@ -25,13 +30,14 @@ defmodule PappapWeb.OnlineChannel do
 
     case Accounts.get_user_by_user_id(sender) do
       [] ->
-        Logger.info("Unknown user to go offline")
+        Logger.info("Unknown user")
       user ->
         user
         |> hd()
         |> Accounts.update_user(%{is_online: false})
     end
 
+    broadcast!(socket, "offline", %{user: sender})
     {:noreply, socket}
   end
 end
