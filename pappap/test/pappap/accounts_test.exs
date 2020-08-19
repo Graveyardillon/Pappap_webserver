@@ -6,7 +6,7 @@ defmodule Pappap.AccountsTest do
   describe "users" do
     alias Pappap.Accounts.User
 
-    @valid_attrs %{is_online: true}
+    @valid_attrs %{user_id: "1", is_online: true}
     @update_attrs %{is_online: false}
     @invalid_attrs %{is_online: nil}
 
