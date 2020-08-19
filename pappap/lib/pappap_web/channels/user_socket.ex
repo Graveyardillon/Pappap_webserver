@@ -2,7 +2,7 @@ defmodule PappapWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", PappapWeb.RoomChannel
+  channel "room:lobby", PappapWeb.RoomChannel
   channel "private_chat:*", PappapWeb.PrivateChatChannel
   channel "public_chat:*", PappapWeb.PublicChatChannel
   channel "online", PappapWeb.OnlineChannel
@@ -19,8 +19,11 @@ defmodule PappapWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  # def connect(_params, socket, _connect_info) do
+  #   {:ok, socket}
+  # end
+  def connect(params, socket, _connect_info) do
+    {:ok, assign(socket, :user_id, params["user_id"])}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
