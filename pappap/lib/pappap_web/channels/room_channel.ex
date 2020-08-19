@@ -16,3 +16,4 @@ defmodule PappapWeb.RoomChannel do
     # push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
+end
