@@ -3,8 +3,7 @@ defmodule PappapWeb.UserSocket do
 
   ## Channels
   channel "room:lobby", PappapWeb.RoomChannel
-  channel "private_chat:*", PappapWeb.PrivateChatChannel
-  channel "public_chat:*", PappapWeb.PublicChatChannel
+  channel "chat:*", PappapWeb.ChatChannel
   channel "online", PappapWeb.OnlineChannel
 
   # Socket params are passed from the client and can
