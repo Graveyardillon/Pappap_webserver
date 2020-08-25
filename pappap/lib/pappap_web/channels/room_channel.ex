@@ -12,8 +12,14 @@ defmodule PappapWeb.RoomChannel do
       user_id: user_id,
       online_at: inspect(System.system_time(:second))
     })
-
+    # IO.inspect(Presence.list(socket))
     # push(socket, "presence_state", Presence.list(socket))
+    {:noreply, socket}
+  end
+
+  intercept ["presence_diff"]
+  def handle_out("presence_diff", _, socket) do
+    push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
 end
