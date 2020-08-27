@@ -30,6 +30,8 @@ defmodule PappapWeb.Router do
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
     post "/upload/image", ImageController, :upload
+
+    post "/register/device", DeviceController, :register_device_id
   end
 
   # Enables LiveDashboard only for development
