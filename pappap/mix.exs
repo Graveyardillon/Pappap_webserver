@@ -51,7 +51,9 @@ defmodule Pappap.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.7"},
       {:poison, "~> 3.1"},
-      {:secure_random, "~> 0.5"}
+      {:secure_random, "~> 0.5"},
+      {:pigeon, "~> 1.5.1"},
+      {:kadabra, "~> 0.4.4"}
     ]
   end
 
