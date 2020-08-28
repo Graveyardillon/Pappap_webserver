@@ -1,4 +1,4 @@
-defmodule PappapWeb.RoomChannel do
+defmodule PappapWeb.OnlineChannel do
   use PappapWeb, :channel
   alias PappapWeb.Presence
 

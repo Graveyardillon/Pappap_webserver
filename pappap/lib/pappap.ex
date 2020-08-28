@@ -23,8 +23,4 @@ defmodule Pappap do
     {:ok, _data} = :gen_tcp.recv(socket, 0)
     loop_receiver(socket)
   end
-
-  defp close_socket(socket) do
-    :gen_tcp.send(socket, "close")
-  end
 end
