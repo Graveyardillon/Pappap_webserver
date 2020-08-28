@@ -14,8 +14,8 @@ defmodule PappapWeb.ChatChannel do
     message = payload["chat"]["word"]
     user_id = payload["chat"]["user_id"]
 
-    #device = Accounts.get_device_by_user_id(user_id)
-    Notifications.push(message, "c20daadeda3329ad256b6e2fd306b9fbb9f1053e575e24d3d70b50793c8e2fa2")
+    device = Accounts.get_device_by_user_id(user_id)
+    Notifications.push(message, device.device_id)
 
     broadcast!(socket, "new_chat", %{payload: payload, response: response})
     {:noreply, socket}

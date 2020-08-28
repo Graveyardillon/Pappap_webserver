@@ -4,9 +4,9 @@ defmodule PappapWeb.DeviceController do
   alias Pappap.Accounts
 
   def register_device_id(conn, params) do
-    params
-    |> Accounts.create_device()
+    {:ok, device} = params
+                    |> Accounts.create_device()
 
-    json(conn, %{message: "completed!"})
+    json(conn, %{device_id: device.device_id})
   end
 end
