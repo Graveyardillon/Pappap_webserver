@@ -12,10 +12,13 @@ defmodule Pappap do
   alias Pappap.Accounts
 
   def connect() do
-    {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
-    Logger.info("Connected to DB Server in TCP")
-
-    loop_receiver(socket)
+    with {:ok, socket} <- :gen_tcp.connect('localhost', 4041, [:binary, active: false]) do
+      Logger.info("Connected to DB Server in TCP")
+      loop_receiver(socket)
+    else
+      {:error, :econnrefused} -> Logger.info("Could not connect to DB Server. (Refused)")
+      _ -> Logger.info("Could not connect to DB Server due to unexpected reasons.")
+    end
   end
 
   defp loop_receiver(socket) do
@@ -24,13 +27,21 @@ defmodule Pappap do
   end
 
   def sync_users() do
-    {:ok, socket} = :gen_tcp.connect('localhost', 4041, [:binary, active: false])
-    Logger.info("User Sync Connected")
+    with {:ok, socket} <- :gen_tcp.connect('localhost', 4041, [:binary, active: false]) do
+      Logger.info("User Sync Connected")
+      send_user_sync_request(socket)
+    else
+      _ -> Logger.info("Could not sync user due to unexpected reasons.")
+    end
+  end
 
-    :ok = :gen_tcp.send(socket, "user_sync")
-    loop_id_receiver(socket)
-
-    close_socket(socket)
+  defp send_user_sync_request(socket) do
+    with :ok <- :gen_tcp.send(socket, "user_sync") do
+      loop_id_receiver(socket)
+      close_socket(socket)
+    else
+      _ -> Logger.info("Could not sync user due to unexpected reasons.")
+    end
   end
 
   defp loop_id_receiver(socket) do
