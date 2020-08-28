@@ -170,7 +170,7 @@ defmodule Pappap.Accounts do
 
   """
   def create_device(attrs \\ %{}) do
-    %Device{}
+    %Device{user_id: attrs["user_id"]}
     |> Device.changeset(attrs)
     |> Repo.insert()
   end

@@ -7,8 +7,8 @@ defmodule Pappap.AccountsTest do
     alias Pappap.Accounts.User
 
     @valid_attrs %{user_id: "1", is_online: true}
-    @update_attrs %{is_online: false}
-    @invalid_attrs %{is_online: nil}
+    @update_attrs %{user_id: "1", is_online: false}
+    @invalid_attrs %{user_id: "1", is_online: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -65,8 +65,8 @@ defmodule Pappap.AccountsTest do
   describe "devices" do
     alias Pappap.Accounts.Device
 
-    @valid_attrs %{device_id: "some device_id"}
-    @update_attrs %{device_id: "some updated device_id"}
+    @valid_attrs %{device_id: "some device_id", user: 1}
+    @update_attrs %{device_id: "some updated device_id", user: 1}
     @invalid_attrs %{device_id: nil}
 
     def device_fixture(attrs \\ %{}) do
