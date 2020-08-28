@@ -10,14 +10,16 @@ defmodule PappapWeb.ChatChannel do
   end
 
   def handle_in("new_chat", payload, socket) do
-    response = Chat.send_chat(payload)
+    _response = Chat.send_chat(payload)
     message = payload["chat"]["word"]
-    user_id = payload["chat"]["user_id"]
+    partner_id = payload["chat"]["partner_id"]
 
-    device = Accounts.get_device_by_user_id(user_id)
+    device = Accounts.get_device_by_user_id(partner_id) 
+             |> hd()
     Notifications.push(message, device.device_id)
 
-    broadcast!(socket, "new_chat", %{payload: payload, response: response})
+    #broadcast!(socket, "new_chat", %{payload: payload, response: response})
+    broadcast!(socket, "new_chat", %{payload: payload})
     {:noreply, socket}
   end
 end

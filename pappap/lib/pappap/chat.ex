@@ -15,20 +15,17 @@ defmodule Pappap.Chat do
       body
     else
       {:error, reason} ->
-        map = %{
+        %{
           "result" => false,
           "reason" => reason,
           "error_no" => 10000
         }
-        map
-
       _ ->
-        map = %{
+        %{
           "result" => false,
           "reason" => "Unexpected error",
           "error_no" => 10000
         }
-        map
     end
   end
 end
