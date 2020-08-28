@@ -67,7 +67,7 @@ defmodule Pappap.AccountsTest do
 
     @valid_attrs %{device_id: "some device_id", user: 1}
     @update_attrs %{device_id: "some updated device_id", user: 1}
-    @invalid_attrs %{device_id: nil}
+    @invalid_attrs %{device_id: nil, user: 1}
 
     def device_fixture(attrs \\ %{}) do
       {:ok, device} =
