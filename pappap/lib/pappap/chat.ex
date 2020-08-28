@@ -12,20 +12,22 @@ defmodule Pappap.Chat do
     with {:ok, attrs} <- Poison.encode(params),
       {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
       {:ok, body} <- Poison.decode(response.body) do
-      body
+      {:ok, body}
     else
       {:error, reason} ->
-        %{
+        map = %{
           "result" => false,
           "reason" => reason,
           "error_no" => 10000
         }
+        {:error, map}
       _ ->
-        %{
+        map = %{
           "result" => false,
           "reason" => "Unexpected error",
           "error_no" => 10000
         }
+        {:error, map}
     end
   end
 end

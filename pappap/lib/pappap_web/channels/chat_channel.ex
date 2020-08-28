@@ -1,6 +1,8 @@
 defmodule PappapWeb.ChatChannel do
   use Phoenix.Channel
 
+  require Logger
+
   alias Pappap.Chat
   alias Pappap.Notifications
   alias Pappap.Accounts
@@ -10,7 +12,13 @@ defmodule PappapWeb.ChatChannel do
   end
 
   def handle_in("new_chat", payload, socket) do
-    _response = Chat.send_chat(payload)
+    with {:ok, _response} <- Chat.send_chat(payload) do
+      # do nothing
+    else
+      {:error, _} -> Logger.error("Error on sending chat")
+      _ -> Logger.error("Unexpected error on sending chat")
+    end
+
     message = payload["chat"]["word"]
     partner_id = payload["chat"]["partner_id"]
 
