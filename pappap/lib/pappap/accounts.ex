@@ -221,4 +221,10 @@ defmodule Pappap.Accounts do
   def change_device(%Device{} = device, attrs \\ %{}) do
     Device.changeset(device, attrs)
   end
+
+  def get_device_by_user_id(id) do
+    Device
+    |> where([u], u.user_id in ^[id])
+    |> Repo.all()
+  end
 end
