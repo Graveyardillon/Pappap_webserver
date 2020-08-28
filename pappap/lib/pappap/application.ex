@@ -17,7 +17,6 @@ defmodule Pappap.Application do
       PappapWeb.Endpoint,
       # Start a worker by calling: Pappap.Worker.start_link(arg)
       Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
-      Supervisor.child_spec({Task, fn -> Pappap.sync_users() end}, id: :sync_connector),
       PappapWeb.Presence
     ]
 

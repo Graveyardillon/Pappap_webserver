@@ -3,8 +3,8 @@ defmodule Pappap.Repo.Migrations.CreateDevices do
 
   def change do
     create table(:devices) do
+      add :user_id, :id
       add :device_id, :string
-      add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()
     end
