@@ -16,8 +16,8 @@ defmodule Pappap do
       Logger.info("Connected to DB Server in TCP")
       loop_receiver(socket)
     else
-      {:error, :econnrefused} -> Logger.info("Could not connect to DB Server. (Refused)")
-      _ -> Logger.info("Could not connect to DB Server due to unexpected reasons.")
+      {:error, :econnrefused} -> Logger.warn("Could not connect to DB Server. (Refused)")
+      _ -> Logger.warn("Could not connect to DB Server due to unexpected reasons.")
     end
   end
 
@@ -31,7 +31,7 @@ defmodule Pappap do
       Logger.info("User Sync Connected")
       send_user_sync_request(socket)
     else
-      _ -> Logger.info("Could not sync user due to unexpected reasons.")
+      _ -> Logger.warn("Could not sync user due to unexpected reasons.")
     end
   end
 
@@ -40,7 +40,7 @@ defmodule Pappap do
       loop_id_receiver(socket)
       close_socket(socket)
     else
-      _ -> Logger.info("Could not sync user due to unexpected reasons.")
+      _ -> Logger.warn("Could not sync user due to unexpected reasons.")
     end
   end
 
