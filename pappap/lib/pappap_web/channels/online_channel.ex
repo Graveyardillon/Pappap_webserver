@@ -2,7 +2,7 @@ defmodule PappapWeb.OnlineChannel do
   use PappapWeb, :channel
   alias PappapWeb.Presence
 
-  def join("room:lobby", %{"user_id" => user_id}, socket) do
+  def join("online", %{"user_id" => user_id}, socket) do
     send(self(), {:after_join, user_id})
     {:ok, socket}
   end

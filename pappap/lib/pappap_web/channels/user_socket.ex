@@ -2,7 +2,7 @@ defmodule PappapWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "room:lobby", PappapWeb.OnlineChannel
+  channel "online", PappapWeb.OnlineChannel
   channel "chat:*", PappapWeb.ChatChannel
 
   # Socket params are passed from the client and can
