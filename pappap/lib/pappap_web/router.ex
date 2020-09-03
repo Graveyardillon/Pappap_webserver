@@ -29,6 +29,8 @@ defmodule PappapWeb.Router do
     post "/signin", AuthController, :signin
     post "/upload/image", ImageController, :upload
 
+    get "/tournament/participating", TournamentController, :get_participating_tournaments
+
     post "/register/device", DeviceController, :register_device_id
   end
 
