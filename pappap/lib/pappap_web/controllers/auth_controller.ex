@@ -4,7 +4,7 @@ defmodule PappapWeb.AuthController do
   @db_domain_url "http://localhost:4000"
   @api_url "/api"
   @signup_url "/user/signup"
-  @signin_url "/signin"
+  @signin_url "/user/login"
   @content_type [{"Content-Type", "application/json"}]
 
   def signup(conn, params) do
@@ -18,16 +18,14 @@ defmodule PappapWeb.AuthController do
       {:error, reason} ->
         map = %{
           "result" => false,
-          "reason" => reason,
-          "error_no" => 10000
+          "reason" => reason
         }
         json(conn, map)
 
       _ ->
         map = %{
           "result" => false,
-          "reason" => "Unexpected error",
-          "error_no" => 10000
+          "reason" => "Unexpected error"
         }
         json(conn, map)
     end
