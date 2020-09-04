@@ -13,30 +13,56 @@ defmodule PappapWeb.ChatChannel do
 
   def handle_in("new_chat", payload, socket) do
     payload
-    |> IO.inspect()
     |> Map.has_key?("chat")
     |> (if do
       with {:ok, _response} <- Chat.send_chat(payload) do
-        # do nothing
+        message = payload["chat"]["word"]
+        partner_id = payload["chat"]["partner_id"]
+
+        device_list = Accounts.get_device_by_user_id(partner_id)
+
+        device_list
+        |> Enum.empty?()
+        |> (unless  do
+          device = hd(device_list)
+          Notifications.push(message, device.device_id)
+        end)
+
+        broadcast!(socket, "new_chat", %{payload: payload})
       else
         {:error, _} -> Logger.error("Error on sending chat")
         _ -> Logger.error("Unexpected error on sending chat")
       end
 
-      message = payload["chat"]["word"]
-      partner_id = payload["chat"]["partner_id"]
-
-      device = Accounts.get_device_by_user_id(partner_id) 
-
-      #          |> hd()
-      # Notifications.push(message, device.device_id)
-
-      #broadcast!(socket, "new_chat", %{payload: payload, response: response})
-      broadcast!(socket, "new_chat", %{payload: payload})
       {:noreply, socket}
     else
-      IO.inspect("payload has no chat key")
-      broadcast!(socket, "new_chat", %{payload: payload})
+      # Map.has_key?/1 が chatじゃなかった場合（直接のメッセージという保証なし）
+      with {:ok, response} <- Chat.send_chat(payload) do
+        message = payload["chat_group"]["word"]
+        members = response["members"]
+
+        members
+        |> is_list()
+        |> (if do
+          members
+          |> Enum.each(fn member_id ->
+            device_list = Accounts.get_device_by_user_id(member_id)
+
+            device_list
+            |> Enum.empty?()
+            |> (unless do
+              device = hd(device_list)
+              Notifications.push(message, device.device_id)
+            end)
+          end)
+        end)
+
+        broadcast!(socket, "new_chat", %{payload: payload})
+      else
+        {:error, _} -> Logger.error("Error on sending group chat")
+        _ -> Logger.error("Unexpected error on sending chat")
+      end
+      
       {:noreply, socket}
     end)
   end

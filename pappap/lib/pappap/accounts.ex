@@ -109,7 +109,7 @@ defmodule Pappap.Accounts do
   """
   def get_device_by_user_id(id) do
     Device
-    |> where([d], d.user_id in ^[id])
+    |> where([d], d.user_id == ^id)
     |> Repo.all()
   end
 end
