@@ -27,7 +27,7 @@ defmodule PappapWeb.AuthController do
           "result" => false,
           "reason" => "Unexpected error"
         }
-        remder(conn, map)
+        render(conn, map)
     end
   end
 

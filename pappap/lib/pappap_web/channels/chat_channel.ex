@@ -12,22 +12,32 @@ defmodule PappapWeb.ChatChannel do
   end
 
   def handle_in("new_chat", payload, socket) do
-    with {:ok, _response} <- Chat.send_chat(payload) do
-      # do nothing
+    payload
+    |> IO.inspect()
+    |> Map.has_key?("chat")
+    |> (if do
+      with {:ok, _response} <- Chat.send_chat(payload) do
+        # do nothing
+      else
+        {:error, _} -> Logger.error("Error on sending chat")
+        _ -> Logger.error("Unexpected error on sending chat")
+      end
+
+      message = payload["chat"]["word"]
+      partner_id = payload["chat"]["partner_id"]
+
+      device = Accounts.get_device_by_user_id(partner_id) 
+
+      #          |> hd()
+      # Notifications.push(message, device.device_id)
+
+      #broadcast!(socket, "new_chat", %{payload: payload, response: response})
+      broadcast!(socket, "new_chat", %{payload: payload})
+      {:noreply, socket}
     else
-      {:error, _} -> Logger.error("Error on sending chat")
-      _ -> Logger.error("Unexpected error on sending chat")
-    end
-
-    message = payload["chat"]["word"]
-    partner_id = payload["chat"]["partner_id"]
-
-    device = Accounts.get_device_by_user_id(partner_id) 
-             |> hd()
-    Notifications.push(message, device.device_id)
-
-    #broadcast!(socket, "new_chat", %{payload: payload, response: response})
-    broadcast!(socket, "new_chat", %{payload: payload})
-    {:noreply, socket}
+      IO.inspect("payload has no chat key")
+      broadcast!(socket, "new_chat", %{payload: payload})
+      {:noreply, socket}
+    end)
   end
 end
