@@ -7,6 +7,6 @@ defmodule PappapWeb.DeviceController do
     {:ok, device} = params
                     |> Accounts.create_device()
 
-    json(conn, %{device_id: device.device_id})
+    render(conn, %{device_id: device.device_id})
   end
 end
