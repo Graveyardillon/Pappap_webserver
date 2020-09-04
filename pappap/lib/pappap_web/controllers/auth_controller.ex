@@ -13,21 +13,21 @@ defmodule PappapWeb.AuthController do
     with {:ok, attrs} <- Poison.encode(params),
       {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
       {:ok, body} <- Poison.decode(response.body) do
-      json(conn, body)
+      render(conn, body)
     else
       {:error, reason} ->
         map = %{
           "result" => false,
           "reason" => reason
         }
-        json(conn, map)
+        render(conn, map)
 
       _ ->
         map = %{
           "result" => false,
           "reason" => "Unexpected error"
         }
-        json(conn, map)
+        remder(conn, map)
     end
   end
 
@@ -38,6 +38,6 @@ defmodule PappapWeb.AuthController do
     {:ok, response} = HTTPoison.post(url, attrs, @content_type)
     b = Poison.decode!(response.body)
 
-    json(conn, b)
+    render(conn, b)
   end
 end
