@@ -8,8 +8,7 @@ defmodule PappapWeb.AuthView do
   def render("error.json", msg, error_no) do
     %{
       "result" => false,
-      "reason" => msg,
-      "error_no" => error_no
+      "reason" => msg
     }
   end
 end
