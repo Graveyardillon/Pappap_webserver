@@ -1,7 +1,7 @@
 defmodule PappapWeb.ProfileView do
   use PappapWeb, :view
 
-  def render("show.json", %{} = body) do
+  def render("send.json", %{} = body) do
     body
   end
 
