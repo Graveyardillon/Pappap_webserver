@@ -31,6 +31,7 @@ defmodule PappapWeb.Router do
 
     get "/tournament/participating", TournamentController, :get_participating_tournaments
 
+    post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
   end
 
