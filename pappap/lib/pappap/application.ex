@@ -16,7 +16,7 @@ defmodule Pappap.Application do
       # Start the Endpoint (http/https)
       PappapWeb.Endpoint,
       # Start a worker by calling: Pappap.Worker.start_link(arg)
-      Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
+      #Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
       PappapWeb.Presence
     ]
 
