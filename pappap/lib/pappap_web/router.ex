@@ -28,7 +28,7 @@ defmodule PappapWeb.Router do
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
     post "/upload/image", ImageController, :upload
-
+    post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
   end
 
