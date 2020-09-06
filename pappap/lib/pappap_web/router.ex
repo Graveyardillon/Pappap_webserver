@@ -30,6 +30,7 @@ defmodule PappapWeb.Router do
     post "/upload/image", ImageController, :upload
 
     get "/tournament/participating", TournamentController, :get_participating_tournaments
+    get "/tournament/tabs", TournamentController, :get_tournament_topics
 
     post "/register/device", DeviceController, :register_device_id
   end
