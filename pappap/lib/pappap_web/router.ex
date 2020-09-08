@@ -33,6 +33,8 @@ defmodule PappapWeb.Router do
     get "/tournament/tabs", TournamentController, :get_tournament_topics
 
     post "/register/device", DeviceController, :register_device_id
+
+    post "/sync", SyncController, :sync
   end
 
   # Enables LiveDashboard only for development
