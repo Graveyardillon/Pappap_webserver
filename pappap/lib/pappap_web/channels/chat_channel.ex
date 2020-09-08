@@ -11,7 +11,6 @@ defmodule PappapWeb.ChatChannel do
     {:ok, socket}
   end
 
-  #TODO: 関数に分割して可読性の向上
   def handle_in("new_chat", payload, socket) do
     payload
     |> Map.has_key?("chat")
