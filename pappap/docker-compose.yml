@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  pappap_db:
+    image: postgres
+    container_name: pappap_db
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    hostname: db
+    restart: always
+    user: root
+  pappap_app:
+    build: .
+    ports:
+      - 4041:4001
+    container_name: pappap_app
+    volumes:
+      - .:/app
+    depends_on:
+      - pappap_db
+    command: bash -c "mix ecto.create && mix ecto.migrate && mix phx.server"
+    tty: true
+    stdin_open: true
+
+
