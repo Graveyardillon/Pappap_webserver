@@ -32,6 +32,9 @@ defmodule PappapWeb.Router do
     get "/tournament/participating", TournamentController, :get_participating_tournaments
     get "/tournament/tabs", TournamentController, :get_tournament_topics
 
+    post "/follow", RelationController, :follow
+    post "/unfollow", RelationController, :unfollow
+
     post "/register/device", DeviceController, :register_device_id
 
     post "/sync", SyncController, :sync
