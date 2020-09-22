@@ -36,6 +36,7 @@ defmodule PappapWeb.Router do
     post "/unfollow", RelationController, :unfollow
     post "/following_list", RelationController, :following_list
 
+    post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
     post "/sync", SyncController, :sync
