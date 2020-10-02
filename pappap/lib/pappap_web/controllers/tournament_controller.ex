@@ -1,5 +1,6 @@
 defmodule PappapWeb.TournamentController do
   use PappapWeb, :controller
+  use Common.Tools
 
   @db_domain_url "http://localhost:4000"
   @api_url "/api"
@@ -11,95 +12,29 @@ defmodule PappapWeb.TournamentController do
   @content_type [{"Content-Type", "application/json"}]
 
   def get_participating_tournaments(conn, params) do
-    url = @db_domain_url <> @api_url <> @get_participating_tournaments_url
-
-    with {:ok, attrs} <- Poison.encode(params),
-      {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
-      {:ok, body} <- Poison.decode(response.body) do
-        json(conn, body)
-      else
-        {:error, reason} ->
-          map = %{
-            "result" => false,
-            "reason" => reason
-          }
-          json(conn, map)
-
-        _ ->
-          map = %{
-            "result" => false,
-            "reason" => "Unexpected error"
-          }
-          json(conn, map)
-    end
+    map =
+      @db_domain_url <> @api_url <> @get_participating_tournaments_url
+      |>sendHTTP(params)
+      json(conn,map)
   end
 
   def get_tournament_topics(conn, params) do
-    url = @db_domain_url <> @api_url <> @get_tournament_topics_url
-
-    with {:ok, attrs} <- Poison.encode(params),
-      {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
-      {:ok, body} <- Poison.decode(response.body) do
-        json(conn, body)
-      else
-        {:error, reason} ->
-          map = %{
-            "result" => false,
-            "reason" => reason
-          }
-          json(conn, map)
-        _ ->
-          map = %{
-            "result" => false,
-            "reason" => "Unexpected error"
-          }
-          json(conn, map)
-    end
+    map =
+      @db_domain_url <> @api_url <> @get_tournament_topics_url
+      |>sendHTTP(params)
+      json(conn,map)
   end
   def start(conn, params) do
-
-    url = @db_domain_url <> @api_url <> @tournament_url <> @match_start_url
-
-    with {:ok, attrs} <- Poison.encode(params),
-      {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
-      {:ok, body} <- Poison.decode(response.body) do
-        json(conn, body)
-      else
-        {:error, reason} ->
-          map = %{
-            "result" => false,
-            "reason" => reason
-          }
-          json(conn, map)
-        _ ->
-          map = %{
-            "result" => false,
-            "reason" => "Unexpected error"
-          }
-          json(conn, map)
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @match_start_url
+      |>sendHTTP(params)
+      json(conn, map)
     end
   end
   def delete_loser(conn, params) do
-
-    url = @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-
-    with {:ok, attrs} <- Poison.encode(params),
-      {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
-      {:ok, body} <- Poison.decode(response.body) do
-        json(conn, body)
-      else
-        {:error, reason} ->
-          map = %{
-            "result" => false,
-            "reason" => reason
-          }
-          json(conn, map)
-        _ ->
-          map = %{
-            "result" => false,
-            "reason" => "Unexpected error"
-          }
-          json(conn, map)
-    end
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+      |>sendHTTP(params)
+    json(conn, map)
   end
 end
