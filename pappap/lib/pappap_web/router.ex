@@ -34,6 +34,8 @@ defmodule PappapWeb.Router do
     post "/tournament/start", TournamentController, :start
     post "/tournament/deleteloser", TournamentController, :delete_loser
 
+    post "/chat/chat_room/create", ChatController, :create_chatroom
+
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
