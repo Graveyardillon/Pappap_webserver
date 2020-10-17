@@ -27,6 +27,7 @@ defmodule PappapWeb.TournamentController do
       |>sendHTTP(params, @content_type)
       json(conn,map)
   end
+  
   def start(conn, params) do
     log = Task.async(PappapWeb.TournamentController, :add_log, [params])
     map =
@@ -35,6 +36,7 @@ defmodule PappapWeb.TournamentController do
     Task.await(log)
     json(conn, map)
   end
+
   def add_log(params) do
     IO.inspect(params)
     tournament_data =
@@ -44,6 +46,7 @@ defmodule PappapWeb.TournamentController do
     @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
     |>sendHTTP(tournament_data, @content_type)
   end
+
   def delete_loser(conn, params) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
