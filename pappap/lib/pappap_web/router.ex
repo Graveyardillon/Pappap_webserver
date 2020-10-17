@@ -38,6 +38,10 @@ defmodule PappapWeb.Router do
     post "/chat/chat_member/create", ChatController, :create_chatmember
     post "/chat/chats/create", ChatController, :create_chats
 
+    post "/assistant/create", AssistantController, :create_assistant
+
+    post "/entrant", EntrantController, :create
+
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
