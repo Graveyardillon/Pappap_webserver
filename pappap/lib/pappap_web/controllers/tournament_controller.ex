@@ -14,7 +14,7 @@ defmodule PappapWeb.TournamentController do
   @delete_loser_url "/deleteloser"
 
   def create(conn, params) do
-    file_path = if params["image"] != nil do
+    file_name = if params["image"] != nil do
       uuid = SecureRandom.uuid()
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       uuid
@@ -22,9 +22,13 @@ defmodule PappapWeb.TournamentController do
       nil
     end
 
+    file_path = "./static/image/tmp/"<>file_name<>".jpg"
+
     map =
       @db_domain_url <> @api_url <> @tournament_url
-      |> send_tournament_multipart(params, "./static/image/tmp/"<>file_path<>".jpg")
+      |> send_tournament_multipart(params, file_path)
+    
+    File.rm(file_path)
 
     json(conn, map)
   end
