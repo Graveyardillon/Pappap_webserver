@@ -16,7 +16,7 @@ defmodule PappapWeb.Router do
   scope "/", PappapWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    #get "/", PageController, :index
   end
 
   # Other scopes may use custom stacks.
@@ -29,8 +29,9 @@ defmodule PappapWeb.Router do
     post "/signin", AuthController, :signin
     post "/upload/image", ImageController, :upload
 
-    get "/tournament/participating", TournamentController, :get_participating_tournaments
+    get "/tournament/participating", TournamentController, :get_participating
     get "/tournament/tabs", TournamentController, :get_tournament_topics
+    post "/tournament/create", TournamentController, :create
     post "/tournament/start", TournamentController, :start
     post "/tournament/deleteloser", TournamentController, :delete_loser
 

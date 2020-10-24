@@ -14,6 +14,7 @@ defmodule PappapWeb.RelationController do
     with {:ok, attrs} <- Poison.encode(params),
       {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
       {:ok, body} <- Poison.decode(response.body) do
+      IO.inspect(body)
       json(conn, body)
     else
       {:error, reason} ->

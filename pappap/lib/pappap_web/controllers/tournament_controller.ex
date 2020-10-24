@@ -12,28 +12,46 @@ defmodule PappapWeb.TournamentController do
   @get_url "/get"
   @add_url "/add"
   @delete_loser_url "/deleteloser"
-  @content_type [{"Content-Type", "application/json"}]
 
-  def get_participating_tournaments(conn, params) do
+  def create(conn, params) do
+    file_path = if params["image"] != nil do
+      uuid = SecureRandom.uuid()
+      File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
+      uuid
+    else
+      nil
+    end
+
+    map =
+      @db_domain_url <> @api_url <> @tournament_url
+      |> send_tournament_multipart(params, "./static/image/tmp/"<>file_path<>".jpg")
+
+    json(conn, map)
+  end
+
+  def get_participating(conn, params) do
     map =
       @db_domain_url <> @api_url <> @get_participating_tournaments_url
-      |>sendHTTP(params, @content_type)
-      json(conn,map)
+      |> send_json(params)
+
+    json(conn, map)
   end
 
   def get_tournament_topics(conn, params) do
     map =
       @db_domain_url <> @api_url <> @get_tournament_topics_url
-      |>sendHTTP(params, @content_type)
-      json(conn,map)
+      |> send_json(params)
+
+    json(conn, map)
   end
   
   def start(conn, params) do
     log = Task.async(PappapWeb.TournamentController, :add_log, [params])
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @match_start_url
-      |>sendHTTP(params, @content_type)
+      |> send_json(params)
     Task.await(log)
+
     json(conn, map)
   end
 
@@ -41,16 +59,17 @@ defmodule PappapWeb.TournamentController do
     IO.inspect(params)
     tournament_data =
       @db_domain_url <> @api_url <> @tournament_url <> @get_url
-      |>sendHTTP(params["tournament"], @content_type)
-      |>IO.inspect(label: :add_log)
+      |> send_json(params["tournament"])
+      |> IO.inspect(label: :add_log)
     @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
-    |>sendHTTP(tournament_data, @content_type)
+    |> send_json(tournament_data)
   end
 
   def delete_loser(conn, params) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-      |>sendHTTP(params, @content_type)
+      |> send_json(params)
+
     json(conn, map)
   end
 end
