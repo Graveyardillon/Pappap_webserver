@@ -10,11 +10,24 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :pappap, PappapWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  http: [port: {:system, "PORT"}],
+  url: [host: "localhost", port: 4000],
+  server: true,
+  root: ".",
+  version: Application.spec(:pappap, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :pappap, Milk.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "pappap",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
+config :milk, Milk.Repo, migration_timestamps: [type: :timestamptz, inserted_at: :create_time, updated_at: :update_time]
 
 # ## SSL Support
 #

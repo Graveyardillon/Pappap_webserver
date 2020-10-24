@@ -41,6 +41,9 @@ defmodule PappapWeb.Router do
 
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
+    
+    # DEBUG
+    post "/notification/force", DeviceController, :force_notify
 
     post "/sync", SyncController, :sync
   end

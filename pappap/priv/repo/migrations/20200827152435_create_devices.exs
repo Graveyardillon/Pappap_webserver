@@ -8,5 +8,7 @@ defmodule Pappap.Repo.Migrations.CreateDevices do
 
       timestamps()
     end
+
+    create unique_index(:devices, [:device_id])
   end
 end

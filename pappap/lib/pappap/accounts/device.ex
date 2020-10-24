@@ -14,5 +14,6 @@ defmodule Pappap.Accounts.Device do
     device
     |> cast(attrs, [:user_id, :device_id])
     |> validate_required([:user_id, :device_id])
+    |> unique_constraint(:device_id)
   end
 end
