@@ -23,7 +23,7 @@ defmodule PappapWeb.TournamentController do
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      "./static/image/545b77c7-a0b1-4e69-ba92-2202ff6263e1.png"
+      "./static/image/stones.png"
     end
 
     map =
