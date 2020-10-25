@@ -39,6 +39,12 @@ defmodule PappapWeb.Router do
     post "/unfollow", RelationController, :unfollow
     post "/following_list", RelationController, :following_list
     post "/chat/chat_room/create", ChatController, :create_chatroom
+    post "/chat/chat_member/create", ChatController, :create_chatmember
+    post "/chat/chats/create", ChatController, :create_chats
+
+    post "/assistant", AssistantController, :create_assistant
+
+    post "/entrant", EntrantController, :create
 
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
@@ -46,6 +52,8 @@ defmodule PappapWeb.Router do
     # DEBUG
     post "/notification/force", DeviceController, :force_notify
 
+    post "/match", ReportController, :register_match
+    post "/report", ReportController, :report
     post "/sync", SyncController, :sync
   end
 
