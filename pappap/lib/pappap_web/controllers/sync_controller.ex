@@ -20,7 +20,6 @@ defmodule PappapWeb.SyncController do
             "reason" => reason
           }
           json(conn, map)
-        
         _ ->
           map = %{
             "result" => false,
