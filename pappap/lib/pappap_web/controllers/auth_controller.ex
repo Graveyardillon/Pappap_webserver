@@ -8,7 +8,7 @@ defmodule PappapWeb.AuthController do
   @signin_url "/user/login"
 
   def signup(conn, params) do
-    map = 
+    map =
       @db_domain_url <> @api_url <> @signup_url
       |> send_json(params)
 
@@ -16,7 +16,7 @@ defmodule PappapWeb.AuthController do
   end
 
   def signin(conn, params) do
-    map = 
+    map =
       @db_domain_url <> @api_url <> @signin_url
       |> send_json(params)
 
