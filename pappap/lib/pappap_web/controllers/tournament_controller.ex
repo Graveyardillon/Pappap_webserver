@@ -17,8 +17,8 @@ defmodule PappapWeb.TournamentController do
   @delete_loser_url "/deleteloser"
 
   def create(conn, params) do
-    IO.inspect(params)
-    file_path = if params["image"] != "" do
+    IO.inspect(params, label: :create_params)
+    file_path = unless params["image"] == "" do
       uuid = SecureRandom.uuid()
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
@@ -44,7 +44,9 @@ defmodule PappapWeb.TournamentController do
 
     IO.inspect(map["data"]["event_date"])
     
-    File.rm(file_path)
+    unless params["image"] == "" do
+      File.rm(file_path)
+    end
 
     json(conn, map)
   end
