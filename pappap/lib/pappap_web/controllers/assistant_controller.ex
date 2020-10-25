@@ -11,7 +11,8 @@ defmodule PappapWeb.AssistantController do
   def create_assistant(conn, params) do
     map =
       @db_domain_url <> @api_url <> @assistant_url
-      |>send_json(params, @content_type)
+      |> send_json(params)
+      
     IO.inspect(params["assistant"]["tournament_id"],label: :params)
     # edited =
     #   map["data"]
@@ -20,7 +21,8 @@ defmodule PappapWeb.AssistantController do
     #     |>Map.put("create_time",map["data"]["create_time"]
     #     |>Map.put("update_time",map["data"][]))) end)
     @db_domain_url <> @api_url <> @assistant_log_url
-    |>send_json(map, @content_type)
+    |> send_json(map)
+
     json(conn, map)
   end
 end

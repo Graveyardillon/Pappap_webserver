@@ -8,6 +8,8 @@ defmodule PappapWeb.ChatController do
   @chats_log_url "/chat_log"
   @chat_room_url "/chat_room"
   @chat_room_log_url "/chat_room_log"
+  @chat_member_url "/chat_member"
+  @chat_member_log_url "/chat_member_log"
 
   def create_chatroom(conn, params) do
     map =
@@ -19,28 +21,35 @@ defmodule PappapWeb.ChatController do
 
     json(conn, map)
   end
+
   def create_chats(conn, params) do
     map =
       @db_domain_url <> @api_url <> @chats_url
-      |>send_json(params, @content_type)
+      |> send_json(params)
+
     index = 
-    Map.get(map, "data")
-    |>Map.get("index")
+      Map.get(map, "data")
+      |> Map.get("index")
+
     merged_map =
       Map.get(params, "chat")
-      |>Map.put("index", index)
-      |>IO.inspect()
+      |> Map.put("index", index)
+      |> IO.inspect()
+
     @db_domain_url <> @api_url <> @chats_log_url
-    |>send_json(merged_map, @content_type)
-    |>IO.inspect
+    |> send_json(merged_map)
+    |> IO.inspect
+
     json(conn, map)
   end
+
   def create_chatmember(conn, params) do
     map =
       @db_domain_url <> @api_url <> @chat_member_url
-      |>send_json(params, @content_type)
+      |> send_json(params)
     @db_domain_url <> @api_url <> @chat_member_log_url
-    |>send_json(map, @content_type)
+    |> send_json(map)
+
     json(conn, map)
   end
 end

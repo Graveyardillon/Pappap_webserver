@@ -10,12 +10,14 @@ defmodule PappapWeb.EntrantController do
   def create(conn, params) do
     map =
       @db_domain_url <> @api_url <> @entrant_url
-      |>send_json(params, @content_type)
+      |> send_json(params)
+
     if map["result"] do
       @db_domain_url <> @api_url <> @entrant_log_url
-      |>send_json(map, @content_type)
-      |>IO.inspect
+      |> send_json(map)
+      |> IO.inspect
     end
+    
     json(conn, map)
   end
 end
