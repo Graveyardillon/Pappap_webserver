@@ -22,6 +22,8 @@ defmodule Pappap.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
+    :ets.new(:match_result, [:public, :named_table])
+    :ets.insert(:match_result, {"last_match", -1})
     opts = [strategy: :one_for_one, name: Pappap.Supervisor]
     Supervisor.start_link(children, opts)
   end

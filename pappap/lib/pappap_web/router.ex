@@ -48,6 +48,8 @@ defmodule PappapWeb.Router do
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
+    post "/match", ReportController, :register_match
+    post "/report", ReportController, :report
     post "/sync", SyncController, :sync
   end
 
