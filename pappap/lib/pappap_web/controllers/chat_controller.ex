@@ -23,7 +23,7 @@ defmodule PappapWeb.ChatController do
     map =
       @db_domain_url <> @api_url <> @chats_url
       |>sendHTTP(params, @content_type)
-    index = 
+    index =
     Map.get(map, "data")
     |>Map.get("index")
     merged_map =
