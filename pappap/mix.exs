@@ -53,7 +53,8 @@ defmodule Pappap.MixProject do
       {:poison, "~> 3.1"},
       {:secure_random, "~> 0.5"},
       {:pigeon, "~> 1.5.1"},
-      {:kadabra, "~> 0.4.4"}
+      {:kadabra, "~> 0.4.4"},
+      {:timex, "~> 3.5"}
     ]
   end
 

@@ -63,7 +63,7 @@ defmodule Pappap.AccountsTest do
 
     test "get_user_by_user_id/1 returns the device with given user_id" do
       device = device_fixture()
-      assert Accounts.get_device_by_user_id(device.user_id) == [device]
+      assert Accounts.get_devices_by_user_id(device.user_id) == [device]
     end
   end
 end

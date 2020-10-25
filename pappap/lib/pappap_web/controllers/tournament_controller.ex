@@ -1,6 +1,7 @@
 defmodule PappapWeb.TournamentController do
   use PappapWeb, :controller
   use Common.Tools
+  use Timex
   alias Pappap.Notifications
   alias Pappap.Accounts
 
@@ -39,6 +40,15 @@ defmodule PappapWeb.TournamentController do
           Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
         end)
       end)
+    end)
+
+    Task.async(fn -> 
+      map["data"]["event_date"]
+      |> IO.inspect(label: "1")
+      |> Timex.parse("{ISO}")
+      |> IO.inspect(label: "2")
+      |> Timex.to_unix()
+      |> IO.inspect(label: "3")
     end)
     
     File.rm(file_path)
