@@ -30,10 +30,13 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
 
-    map["data"]["master_id"]
-    |> Accounts.get_devices_by_user_id()
-    |> Enum.each(fn device -> 
-      Notifications.push("大会が予定されました。", device.device_id)
+    map["data"]["followers"]
+    |> Enum.each(fn follower_id -> 
+      follower_id
+      |> Accounts.get_devices_by_user_id()
+      |> Enum.each(fn device -> 
+        Notifications.push("大会が予定されました。", device.device_id)
+      end)
     end)
     
     File.rm(file_path)
