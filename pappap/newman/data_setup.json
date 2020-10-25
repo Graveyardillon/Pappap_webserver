@@ -1,0 +1,43 @@
+{
+  "info":
+  {
+    "name": "Sample Newman Collection for Pappap WebServer"
+  },
+  "item": [
+    {
+      "name": "Register device request",
+      "request": {
+        "url": "http://localhost:4001/api/register/device",
+        "method": "POST",
+        "header": [
+	  {
+	    "key": "Content-Type",
+	    "value": "application/json"
+	  }
+        ],
+        "body": {
+	  "mode": "raw",
+	  "raw": "{\"device_id\": \"c20daadeda3329ad256b6e2fd306b9fbb9f1053e575e24d3d70b50793c8e2fa2\", \"user_id\": 1}"
+        }
+      }
+    },
+    {
+      "name": "Register device request",
+      "request": {
+        "url": "http://localhost:4001/api/register/device",
+        "method": "POST",
+        "header": [
+	  {
+	    "key": "Content-Type",
+	    "value": "application/json"
+	  }
+        ],
+        "body": {
+	  "mode": "raw",
+	  "raw": "{\"device_id\": \"321c52013bd44e18a471478cb8c82e88385810a086f8fa8b06ae5dbea1aa0345\", \"user_id\": 2}"
+        }
+      }
+    }
+
+  ]
+}

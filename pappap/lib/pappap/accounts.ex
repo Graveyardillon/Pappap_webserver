@@ -107,7 +107,7 @@ defmodule Pappap.Accounts do
   @doc """
   Gets single device by user_id.
   """
-  def get_device_by_user_id(id) do
+  def get_devices_by_user_id(id) do
     Device
     |> where([d], d.user_id == ^id)
     |> Repo.all()

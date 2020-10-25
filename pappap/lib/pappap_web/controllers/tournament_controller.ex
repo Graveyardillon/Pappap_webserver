@@ -1,6 +1,8 @@
 defmodule PappapWeb.TournamentController do
   use PappapWeb, :controller
   use Common.Tools
+  alias Pappap.Notifications
+  alias Pappap.Accounts
 
   @db_domain_url "http://localhost:4000"
   @api_url "/api"
@@ -27,6 +29,12 @@ defmodule PappapWeb.TournamentController do
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
+
+    map["data"]["master_id"]
+    |> Accounts.get_devices_by_user_id()
+    |> Enum.each(fn device -> 
+      Notifications.push("大会が予定されました。", device.device_id)
+    end)
     
     File.rm(file_path)
 

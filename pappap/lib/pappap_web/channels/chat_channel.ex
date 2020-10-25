@@ -19,7 +19,7 @@ defmodule PappapWeb.ChatChannel do
         message = payload["chat"]["word"]
         partner_id = payload["chat"]["partner_id"]
 
-        Accounts.get_device_by_user_id(partner_id)
+        Accounts.get_devices_by_user_id(partner_id)
         |> notify(message)
 
         broadcast!(socket, "new_chat", %{payload: payload})
@@ -40,7 +40,7 @@ defmodule PappapWeb.ChatChannel do
         |> (if do
           members
           |> Enum.each(fn member_id ->
-            Accounts.get_device_by_user_id(member_id)
+            Accounts.get_devices_by_user_id(member_id)
             |> notify(message)
           end)
         end)
