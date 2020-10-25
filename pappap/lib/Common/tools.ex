@@ -39,8 +39,6 @@ defmodule Common.Tools do
           Poison.encode!(params["tournament"])
         end
 
-        IO.inspect(tournament)
-
         form = [{:file, file_path}, {"tournament", tournament}]
 
         with {:ok, response} <- HTTPoison.post(

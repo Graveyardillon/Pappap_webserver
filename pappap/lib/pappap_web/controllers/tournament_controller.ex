@@ -23,12 +23,13 @@ defmodule PappapWeb.TournamentController do
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      "./static/image/15ad706b-731f-4941-a66f-6b09a965aa6d.png"
+      "./static/image/545b77c7-a0b1-4e69-ba92-2202ff6263e1.png"
     end
 
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
+      |> IO.inspect()
 
     Task.async(fn -> 
       map["data"]["followers"]
