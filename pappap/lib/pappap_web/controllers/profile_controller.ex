@@ -6,9 +6,7 @@ defmodule PappapWeb.ProfileController do
     @update_url "/update"
     @content_type [{"Content-Type", "application/json"}]
 
-
     def send(conn,params) do
-
         url = @db_domain_url <> @api_url <> @profile_url <> @update_url
 
         with {:ok, attrs} <- Poison.encode(params),

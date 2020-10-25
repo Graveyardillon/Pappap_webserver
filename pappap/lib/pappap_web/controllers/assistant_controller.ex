@@ -6,7 +6,6 @@ defmodule PappapWeb.AssistantController do
   @api_url "/api"
   @assistant_url "/assistant"
   @assistant_log_url "/assistant_log"
-  @content_type [{"Content-Type", "application/json"}]
 
   def create_assistant(conn, params) do
     map =

@@ -17,15 +17,14 @@ defmodule PappapWeb.TournamentController do
   @delete_loser_url "/deleteloser"
 
   def create(conn, params) do
-    file_name = if params["image"] != nil do
+    IO.inspect(params)
+    file_path = if params["image"] != "" do
       uuid = SecureRandom.uuid()
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
-      uuid
+      "./static/image/tmp/"<>uuid<>".jpg"
     else
-      nil
+      "./static/image/15ad706b-731f-4941-a66f-6b09a965aa6d.png"
     end
-
-    file_path = "./static/image/tmp/"<>file_name<>".jpg"
 
     map =
       @db_domain_url <> @api_url <> @tournament_url
@@ -42,14 +41,7 @@ defmodule PappapWeb.TournamentController do
       end)
     end)
 
-    Task.async(fn -> 
-      map["data"]["event_date"]
-      |> IO.inspect(label: "1")
-      |> Timex.parse("{ISO}")
-      |> IO.inspect(label: "2")
-      |> Timex.to_unix()
-      |> IO.inspect(label: "3")
-    end)
+    IO.inspect(map["data"]["event_date"])
     
     File.rm(file_path)
 

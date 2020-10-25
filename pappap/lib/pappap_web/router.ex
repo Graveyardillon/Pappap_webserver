@@ -31,7 +31,7 @@ defmodule PappapWeb.Router do
 
     get "/tournament/participating", TournamentController, :get_participating
     get "/tournament/tabs", TournamentController, :get_tournament_topics
-    post "/tournament/create", TournamentController, :create
+    post "/tournament", TournamentController, :create
     post "/tournament/start", TournamentController, :start
     post "/tournament/deleteloser", TournamentController, :delete_loser
 

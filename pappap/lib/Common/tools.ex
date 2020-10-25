@@ -1,4 +1,6 @@
 defmodule Common.Tools do
+  use Timex
+
   defmacro __using__(_opts) do
     quote do
       def send_json(url, params) do
@@ -30,9 +32,16 @@ defmodule Common.Tools do
       #FIXME: この関数をtournament_controllerから別で書く必要はないかも
       def send_tournament_multipart(url, params, file_path) do
         content_type = [{"Content-Type", "multipart/form-data"}]
-        IO.inspect(file_path)
-        IO.inspect(params["tournament"])
-        form = [{:file, file_path}, {"tournament", params["tournament"]}]
+
+        tournament = if is_binary(params["tournament"]) do
+          params["tournament"]
+        else
+          Poison.encode!(params["tournament"])
+        end
+
+        IO.inspect(tournament)
+
+        form = [{:file, file_path}, {"tournament", tournament}]
 
         with {:ok, response} <- HTTPoison.post(
           url,
