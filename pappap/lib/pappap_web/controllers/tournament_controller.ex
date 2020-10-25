@@ -30,12 +30,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
 
-    map["data"]["followers"]
-    |> Enum.each(fn follower -> 
-      follower["id"]
-      |> Accounts.get_devices_by_user_id()
-      |> Enum.each(fn device -> 
-        Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
+    Task.async(fn -> 
+      map["data"]["followers"]
+      |> Enum.each(fn follower -> 
+        follower["id"]
+        |> Accounts.get_devices_by_user_id()
+        |> Enum.each(fn device -> 
+          Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
+        end)
       end)
     end)
     
