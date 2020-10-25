@@ -27,7 +27,7 @@ defmodule PappapWeb.TournamentController do
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
-    
+
     File.rm(file_path)
 
     json(conn, map)
