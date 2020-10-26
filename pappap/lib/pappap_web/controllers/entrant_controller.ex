@@ -1,7 +1,6 @@
 defmodule PappapWeb.EntrantController do
   use PappapWeb, :controller
   use Common.Tools
-  @content_type [{"Content-Type", "application/json"}]
   @db_domain_url "http://localhost:4000"
   @entrant_url "/entrant"
   @entrant_log_url "/entrant_log"
