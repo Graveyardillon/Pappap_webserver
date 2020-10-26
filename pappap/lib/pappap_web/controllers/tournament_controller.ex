@@ -42,7 +42,27 @@ defmodule PappapWeb.TournamentController do
       end)
     end)
 
-    IO.inspect(map["data"]["event_date"])
+    event_time =
+      map["data"]["event_date"]
+      |> Timex.parse!("{ISO:Extended}")
+      |> DateTime.to_unix()
+
+    now = 
+      DateTime.utc_now()
+      |> DateTime.to_unix()
+    
+    Task.async(fn -> 
+      IO.inspect(event_time - now)
+      Process.sleep((event_time - now)*1000)
+      map["data"]["followers"]
+      |> Enum.each(fn follower -> 
+        follower["id"]
+        |> Accounts.get_devices_by_user_id()
+        |> Enum.each(fn device -> 
+          Notifications.push(follower["name"]<>"さんの大会が開始します！", device.device_id)
+        end)
+      end)
+    end)
     
     unless params["image"] == "" do
       File.rm(file_path)
