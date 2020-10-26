@@ -50,7 +50,7 @@ defmodule PappapWeb.TournamentController do
       now = 
         DateTime.utc_now()
         |> DateTime.to_unix()
-      IO.inspect(event_time - now)
+      IO.inspect(event_time - now, label: :left_second)
       Process.sleep((event_time - now)*1000)
       
       url = @db_domain_url <> @api_url <> @get_tournament_info_url
@@ -61,11 +61,9 @@ defmodule PappapWeb.TournamentController do
       case HTTPoison.post(url, p, content_type) do
         {:ok, response} ->
           res = Poison.decode!(response.body)
-                |> IO.inspect(label: :res)
+
           res["data"]["entrants"]
-          |> IO.inspect(label: :entrants)
           |> Enum.each(fn entrant -> 
-            IO.inspect(entrant)
             entrant["id"]
             |> Accounts.get_devices_by_user_id()
             |> Enum.each(fn device -> 
