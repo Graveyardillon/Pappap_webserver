@@ -2,7 +2,7 @@ defmodule PappapWeb.AuthController do
   use PappapWeb, :controller
   use Common.Tools
 
-  @db_domain_url "http://localhost:4000"
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @signup_url "/user/signup"
   @signin_url "/user/login"

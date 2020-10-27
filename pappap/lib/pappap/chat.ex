@@ -1,7 +1,7 @@
 defmodule Pappap.Chat do
   use PappapWeb, :controller
 
-  @db_domain_url "http://localhost:4000"
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @create_dialogue_url "/chat/create_dialogue"
   @content_type [{"Content-Type", "application/json"}]

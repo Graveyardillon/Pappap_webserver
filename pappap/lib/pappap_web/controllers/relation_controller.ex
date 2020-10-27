@@ -1,7 +1,7 @@
 defmodule PappapWeb.RelationController do
   use PappapWeb, :controller
 
-  @db_domain_url "http://localhost:4000"
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @follow_url "/relation"
   @unfollow_url "/relation/unfollow"

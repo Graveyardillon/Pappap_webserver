@@ -1,7 +1,7 @@
 defmodule PappapWeb.EntrantController do
   use PappapWeb, :controller
   use Common.Tools
-  @db_domain_url "http://localhost:4000"
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @entrant_url "/entrant"
   @entrant_log_url "/entrant_log"
   @api_url "/api"
