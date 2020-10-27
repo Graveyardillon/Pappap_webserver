@@ -17,6 +17,7 @@ defmodule PappapWeb.TournamentController do
   @add_url "/add"
   @delete_loser_url "/deleteloser"
 
+  #FIXME: 長いのでリファクタリングが必要
   def create(conn, params) do
     file_path = unless params["image"] == "" do
       uuid = SecureRandom.uuid()
