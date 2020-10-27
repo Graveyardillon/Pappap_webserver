@@ -1,6 +1,6 @@
 defmodule PappapWeb.ProfileController do
     use PappapWeb, :controller
-    @db_domain_url "http://localhost:4000"
+    @db_domain_url Application.get_env(:pappap, :db_domain_url)
     @api_url "/api"
     @profile_url  "/profile"
     @update_url "/update"
