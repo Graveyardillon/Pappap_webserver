@@ -16,6 +16,8 @@ COPY config config
 RUN mix do deps.get, deps.compile
 
 COPY priv priv
+RUN ls priv
+RUN ls priv/cert
 COPY lib lib
 #COPY rel rel
 RUN mix compile
@@ -37,10 +39,11 @@ COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/pappap ./
 ENV HOME=/app
 
 COPY ./entrypoint.sh .
-RUN ls
+RUN ls lib/pappap-0.1.0
 
 USER root
 
+RUN ls
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 

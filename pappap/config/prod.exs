@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :pappap, PappapWeb.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "localhost", port: 4000],
+  url: [host: "localhost", port: 4001],
   server: true,
   root: ".",
   version: Application.spec(:pappap, :vsn)
@@ -26,8 +26,6 @@ config :pappap, Pappap.Repo,
   hostname: "db",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
-
-config :milk, Pappap.Repo, migration_timestamps: [type: :timestamptz, inserted_at: :create_time, updated_at: :update_time]
 
 # ## SSL Support
 #
@@ -65,4 +63,4 @@ config :milk, Pappap.Repo, migration_timestamps: [type: :timestamptz, inserted_a
 
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
-import_config "prod.secret.exs"
+# import_config "prod.secret.exs"
