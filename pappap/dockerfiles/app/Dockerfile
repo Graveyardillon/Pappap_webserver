@@ -10,6 +10,7 @@ RUN mix local.hex --force && \
 ENV DATABASE_URL=ecto://postgres:postgres@db/pappap
 ENV SECRET_KEY_BASE=uTG/s/VxvRixaWqRdW1MrtOqGxAUL/m3VIA5HZAaMHvU/PixTV5V+vUeWhv5UEnY
 ENV MIX_ENV=prod
+ENV PORT=4001
 
 COPY mix.exs mix.lock ./
 COPY config config
@@ -26,13 +27,10 @@ RUN mix compile
 RUN mix release
 
 FROM alpine:3.9 AS app
+USER root
 RUN apk add --no-cache openssl ncurses-libs
 
 WORKDIR /app
-
-RUN chown nobody:nobody /app
-
-USER nobody:nobody
 
 COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/pappap ./
 
@@ -40,8 +38,6 @@ ENV HOME=/app
 
 COPY ./entrypoint.sh .
 RUN ls lib/pappap-0.1.0
-
-USER root
 
 RUN ls
 RUN chmod +x entrypoint.sh
