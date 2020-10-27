@@ -27,6 +27,7 @@ defmodule PappapWeb.ReportController do
           end
           json(conn, %{msg: "completed",loser: result})
         else
+          :ets.insert(:match_result, {id, players, nil})
           json(conn, %{msg: "conflict"})
         end
     end

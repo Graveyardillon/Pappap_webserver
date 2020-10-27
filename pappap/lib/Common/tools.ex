@@ -6,7 +6,7 @@ defmodule Common.Tools do
       def send_json(url, params) do
         content_type = [{"Content-Type", "application/json"}]
 
-        with {:ok, attrs} <- Poison.decode(params),
+        with {:ok, attrs} <- Poison.encode(params),
           {:ok, response} <- HTTPoison.post(url, attrs, content_type),
           {:ok, body} <- Poison.decode(response.body) do
             body
