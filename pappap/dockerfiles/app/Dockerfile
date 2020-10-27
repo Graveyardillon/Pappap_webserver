@@ -1,4 +1,3 @@
-
 FROM elixir:1.9.4-alpine AS build
 
 RUN apk add --no-cache build-base npm git python
@@ -8,6 +7,8 @@ WORKDIR /app
 RUN mix local.hex --force && \
     mix local.rebar --force
 
+ENV DATABASE_URL=ecto://postgres:postgres@db/pappap
+ENV SECRET_KEY_BASE=uTG/s/VxvRixaWqRdW1MrtOqGxAUL/m3VIA5HZAaMHvU/PixTV5V+vUeWhv5UEnY
 ENV MIX_ENV=prod
 
 COPY mix.exs mix.lock ./
@@ -16,7 +17,7 @@ RUN mix do deps.get, deps.compile
 
 COPY priv priv
 COPY lib lib
-COPY rel rel
+#COPY rel rel
 RUN mix compile
 #RUN mix ecto.create
 #RUN mix ecto.migrate
@@ -38,5 +39,8 @@ ENV HOME=/app
 COPY ./entrypoint.sh .
 RUN ls
 
+USER root
+
+RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 

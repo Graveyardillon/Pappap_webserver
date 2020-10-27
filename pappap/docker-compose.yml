@@ -28,7 +28,7 @@ services:
       - DATABASE_URL=ecto://postgres:postgres@db/pappap
       - SECRET_KEY_BASE=tIQIht+gvi3rto8AHxzjr7WfqltNPBXWb4HnYzBS/tw0vBldMvSsxFe1rdpoOkYc
     ports:
-      - 4000:4000
+      - 4001:4001
     tty: true
     networks:
       - backend

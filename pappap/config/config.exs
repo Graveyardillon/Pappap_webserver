@@ -13,7 +13,7 @@ config :pappap,
 # Configures the endpoint
 config :pappap, PappapWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "tIQIht+gvi3rto8AHxzjr7WfqltNPBXWb4HnYzBS/tw0vBldMvSsxFe1rdpoOkYc",
+  secret_key_base: "uTG/s/VxvRixaWqRdW1MrtOqGxAUL/m3VIA5HZAaMHvU/PixTV5V+vUeWhv5UEnY",
   render_errors: [view: PappapWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Pappap.PubSub,
   live_view: [signing_salt: "AQTgcwja"]
