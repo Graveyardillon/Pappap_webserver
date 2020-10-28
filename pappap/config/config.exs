@@ -26,12 +26,21 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Configuration for deployment.
+# config :pigeon, :apns,
+#   apns_default: %{
+#     key: "lib/pappap-0.1.0/priv/cert/AuthKey_5KHYB5J926.p8",
+#     key_identifier: "5KHYB5J926",
+#     team_id: "32B5DRP9TS",
+#     mode: :prod
+#   }
+
 config :pigeon, :apns,
   apns_default: %{
-    key: "lib/pappap-0.1.0/priv/cert/AuthKey_5KHYB5J926.p8",
+    key: "priv/cert/AuthKey_5KHYB5J926.p8",
     key_identifier: "5KHYB5J926",
     team_id: "32B5DRP9TS",
-    mode: :prod
+    mode: :dev
   }
 
 # Import environment specific config. This must remain at the bottom
