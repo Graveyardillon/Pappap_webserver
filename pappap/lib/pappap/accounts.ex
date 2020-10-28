@@ -39,6 +39,8 @@ defmodule Pappap.Accounts do
   """
   def get_device!(id), do: Repo.get!(Device, id)
 
+  def from_device_id(device_id), do: Repo.one(from d in Device, where: d.device_id == ^device_id)
+
   @doc """
   Creates a device.
 
