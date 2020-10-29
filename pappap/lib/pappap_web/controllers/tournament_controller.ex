@@ -87,7 +87,6 @@ defmodule PappapWeb.TournamentController do
     map =
       @db_domain_url <> @api_url <> @get_participating_tournaments_url
       |> send_json(params)
-      |> IO.inspect(label: :partici)
 
     json(conn, map)
   end
