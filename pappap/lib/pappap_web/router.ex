@@ -48,6 +48,8 @@ defmodule PappapWeb.Router do
 
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
+
+    get "/notification/list", NotificationController, :index
     
     # DEBUG
     post "/notification/force", DeviceController, :force_notify
