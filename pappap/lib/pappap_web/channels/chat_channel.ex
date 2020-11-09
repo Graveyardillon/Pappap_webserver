@@ -60,7 +60,7 @@ defmodule PappapWeb.ChatChannel do
     |> Enum.empty?()
     |> (unless  do
       device = hd(device_list)
-      Notifications.push(message, device.device_id)
+      Notifications.push(message, device.device_id, 4)
     end)
   end
 end

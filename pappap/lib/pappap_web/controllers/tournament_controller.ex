@@ -37,7 +37,7 @@ defmodule PappapWeb.TournamentController do
         follower["id"]
         |> Accounts.get_devices_by_user_id()
         |> Enum.each(fn device -> 
-          Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
+          Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id, 5)
         end)
       end)
     end)
@@ -68,7 +68,7 @@ defmodule PappapWeb.TournamentController do
             entrant["id"]
             |> Accounts.get_devices_by_user_id()
             |> Enum.each(fn device -> 
-              Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id)
+              Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id, 6)
             end)
           end)
         {:error, reason} ->
