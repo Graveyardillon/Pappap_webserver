@@ -24,11 +24,12 @@ defmodule PappapWeb.Router do
     pipe_through :api
 
     get "/load/image", ImageController, :load
+    post "/upload/image", ImageController, :upload
 
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
     post "/signout", AuthController, :logout
-    post "/upload/image", ImageController, :upload
+    post "/user/get", UserController, :get
 
     get "/tournament/participating", TournamentController, :get_participating
     get "/tournament/tabs", TournamentController, :get_tournament_topics
