@@ -20,7 +20,7 @@ defmodule PappapWeb.ChatChannel do
         partner_id = payload["chat"]["partner_id"]
 
         Accounts.get_devices_by_user_id(partner_id)
-        |> notify(message)
+        |> notify(message, partner_id)
 
         broadcast!(socket, "new_chat", %{payload: payload})
       else
@@ -41,7 +41,7 @@ defmodule PappapWeb.ChatChannel do
           members
           |> Enum.each(fn member_id ->
             Accounts.get_devices_by_user_id(member_id)
-            |> notify(message)
+            |> notify(message, member_id)
           end)
         end)
 
@@ -55,12 +55,13 @@ defmodule PappapWeb.ChatChannel do
     end)
   end
 
-  defp notify(device_list, message) do
+  defp notify(device_list, message, user_id) do
     device_list
     |> Enum.empty?()
-    |> (unless  do
+    |> (unless do
+      # XXX: デバイス２つ以上使ってる人は通知がおかしくなるかも
       device = hd(device_list)
-      Notifications.push(message, device.device_id, 4)
+      Notifications.push(message, device.device_id, 4, user_id)
     end)
   end
 end
