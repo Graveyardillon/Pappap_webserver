@@ -10,22 +10,26 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :pappap, PappapWeb.Endpoint,
-  http: [port: System.get_env("PORT" || 4001)],
-  url: [host: "localhost", port: 4001],
-  server: true,
-  root: ".",
-  version: Application.spec(:pappap, :vsn)
+  url: [host: "pappap.com", port: {:system, "PORT"}]
 
 # Do not print debug messages in production
 config :logger, level: :info
 
 config :pappap, Pappap.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "K42etH0my05kE",
   database: "pappap",
-  hostname: "db",
+  socket_dir: "/tmp/cloudsql/e-players-293208:asia-northeast1:pappapdb",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+
+#config :pappap, Pappap.Repo,
+#  username: "postgres",
+#  password: "postgres",
+#  database: "pappap",
+#  hostname: "db",
+#  show_sensitive_data_on_connection_error: true,
+#  pool_size: 10
 
 # ## SSL Support
 #
