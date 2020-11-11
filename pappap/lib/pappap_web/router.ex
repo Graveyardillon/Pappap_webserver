@@ -24,10 +24,13 @@ defmodule PappapWeb.Router do
     pipe_through :api
 
     get "/load/image", ImageController, :load
+    post "/upload/image", ImageController, :upload
 
     post "/signup", AuthController, :signup
     post "/signin", AuthController, :signin
-    post "/upload/image", ImageController, :upload
+    post "/signout", AuthController, :logout
+    post "/user/get", UserController, :get
+    post "/user/get_with_room", UserController, :get_with_room_id
 
     get "/tournament/participating", TournamentController, :get_participating
     get "/tournament/tabs", TournamentController, :get_tournament_topics
@@ -48,6 +51,8 @@ defmodule PappapWeb.Router do
 
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
+
+    get "/notification/list", NotificationController, :index
     
     # DEBUG
     post "/notification/force", DeviceController, :force_notify

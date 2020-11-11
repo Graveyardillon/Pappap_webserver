@@ -13,7 +13,7 @@ config :pappap,
 # Configures the endpoint
 config :pappap, PappapWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "uTG/s/VxvRixaWqRdW1MrtOqGxAUL/m3VIA5HZAaMHvU/PixTV5V+vUeWhv5UEnY",
+  secret_key_base: "jNdYCx7OQTVpeGd5gH2Mto+spavwuG6RzMFE4+UAH/QgP8C5EP4BLcVCyWSkv+TI",
   render_errors: [view: PappapWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Pappap.PubSub,
   live_view: [signing_salt: "AQTgcwja"]
@@ -25,6 +25,15 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# Configuration for deployment.
+# config :pigeon, :apns,
+#   apns_default: %{
+#     key: "lib/pappap-0.1.0/priv/cert/AuthKey_5KHYB5J926.p8",
+#     key_identifier: "5KHYB5J926",
+#     team_id: "32B5DRP9TS",
+#     mode: :prod
+#   }
 
 config :pigeon, :apns,
   apns_default: %{
@@ -38,4 +47,5 @@ config :pigeon, :apns,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
+# config :pappap, :db_domain_url, "http://34.84.71.145"
 config :pappap, :db_domain_url, "http://localhost:4000"
