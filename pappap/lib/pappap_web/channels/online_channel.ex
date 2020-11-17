@@ -80,4 +80,8 @@ defmodule PappapWeb.OnlineChannel do
     # IO.inspect "#{inspect socket.channel_pid}"
     {:noreply, socket}
   end
+
+  def broadcast_all(event, payload) do
+    PappapWeb.Endpoint.broadcast("online", event, payload)
+  end
 end

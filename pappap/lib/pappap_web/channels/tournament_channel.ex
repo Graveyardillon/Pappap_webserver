@@ -21,7 +21,6 @@ defmodule PappapWeb.TournamentChannel do
   # broadcast to everyone in the current topic (tournament:lobby).
   @impl true
   def handle_in("new_notice", payload, socket) do
-
     payload
     |> Map.has_key?("info")
     |> if do
