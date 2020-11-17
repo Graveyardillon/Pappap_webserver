@@ -55,6 +55,8 @@ defmodule PappapWeb.Router do
     post "/register/device", DeviceController, :register_device_id
 
     get "/notification/list", NotificationController, :index
+
+    post "/online/all", OnlineController, :get_online_users
     
     # DEBUG
     post "/notification/force", DeviceController, :force_notify
