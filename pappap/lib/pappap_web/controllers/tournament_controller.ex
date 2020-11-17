@@ -144,7 +144,17 @@ defmodule PappapWeb.TournamentController do
   end
 
   def claim_lose(conn, params) do
-    json(conn, %{msg: "lose"})
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
+      |> send_json(params)
+
+    unless map["validated"] do
+      Task.start_link(fn -> 
+        notify_game_masters(params["tournament_id"])
+      end)
+    end
+
+    json(conn, map)
   end
 
   # XXX: 動作確認まだ
