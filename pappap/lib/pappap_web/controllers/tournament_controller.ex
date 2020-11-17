@@ -157,19 +157,21 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  # XXX: 動作確認まだ
+  # XXX: 通知の動作確認まだ
   defp notify_game_masters(tournament_id) do
     map = 
       @db_domain_url <> @api_url <> @tournament_url <> @masters
       |> send_json(%{"tournament_id" => tournament_id})
 
-    map["data"]
-    |> Enum.each(fn master -> 
-      master["id"]
-      |> get_devices_by_user_id()
-      |> Enum.each(fn device -> 
-        Notifications.push("勝敗報告にズレが生じています！", device.device_id, -1)
+    if is_list(map["data"]) do
+      map["data"]
+      |> Enum.each(fn master -> 
+        master["id"]
+        |> Accounts.get_devices_by_user_id()
+        |> Enum.each(fn device -> 
+          Notifications.push("勝敗報告にズレが生じています！", device.device_id, -1)
+        end)
       end)
-    end)
+    end
   end
 end
