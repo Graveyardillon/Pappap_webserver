@@ -16,6 +16,9 @@ defmodule PappapWeb.TournamentController do
   @get_url "/get"
   @add_url "/add"
   @delete_loser_url "/deleteloser"
+  @claim_win "/claim_win"
+  @claim_lose "/claim_lose"
+  @masters "/masters"
 
   #FIXME: 長いのでリファクタリングが必要
   def create(conn, params) do
@@ -110,7 +113,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   def add_log(params) do
-    IO.inspect(params)
     tournament_data =
       @db_domain_url <> @api_url <> @tournament_url <> @get_url
       |> send_json(params["tournament"])
@@ -125,5 +127,39 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     json(conn, map)
+  end
+
+  def claim_win(conn, params) do
+    map = 
+      @db_domain_url <> @api_url <> @tournament_url <> @claim_win
+      |> send_json(params)
+
+    unless map["validated"] do
+      Task.start_link(fn -> 
+        notify_game_masters(params["tournament_id"])
+      end)
+    end
+
+    json(conn, map)
+  end
+
+  def claim_lose(conn, params) do
+    json(conn, %{msg: "lose"})
+  end
+
+  # XXX: 動作確認まだ
+  defp notify_game_masters(tournament_id) do
+    map = 
+      @db_domain_url <> @api_url <> @tournament_url <> @masters
+      |> send_json(%{"tournament_id" => tournament_id})
+
+    map["data"]
+    |> Enum.each(fn master -> 
+      master["id"]
+      |> get_devices_by_user_id()
+      |> Enum.each(fn device -> 
+        Notifications.push("勝敗報告にズレが生じています！", device.device_id, -1)
+      end)
+    end)
   end
 end
