@@ -47,5 +47,5 @@ config :pigeon, :apns,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
-config :pappap, :db_domain_url, "http://34.84.71.145"
-#config :pappap, :db_domain_url, "http://localhost:4000"
+# config :pappap, :db_domain_url, "http://34.84.71.145"
+config :pappap, :db_domain_url, "http://localhost:4000"
