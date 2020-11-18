@@ -22,8 +22,8 @@ defmodule PappapWeb.DeviceController do
 
   # WebSocket送信DEBUG
   def broadcast(conn, _params) do
-    PubSub.broadcast(Pappap.PubSub, "online", "force", "msg!")
-    #PappapWeb.Endpoint.broadcast!("online", "force", "msg!")
+    #PubSub.broadcast(Pappap.PubSub, "online", "force", "msg!")
+    PappapWeb.Endpoint.broadcast("online", "force", %{msg: "done"})
     #OnlineChannel.broadcast_all("force", "messaaaaaage")
 
     json(conn, %{msg: "broadcast done"})
