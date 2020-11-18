@@ -16,6 +16,7 @@ defmodule PappapWeb.TournamentController do
   @get_url "/get"
   @add_url "/add"
   @delete_loser_url "/deleteloser"
+  @match_list "/get_match_list"
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
@@ -116,7 +117,6 @@ defmodule PappapWeb.TournamentController do
     tournament_data =
       @db_domain_url <> @api_url <> @tournament_url <> @get_url
       |> send_json(params["tournament"])
-      |> IO.inspect(label: :add_log)
     @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
     |> send_json(tournament_data)
   end
@@ -126,6 +126,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
       |> send_json(params)
 
+    json(conn, map)
+  end
+
+  def get_match_list(conn, params) do
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @match_list
+      |> send_json(params)
+    
     json(conn, map)
   end
 
@@ -140,6 +148,16 @@ defmodule PappapWeb.TournamentController do
       end)
     end
 
+    if map["completed"] do
+      Task.start_link(fn ->
+        topic = "tournament:" <> to_string(params["tournament_id"])
+        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+        
+        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+        |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["opponent_id"]]}})
+      end)
+    end
+
     json(conn, map)
   end
 
@@ -151,6 +169,16 @@ defmodule PappapWeb.TournamentController do
     unless map["validated"] do
       Task.start_link(fn -> 
         notify_game_masters(params["tournament_id"])
+      end)
+    end
+
+    if map["completed"] do
+      Task.start_link(fn -> 
+        topic = "tournament:" <> to_string(params["tournament_id"])
+        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+
+        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+        |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
       end)
     end
 
