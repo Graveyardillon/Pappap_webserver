@@ -20,7 +20,11 @@ defmodule PappapWeb.TournamentController do
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
+  @finish "/finish"
 
+  @doc """
+  Creates a tournament.
+  """
   #FIXME: 長いのでリファクタリングが必要
   def create(conn, params) do
     file_path = unless params["image"] == "" do
@@ -87,6 +91,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
+  @doc """
+  Gets participating tournaments.
+  """
   def get_participating(conn, params) do
     map =
       @db_domain_url <> @api_url <> @get_participating_tournaments_url
@@ -95,6 +102,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
+  @doc """
+  Gets tournament topics.
+  """
   def get_tournament_topics(conn, params) do
     map =
       @db_domain_url <> @api_url <> @get_tournament_topics_url
@@ -103,6 +113,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
   
+  @doc """
+  Starts a tournament.
+  """
   def start(conn, params) do
     log = Task.async(PappapWeb.TournamentController, :add_log, [params])
     map =
@@ -113,7 +126,7 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  def add_log(params) do
+  defp add_log(params) do
     tournament_data =
       @db_domain_url <> @api_url <> @tournament_url <> @get_url
       |> send_json(params["tournament"])
@@ -121,6 +134,9 @@ defmodule PappapWeb.TournamentController do
     |> send_json(tournament_data)
   end
 
+  @doc """
+  Deletes losers.
+  """
   def delete_loser(conn, params) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
@@ -129,6 +145,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
+  @doc """
+  Gets match list.
+  """
   def get_match_list(conn, params) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @match_list
@@ -137,6 +156,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
+  @doc """
+  Claims win.
+  """
   def claim_win(conn, params) do
     map = 
       @db_domain_url <> @api_url <> @tournament_url <> @claim_win
@@ -161,6 +183,9 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
+  @doc """
+  Claims lose.
+  """
   def claim_lose(conn, params) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
@@ -201,5 +226,16 @@ defmodule PappapWeb.TournamentController do
         end)
       end)
     end
+  end
+
+  @doc """
+  Finishes a tournament.
+  """
+  def finish(conn, params) do
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @finish
+      |> send_json(params)
+    
+    json(conn, map)
   end
 end

@@ -39,6 +39,7 @@ defmodule PappapWeb.Router do
     post "/tournament/deleteloser", TournamentController, :delete_loser
     post "/tournament/claim_win", TournamentController, :claim_win
     post "/tournament/claim_lose", TournamentController, :claim_lose
+    post "/tournament/finish", TournamentController, :finish
 
     post "/follow", RelationController, :follow
     post "/unfollow", RelationController, :unfollow
