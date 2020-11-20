@@ -236,6 +236,9 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url <> @finish
       |> send_json(params)
     
+    topic = "tournament:" <> to_string(params["tournament_id"])
+    PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "match finished"})
+    
     json(conn, map)
   end
 end
