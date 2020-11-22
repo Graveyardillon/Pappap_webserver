@@ -31,29 +31,28 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
 
-    Task.start_link(fn -> 
+    Task.start_link(fn ->
       map["data"]["followers"]
-      |> Enum.each(fn follower -> 
+      |> Enum.each(fn follower ->
         follower["id"]
         |> Accounts.get_devices_by_user_id()
-        |> Enum.each(fn device -> 
+        |> Enum.each(fn device ->
           Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
         end)
       end)
     end)
-    
-    Task.start_link(fn -> 
+    Task.start_link(fn ->
       event_time =
         map["data"]["event_date"]
         |> Timex.parse!("{ISO:Extended}")
         |> DateTime.to_unix()
 
-      now = 
+      now =
         DateTime.utc_now()
         |> DateTime.to_unix()
       IO.inspect(event_time - now, label: :left_second)
       Process.sleep((event_time - now)*1000)
-      
+
       url = @db_domain_url <> @api_url <> @get_tournament_info_url
       content_type = [{"Content-Type", "application/json"}]
 
@@ -64,10 +63,10 @@ defmodule PappapWeb.TournamentController do
           res = Poison.decode!(response.body)
 
           res["data"]["entrants"]
-          |> Enum.each(fn entrant -> 
+          |> Enum.each(fn entrant ->
             entrant["id"]
             |> Accounts.get_devices_by_user_id()
-            |> Enum.each(fn device -> 
+            |> Enum.each(fn device ->
               Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id)
             end)
           end)
@@ -75,7 +74,7 @@ defmodule PappapWeb.TournamentController do
           IO.inspect(reason, label: :reason)
       end
     end)
-    
+
     unless params["image"] == "" do
       File.rm(file_path)
     end
@@ -98,7 +97,7 @@ defmodule PappapWeb.TournamentController do
 
     json(conn, map)
   end
-  
+
   def start(conn, params) do
     log = Task.async(PappapWeb.TournamentController, :add_log, [params])
     map =
