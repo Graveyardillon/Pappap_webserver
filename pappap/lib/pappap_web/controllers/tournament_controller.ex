@@ -238,9 +238,20 @@ defmodule PappapWeb.TournamentController do
     
     if map["result"] do
       topic = "tournament:" <> to_string(params["tournament_id"])
-      PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "match finished"})
+      PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
     end
     
     json(conn, map)
+  end
+
+  # DEBUG: 
+  def debug_tournament_ws(conn, %{"tournament_id" => id}) do
+    id = unless is_binary(id) do
+      to_string(id)
+    end
+
+    PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
+
+    json(conn, %{msg: "done"})
   end
 end

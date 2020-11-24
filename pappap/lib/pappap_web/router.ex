@@ -62,6 +62,7 @@ defmodule PappapWeb.Router do
     # DEBUG
     post "/notification/force", DeviceController, :force_notify
     post "/broadcast", DeviceController, :broadcast
+    post "/dtw", TournamentController, :debug_tournament_ws
 
     post "/match", ReportController, :register_match
     post "/report", ReportController, :report
