@@ -251,6 +251,7 @@ defmodule PappapWeb.TournamentController do
     end
 
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
+    PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_finished", %{msg: "debug notification"})
 
     json(conn, %{msg: "done"})
   end
