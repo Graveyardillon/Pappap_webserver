@@ -4,13 +4,22 @@ defmodule Pappap.MixProject do
   def project do
     [
       app: :pappap,
-      version: "0.1.0",
+      version: "0.1.3",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        pappap: [
+          include_erts: true,
+          include_executables_for: [:unix],
+          applications: [
+            runtime_tools: :permanent
+          ]
+        ]
+      ],
     ]
   end
 

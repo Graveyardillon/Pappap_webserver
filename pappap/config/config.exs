@@ -13,7 +13,7 @@ config :pappap,
 # Configures the endpoint
 config :pappap, PappapWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "uTG/s/VxvRixaWqRdW1MrtOqGxAUL/m3VIA5HZAaMHvU/PixTV5V+vUeWhv5UEnY",
+  secret_key_base: "jNdYCx7OQTVpeGd5gH2Mto+spavwuG6RzMFE4+UAH/QgP8C5EP4BLcVCyWSkv+TI",
   render_errors: [view: PappapWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Pappap.PubSub,
   live_view: [signing_salt: "AQTgcwja"]
@@ -29,22 +29,23 @@ config :phoenix, :json_library, Jason
 # Configuration for deployment.
 # config :pigeon, :apns,
 #   apns_default: %{
-#     key: "lib/pappap-0.1.0/priv/cert/AuthKey_5KHYB5J926.p8",
+#     key: "lib/pappap-0.1.3/priv/cert/AuthKey_5KHYB5J926.p8",
 #     key_identifier: "5KHYB5J926",
 #     team_id: "32B5DRP9TS",
 #     mode: :prod
 #   }
 
 config :pigeon, :apns,
-  apns_default: %{
-    key: "priv/cert/AuthKey_5KHYB5J926.p8",
-    key_identifier: "5KHYB5J926",
-    team_id: "32B5DRP9TS",
-    mode: :dev
-  }
+ apns_default: %{
+   key: "priv/cert/AuthKey_5KHYB5J926.p8",
+   key_identifier: "5KHYB5J926",
+   team_id: "32B5DRP9TS",
+   mode: :dev
+ }
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
+#config :pappap, :db_domain_url, "http://34.84.190.238"
 config :pappap, :db_domain_url, "http://localhost:4000"
