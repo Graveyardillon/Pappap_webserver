@@ -45,6 +45,7 @@ defmodule PappapWeb.Router do
     post "/assistant", AssistantController, :create_assistant
 
     post "/entrant", EntrantController, :create
+    get  "/entrant/rank/:tournament_id/:user_id", EntrantController, :show_rank
 
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id

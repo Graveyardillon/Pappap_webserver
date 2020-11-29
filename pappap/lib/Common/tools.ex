@@ -3,6 +3,29 @@ defmodule Common.Tools do
 
   defmacro __using__(_opts) do
     quote do
+      def get_request(url) do
+        content_type = [{"Content-Type", "application/json"}]
+        with {:ok, response} <- HTTPoison.get(url, content_type),
+        {:ok, body} <- Poison.decode(response.body) do
+          body
+        else
+          {:error, {reason, _, _}} ->
+            %{
+              "result" => false,
+              "reason" => reason
+            }
+          {:error, reason} ->
+            %{
+              "result" => false,
+              "reason" => reason
+            }
+          _ ->
+            %{
+              "result" => false,
+              "reason" => "Unexpected error"
+            }
+        end
+      end
       def send_json(url, params) do
         content_type = [{"Content-Type", "application/json"}]
 
