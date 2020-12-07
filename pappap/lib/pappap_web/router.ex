@@ -23,7 +23,7 @@ defmodule PappapWeb.Router do
   scope "/api", PappapWeb do
     pipe_through :api
 
-    get "/load/image", ImageController, :load
+    get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
 
     post "/signup", AuthController, :signup
@@ -32,8 +32,8 @@ defmodule PappapWeb.Router do
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
 
-    get "/tournament/participating", TournamentController, :get_participating
-    get "/tournament/tabs", TournamentController, :get_tournament_topics
+    get  "/tournament/participating", TournamentController, :get_participating
+    get  "/tournament/tabs", TournamentController, :get_tournament_topics
     post "/tournament", TournamentController, :create
     post "/tournament/start", TournamentController, :start
     post "/tournament/deleteloser", TournamentController, :delete_loser
@@ -44,6 +44,10 @@ defmodule PappapWeb.Router do
     post "/follow", RelationController, :follow
     post "/unfollow", RelationController, :unfollow
     post "/following_list", RelationController, :following_list
+    post "/following_id_list", RelationController, :following_id_list
+    post "/followers_list", RelationController, :followers_list
+    post "/followers_id_list", RelationController, :followers_id_list
+
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat/chat_member/create", ChatController, :create_chatmember
     post "/chat/chats/create", ChatController, :create_chats
