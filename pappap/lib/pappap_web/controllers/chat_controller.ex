@@ -10,6 +10,7 @@ defmodule PappapWeb.ChatController do
   @chat_room_log_url "/chat_room_log"
   @chat_member_url "/chat_member"
   @chat_member_log_url "/chat_member_log"
+  @private_rooms "/chat_room/private_rooms"
 
   def create_chatroom(conn, params) do
     map =
@@ -49,6 +50,14 @@ defmodule PappapWeb.ChatController do
       |> send_json(params)
     @db_domain_url <> @api_url <> @chat_member_log_url
     |> send_json(map)
+
+    json(conn, map)
+  end
+
+  def private_rooms(conn, %{"user_id" => user_id}) do
+    map =
+      @db_domain_url <> @api_url <> @private_rooms <> "?user_id=" <> to_string(user_id)
+      |> get_request()
 
     json(conn, map)
   end

@@ -49,6 +49,7 @@ defmodule PappapWeb.Router do
     post "/followers_id_list", RelationController, :followers_id_list
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
+    post "/chat_room/private_rooms", ChatController, :private_rooms
     post "/chat/chat_member/create", ChatController, :create_chatmember
     post "/chat/chats/create", ChatController, :create_chats
 
