@@ -61,7 +61,7 @@ defmodule PappapWeb.Router do
     post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
-    get "/notification/list", NotificationController, :index
+    get  "/notification/list", NotificationController, :index
 
     post "/online/all", OnlineController, :get_online_users
     

@@ -8,8 +8,8 @@ defmodule PappapWeb.NotificationController do
 
   def index(conn, %{"user_id" => id}) do
     map =
-      @db_domain_url <> @api_url <> @index_url
-      |> send_json(%{"notif" => %{"user_id" => id}})
+      @db_domain_url <> @api_url <> @index_url <> "?user_id=" <> to_string(id)
+      |> get_request()
 
     json(conn, map)
   end
