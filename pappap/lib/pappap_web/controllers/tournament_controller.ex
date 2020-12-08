@@ -93,10 +93,10 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Gets participating tournaments.
   """
-  def get_participating(conn, params) do
+  def get_participating(conn, %{"user_id" => user_id}) do
     map =
-      @db_domain_url <> @api_url <> @get_participating_tournaments_url
-      |> send_json(params)
+      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id)
+      |> get_request()
 
     json(conn, map)
   end
@@ -104,10 +104,10 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Gets tournament topics.
   """
-  def get_tournament_topics(conn, params) do
+  def get_tournament_topics(conn, %{"tournament_id" => tournament_id}) do
     map =
-      @db_domain_url <> @api_url <> @get_tournament_topics_url
-      |> send_json(params)
+      @db_domain_url <> @api_url <> @get_tournament_topics_url <> "?tournament_id=" <> to_string(tournament_id)
+      |> get_request()
 
     json(conn, map)
   end
@@ -212,8 +212,8 @@ defmodule PappapWeb.TournamentController do
   # XXX: 通知の動作確認まだ
   defp notify_game_masters(tournament_id) do
     map = 
-      @db_domain_url <> @api_url <> @tournament_url <> @masters
-      |> send_json(%{"tournament_id" => tournament_id})
+      @db_domain_url <> @api_url <> @tournament_url <> @masters <> "?tournament_id=" <> to_string(tournament_id)
+      |> get_request()
 
     if is_list(map["data"]) do
       map["data"]
