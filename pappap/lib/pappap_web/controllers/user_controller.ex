@@ -15,10 +15,10 @@ defmodule PappapWeb.UserController do
     json(conn, map)
   end
 
-  def get_with_room_id(conn, params) do
+  def get_with_room_id(conn, %{"my_id" => my_id, "partner_id" => partner_id}) do
     map =
-      @db_domain_url <> @api_url <> @get_with_room_id_url
-      |> send_json(params)
+      @db_domain_url <> @api_url <> @get_with_room_id_url <> "?my_id=" <> to_string(my_id) <> "&partner_id=" <> partner_id  
+      |> get_request()
     
     json(conn, map)
   end
