@@ -38,12 +38,12 @@ defmodule PappapWeb.Router do
     post "/tournament/claim_lose", TournamentController, :claim_lose
     post "/tournament/finish", TournamentController, :finish
 
-    post "/follow", RelationController, :follow
-    post "/unfollow", RelationController, :unfollow
-    post "/following_list", RelationController, :following_list
-    post "/following_id_list", RelationController, :following_id_list
-    post "/followers_list", RelationController, :followers_list
-    post "/followers_id_list", RelationController, :followers_id_list
+    post "/relation/follow", RelationController, :follow
+    post "/relation/unfollow", RelationController, :unfollow
+    get "/relation/following_list", RelationController, :following_list
+    get "/relation/following_id_list", RelationController, :following_id_list
+    get "/relation/followers_list", RelationController, :followers_list
+    get "/relation/followers_id_list", RelationController, :followers_id_list
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms
