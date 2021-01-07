@@ -40,10 +40,10 @@ defmodule PappapWeb.Router do
 
     post "/relation/follow", RelationController, :follow
     post "/relation/unfollow", RelationController, :unfollow
-    get "/relation/following_list", RelationController, :following_list
-    get "/relation/following_id_list", RelationController, :following_id_list
-    get "/relation/followers_list", RelationController, :followers_list
-    get "/relation/followers_id_list", RelationController, :followers_id_list
+    get  "/relation/following_list", RelationController, :following_list
+    get  "/relation/following_id_list", RelationController, :following_id_list
+    get  "/relation/followers_list", RelationController, :followers_list
+    get  "/relation/followers_id_list", RelationController, :followers_id_list
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms

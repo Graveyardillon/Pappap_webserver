@@ -93,6 +93,14 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Gets participating tournaments.
   """
+  def get_participating(conn, %{"user_id" => user_id}) do
+    map =
+      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id)
+      |> get_request()
+
+    json(conn, map)
+  end
+
   def get_participating(conn, %{"user_id" => user_id, "offset" => offset}) do
     map =
       @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id) <> "&offset=" <> to_string(offset)
@@ -159,23 +167,33 @@ defmodule PappapWeb.TournamentController do
   Claims win.
   """
   def claim_win(conn, params) do
+    tournament_id = params["tournament_id"]
+
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @claim_win
       |> send_json(params)
 
     unless map["validated"] do
       Task.start_link(fn ->
-        notify_game_masters(params["tournament_id"])
+        notify_game_masters(tournament_id)
       end)
     end
 
     if map["completed"] do
       Task.start_link(fn ->
-        topic = "tournament:" <> to_string(params["tournament_id"])
+        topic = "tournament:" <> to_string(tournament_id)
         PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
-        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-        |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["opponent_id"]]}})
+        map =
+          @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+          |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+
+        updated_match_list = map["updated_match_list"]
+        if is_integer(updated_match_list) do
+          @db_domain_url <> @api_url <> @tournament_url <> @finish
+          # FIXME: Using dummy user id.
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
+        end
       end)
     end
 
@@ -209,7 +227,7 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  # XXX: 通知の動作確認まだ
+  # FIXME: 通知の動作確認まだ
   defp notify_game_masters(tournament_id) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @masters <> "?tournament_id=" <> to_string(tournament_id)
