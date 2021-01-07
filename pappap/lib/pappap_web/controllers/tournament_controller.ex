@@ -93,17 +93,17 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Gets participating tournaments.
   """
-  def get_participating(conn, %{"user_id" => user_id}) do
+  def get_participating(conn, %{"user_id" => user_id, "offset" => offset}) do
     map =
-      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id)
+      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id) <> "&offset=" <> to_string(offset)
       |> get_request()
 
     json(conn, map)
   end
 
-  def get_participating(conn, %{"user_id" => user_id, "offset" => offset}) do
+  def get_participating(conn, %{"user_id" => user_id}) do
     map =
-      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id) <> "&offset=" <> to_string(offset)
+      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id)
       |> get_request()
 
     json(conn, map)
