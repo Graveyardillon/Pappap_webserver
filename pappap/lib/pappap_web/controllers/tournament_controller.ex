@@ -181,12 +181,12 @@ defmodule PappapWeb.TournamentController do
 
     if map["completed"] do
       Task.start_link(fn ->
-        topic = "tournament:" <> to_string(tournament_id)
-        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
           |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+
+        topic = "tournament:" <> to_string(tournament_id)
+        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
         updated_match_list = map["updated_match_list"]
         if is_integer(updated_match_list) do
@@ -224,12 +224,12 @@ defmodule PappapWeb.TournamentController do
 
     if map["completed"] do
       Task.start_link(fn ->
-        topic = "tournament:" <> to_string(params["tournament_id"])
-        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
           |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
+
+        topic = "tournament:" <> to_string(params["tournament_id"])
+        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
         updated_match_list = map["updated_match_list"]
         if is_integer(updated_match_list) do
