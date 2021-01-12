@@ -15,11 +15,8 @@ defmodule PappapWeb.Router do
 
   scope "/", PappapWeb do
     pipe_through :browser
-
-    #get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
   scope "/api", PappapWeb do
     pipe_through :api
 
@@ -43,10 +40,10 @@ defmodule PappapWeb.Router do
 
     post "/relation/follow", RelationController, :follow
     post "/relation/unfollow", RelationController, :unfollow
-    get "/relation/following_list", RelationController, :following_list
-    get "/relation/following_id_list", RelationController, :following_id_list
-    get "/relation/followers_list", RelationController, :followers_list
-    get "/relation/followers_id_list", RelationController, :followers_id_list
+    get  "/relation/following_list", RelationController, :following_list
+    get  "/relation/following_id_list", RelationController, :following_id_list
+    get  "/relation/followers_list", RelationController, :followers_list
+    get  "/relation/followers_id_list", RelationController, :followers_id_list
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms
@@ -64,8 +61,12 @@ defmodule PappapWeb.Router do
     get  "/notification/list", NotificationController, :index
 
     post "/online/all", OnlineController, :get_online_users
-    
-    # DEBUG
+  end
+
+  # DEBUG
+  scope "/api", PappapWeb do
+    pipe_through :api
+
     post "/notification/force", DeviceController, :force_notify
     post "/broadcast", DeviceController, :broadcast
     post "/dtw", TournamentController, :debug_tournament_ws

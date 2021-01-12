@@ -27,13 +27,13 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 # Configuration for deployment.
-# config :pigeon, :apns,
-#   apns_default: %{
-#     key: "lib/pappap-0.1.3/priv/cert/AuthKey_5KHYB5J926.p8",
-#     key_identifier: "5KHYB5J926",
-#     team_id: "32B5DRP9TS",
-#     mode: :prod
-#   }
+#config :pigeon, :apns,
+#  apns_default: %{
+#    key: "lib/pappap-0.1.3/priv/cert/AuthKey_5KHYB5J926.p8",
+#    key_identifier: "5KHYB5J926",
+#    team_id: "32B5DRP9TS",
+#    mode: :prod
+#  }
 
 config :pigeon, :apns,
  apns_default: %{
@@ -47,5 +47,5 @@ config :pigeon, :apns,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
-#config :pappap, :db_domain_url, "http://34.84.190.238"
+#config :pappap, :db_domain_url, "http://35.200.124.100"
 config :pappap, :db_domain_url, "http://localhost:4000"
