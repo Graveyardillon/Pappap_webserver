@@ -168,15 +168,18 @@ defmodule PappapWeb.TournamentController do
   """
   def claim_win(conn, params) do
     tournament_id = params["tournament_id"]
+    opponent_id = params["opponent_id"]
+    user_id = params["user_id"]
+
+    topic = "tournament:" <> to_string(tournament_id)
 
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @claim_win
       |> send_json(params)
 
     unless map["validated"] do
-      Task.start_link(fn ->
-        notify_game_masters(tournament_id)
-      end)
+      notify_game_masters(tournament_id)
+      PappapWeb.Endpoint.broadcast(topic, "invalid_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
     end
 
     if map["completed"] do
@@ -185,7 +188,6 @@ defmodule PappapWeb.TournamentController do
           @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
           |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
 
-        topic = "tournament:" <> to_string(tournament_id)
         PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
         updated_match_list = map["updated_match_list"]
@@ -211,15 +213,18 @@ defmodule PappapWeb.TournamentController do
   """
   def claim_lose(conn, params) do
     tournament_id = params["tournament_id"]
+    opponent_id = params["opponent_id"]
+    user_id = params["user_id"]
+
+    topic = "tournament:" <> to_string(tournament_id)
 
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
       |> send_json(params)
 
     unless map["validated"] do
-      Task.start_link(fn ->
-        notify_game_masters(params["tournament_id"])
-      end)
+      notify_game_masters(tournament_id)
+      PappapWeb.Endpoint.broadcast(topic, "invalid_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
     end
 
     if map["completed"] do
@@ -228,7 +233,6 @@ defmodule PappapWeb.TournamentController do
           @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
           |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
 
-        topic = "tournament:" <> to_string(params["tournament_id"])
         PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
         updated_match_list = map["updated_match_list"]

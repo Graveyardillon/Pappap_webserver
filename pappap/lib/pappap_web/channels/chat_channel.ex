@@ -11,6 +11,7 @@ defmodule PappapWeb.ChatChannel do
     {:ok, socket}
   end
 
+  # FIXME: もしかしたら冗長かもしれない
   def handle_in("new_chat", payload, socket) do
     payload
     |> Map.has_key?("chat")
@@ -50,7 +51,7 @@ defmodule PappapWeb.ChatChannel do
         {:error, _} -> Logger.error("Error on sending group chat")
         _ -> Logger.error("Unexpected error on sending chat")
       end
-      
+
       {:noreply, socket}
     end)
   end
