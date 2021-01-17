@@ -8,13 +8,13 @@ defmodule PappapWeb.TournamentController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
-  @tournament_log_url "/tournament_log"
+  # @tournament_log_url "/tournament_log"
   @get_participating_tournaments_url "/tournament/get_participating_tournaments"
   @get_tournament_topics_url "/tournament/get_tabs"
   @get_tournament_info_url "/tournament/get"
   @match_start_url "/start"
-  @get_url "/get"
-  @add_url "/add"
+  # @get_url "/get"
+  # @add_url "/add"
   @delete_loser_url "/deleteloser"
   @match_list "/get_match_list"
   @claim_win "/claim_win"
@@ -133,13 +133,13 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  defp add_log(params) do
-    tournament_data =
-      @db_domain_url <> @api_url <> @tournament_url <> @get_url
-      |> send_json(params["tournament"])
-    @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
-    |> send_json(tournament_data)
-  end
+  # defp add_log(params) do
+  #   tournament_data =
+  #     @db_domain_url <> @api_url <> @tournament_url <> @get_url
+  #     |> send_json(params["tournament"])
+  #   @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
+  #   |> send_json(tournament_data)
+  # end
 
   @doc """
   Deletes losers.

@@ -31,7 +31,7 @@ defmodule PappapWeb.TournamentChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(user_id) do
+  defp authorized?(_user_id) do
     true
   end
 end

@@ -10,9 +10,8 @@ defmodule PappapWeb.ProfileController do
     url = @db_domain_url <> @api_url <> @profile_url <> @update_url
 
     with {:ok, attrs} <- Poison.encode(params),
-    {:ok, response} <- HTTPoison.post(url, attrs, @content_type) do
+    {:ok, _response} <- HTTPoison.post(url, attrs, @content_type) do
         json(conn, %{msg: "Succeed"})
     end
-
   end
 end

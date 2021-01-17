@@ -3,8 +3,6 @@ defmodule PappapWeb.DeviceController do
 
   alias Pappap.Accounts
   alias Pappap.Notifications
-  alias PappapWeb.OnlineChannel
-  alias Phoenix.PubSub
 
   def register_device_id(conn, params) do
     {:ok, device} = params
@@ -22,9 +20,7 @@ defmodule PappapWeb.DeviceController do
 
   # WebSocket送信DEBUG
   def broadcast(conn, _params) do
-    #PubSub.broadcast(Pappap.PubSub, "online", "force", "msg!")
     PappapWeb.Endpoint.broadcast("online", "force", %{msg: "done"})
-    #OnlineChannel.broadcast_all("force", "messaaaaaage")
 
     json(conn, %{msg: "broadcast done"})
   end

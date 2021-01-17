@@ -5,7 +5,7 @@ defmodule PappapWeb.AuthView do
     body
   end
 
-  def render("error.json", msg, error_no) do
+  def render("error.json", msg, _error_no) do
     %{
       "result" => false,
       "reason" => msg
