@@ -11,6 +11,44 @@ defmodule PappapWeb.ChatController do
   @chat_member_url "/chat_member"
   @chat_member_log_url "/chat_member_log"
   @private_rooms "/chat_room/private_rooms"
+  @delete "/chat"
+
+  @doc """
+  Pass a get request to database server.
+  """
+  def pass_get_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/chat/" <> path
+      |> get_parammed_request(params)
+
+    json(conn, map)
+  end
+
+  @doc """
+  Pass a post request to database server.
+  """
+  def pass_post_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/chat/" <> path
+      |> send_json(params)
+
+    json(conn, map)
+  end
+
+  @doc """
+  Delete a chat.
+  """
+  def delete(conn, params) do
+    map =
+      @db_domain_url <> @api_url <> @delete
+      |> delete_request(params)
+
+    json(conn, map)
+  end
 
   def create_chatroom(conn, params) do
     map =
@@ -28,7 +66,7 @@ defmodule PappapWeb.ChatController do
       @db_domain_url <> @api_url <> @chats_url
       |> send_json(params)
 
-    index = 
+    index =
       Map.get(map, "data")
       |> Map.get("index")
 

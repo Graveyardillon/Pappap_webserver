@@ -115,6 +115,32 @@ defmodule Common.Tools do
             }
         end
       end
+
+      def delete_request(url, params) do
+        content_type = [{"Content-Type", "application/json"}]
+
+        with {:ok, attrs} <- Poison.encode(params),
+          {:ok, response} <- HTTPoison.delete(url, attrs, content_type),
+          {:ok, body} <- Poison.decode(response.body) do
+          body
+        else
+          {:error, {reason, _, _}} ->
+            %{
+              "result" => false,
+              "reason" => reason
+            }
+          {:error, reason} ->
+            %{
+              "result" => false,
+              "reason" => reason
+            }
+          _ ->
+            %{
+              "result" => false,
+              "reason" => "unexpected error"
+            }
+        end
+      end
     end
   end
 end

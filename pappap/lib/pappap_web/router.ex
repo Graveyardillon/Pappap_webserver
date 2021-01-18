@@ -46,6 +46,9 @@ defmodule PappapWeb.Router do
     get  "/relation/:string", RelationController, :pass_get_request
     post "/relation/:string", RelationController, :pass_post_request
 
+    get  "/chat/:string", ChatController, :pass_get_request
+    post "/chat/:string", ChatController, :pass_post_request
+
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms
     post "/chat/chat_member/create", ChatController, :create_chatmember
