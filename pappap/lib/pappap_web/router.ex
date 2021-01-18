@@ -29,14 +29,20 @@ defmodule PappapWeb.Router do
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
 
-    get  "/tournament/participating", TournamentController, :get_participating
-    get  "/tournament/tabs", TournamentController, :get_tournament_topics
     post "/tournament", TournamentController, :create
+    # NEW
     post "/tournament/start", TournamentController, :start
-    post "/tournament/deleteloser", TournamentController, :delete_loser
     post "/tournament/claim_win", TournamentController, :claim_win
     post "/tournament/claim_lose", TournamentController, :claim_lose
     post "/tournament/finish", TournamentController, :finish
+
+    get  "/tournament/:string", TournamentController, :pass_get_request
+    post "/tournament/:string", TournamentController, :pass_post_request
+    # get  "/tournament/get_game", TournamentController, :get_game
+    # TODO: 画像なのでwebserverでもいろいろしないといけない
+    # get  "/tournament/get_thumbnail", TournamentController, :get_thumbnail_image
+    # TODO: 動作未確認
+    # post "/tournament/update_tabs", TournamentController, :tournament_update_topics
 
     post "/relation/follow", RelationController, :follow
     post "/relation/unfollow", RelationController, :unfollow

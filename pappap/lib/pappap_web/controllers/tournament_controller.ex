@@ -8,19 +8,48 @@ defmodule PappapWeb.TournamentController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
-  # @tournament_log_url "/tournament_log"
+  @users_for_add_assistant "/tournament/users_for_add_assistant"
+  @get "/tournament/get"
+  @get_by_master_id "/tournament/get_by_master_id"
   @get_participating_tournaments_url "/tournament/get_participating_tournaments"
   @get_tournament_topics_url "/tournament/get_tabs"
   @get_tournament_info_url "/tournament/get"
   @match_start_url "/start"
-  # @get_url "/get"
-  # @add_url "/add"
   @delete_loser_url "/deleteloser"
   @match_list "/get_match_list"
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
   @finish "/finish"
+  @get_url "/get"
+  @add_url "/add"
+  @tournament_log_url "/tournament_log"
+
+  @doc """
+  Pass a get request to database server.
+  """
+  def pass_get_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/tournament/" <> path
+      |> get_parammed_request(params)
+
+    json(conn, map)
+  end
+
+  @doc """
+  Pass a post request to database server.
+  """
+  def pass_post_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/tournament/" <> path
+      |> send_json(params)
+
+    json(conn, map)
+  end
 
   @doc """
   Creates a tournament.
@@ -91,36 +120,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   @doc """
-  Gets participating tournaments.
-  """
-  def get_participating(conn, %{"user_id" => user_id, "offset" => offset}) do
-    map =
-      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id) <> "&offset=" <> to_string(offset)
-      |> get_request()
-
-    json(conn, map)
-  end
-
-  def get_participating(conn, %{"user_id" => user_id}) do
-    map =
-      @db_domain_url <> @api_url <> @get_participating_tournaments_url <> "?user_id=" <> to_string(user_id)
-      |> get_request()
-
-    json(conn, map)
-  end
-
-  @doc """
-  Gets tournament topics.
-  """
-  def get_tournament_topics(conn, %{"tournament_id" => tournament_id}) do
-    map =
-      @db_domain_url <> @api_url <> @get_tournament_topics_url <> "?tournament_id=" <> to_string(tournament_id)
-      |> get_request()
-
-    json(conn, map)
-  end
-
-  @doc """
   Starts a tournament.
   """
   def start(conn, params) do
@@ -133,13 +132,13 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  # defp add_log(params) do
-  #   tournament_data =
-  #     @db_domain_url <> @api_url <> @tournament_url <> @get_url
-  #     |> send_json(params["tournament"])
-  #   @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
-  #   |> send_json(tournament_data)
-  # end
+  defp add_log(params) do
+    tournament_data =
+      @db_domain_url <> @api_url <> @tournament_url <> @get_url
+      |> send_json(params["tournament"])
+    @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
+    |> send_json(tournament_data)
+  end
 
   @doc """
   Deletes losers.
@@ -153,20 +152,11 @@ defmodule PappapWeb.TournamentController do
   end
 
   @doc """
-  Gets match list.
-  """
-  def get_match_list(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @match_list
-      |> send_json(params)
-
-    json(conn, map)
-  end
-
-  @doc """
   Claims win.
   """
   def claim_win(conn, params) do
+    IO.inspect("claim_win function was called up", label: :claim_win)
+
     tournament_id = params["tournament_id"]
     opponent_id = params["opponent_id"]
     user_id = params["user_id"]
