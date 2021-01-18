@@ -46,13 +46,19 @@ defmodule PappapWeb.Router do
     get  "/relation/:string", RelationController, :pass_get_request
     post "/relation/:string", RelationController, :pass_post_request
 
+    # TODO: チャットのリクエストのルーティングの、ファイルの中の関数を含めた調整
     get  "/chat/:string", ChatController, :pass_get_request
     post "/chat/:string", ChatController, :pass_post_request
+    delete "/chat", ChatController, :delete
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms
     post "/chat/chat_member/create", ChatController, :create_chatmember
     post "/chat/chats/create", ChatController, :create_chats
+
+    get  "/chat_room", ChatRoomController, :show
+    get  "/chat_room/:string", ChatRoomController, :pass_get_request
+    post "/chat_room/:string", ChatRoomController, :pass_post_request
 
     post "/assistant", AssistantController, :create_assistant
 
@@ -63,6 +69,7 @@ defmodule PappapWeb.Router do
     post "/register/device", DeviceController, :register_device_id
 
     get  "/notification/list", NotificationController, :index
+    post "/sync", SyncController, :sync
 
     post "/online/all", OnlineController, :get_online_users
   end
@@ -77,7 +84,6 @@ defmodule PappapWeb.Router do
 
     post "/match", ReportController, :register_match
     post "/report", ReportController, :report
-    post "/sync", SyncController, :sync
   end
 
   # Enables LiveDashboard only for development
