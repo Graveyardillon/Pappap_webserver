@@ -120,7 +120,7 @@ defmodule Common.Tools do
         content_type = [{"Content-Type", "application/json"}]
 
         with {:ok, attrs} <- Poison.encode(params),
-          {:ok, response} <- HTTPoison.delete(url, attrs, content_type),
+          {:ok, response} <- HTTPoison.delete(url, content_type, params: params),
           {:ok, body} <- Poison.decode(response.body) do
           body
         else
