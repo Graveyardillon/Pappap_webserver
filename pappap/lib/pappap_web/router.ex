@@ -30,7 +30,6 @@ defmodule PappapWeb.Router do
     post "/user/get_with_room", UserController, :get_with_room_id
 
     post "/tournament", TournamentController, :create
-    # NEW
     post "/tournament/start", TournamentController, :start
     post "/tournament/claim_win", TournamentController, :claim_win
     post "/tournament/claim_lose", TournamentController, :claim_lose
@@ -44,12 +43,8 @@ defmodule PappapWeb.Router do
     # TODO: 動作未確認
     # post "/tournament/update_tabs", TournamentController, :tournament_update_topics
 
-    post "/relation/follow", RelationController, :follow
-    post "/relation/unfollow", RelationController, :unfollow
-    get  "/relation/following_list", RelationController, :following_list
-    get  "/relation/following_id_list", RelationController, :following_id_list
-    get  "/relation/followers_list", RelationController, :followers_list
-    get  "/relation/followers_id_list", RelationController, :followers_id_list
+    get  "/relation/:string", RelationController, :pass_get_request
+    post "/relation/:string", RelationController, :pass_post_request
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
     post "/chat_room/private_rooms", ChatController, :private_rooms
