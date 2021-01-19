@@ -35,7 +35,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> "/api/tournament/" <> path
       |> get_parammed_request(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
   @doc """
@@ -48,7 +55,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> "/api/tournament/" <> path
       |> send_json(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
   @doc """

@@ -3,32 +3,44 @@ defmodule PappapWeb.AuthController do
   use Common.Tools
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @signup_url "/user/signup"
-  @signin_url "/user/login"
-  @logout_url "/user/logout"
 
-  def signup(conn, params) do
+  @doc """
+  Pass a get request to database server.
+  """
+  def pass_get_request(conn, params) do
+    path = params["string"]
+
     map =
-      @db_domain_url <> @api_url <> @signup_url
-      |> send_json(params)
+      @db_domain_url <> "/api/user/" <> path
+      |> get_parammed_request(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
-  def signin(conn, params) do
+  @doc """
+  Pass a post request to database server.
+  """
+  def pass_post_request(conn, params) do
+    path = params["string"]
+
     map =
-      @db_domain_url <> @api_url <> @signin_url
+      @db_domain_url <> "/api/user/" <> path
       |> send_json(params)
 
-    json(conn, map)
-  end
-
-  def logout(conn, params) do
-    map = 
-      @db_domain_url <> @api_url <> @logout_url
-      |> send_json(params)
-
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 end

@@ -14,7 +14,14 @@ defmodule PappapWeb.ChatRoomController do
       @db_domain_url <> "/api/chat_room/" <> path
       |> get_parammed_request(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
   @doc """
@@ -27,7 +34,14 @@ defmodule PappapWeb.ChatRoomController do
       @db_domain_url <> "/api/chat_room/" <> path
       |> send_json(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
   @doc """
@@ -38,6 +52,13 @@ defmodule PappapWeb.ChatRoomController do
       @db_domain_url <> "/api/chat_room"
       |> get_parammed_request(params)
 
-    json(conn, map)
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 end

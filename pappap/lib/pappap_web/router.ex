@@ -23,11 +23,12 @@ defmodule PappapWeb.Router do
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
 
-    post "/signup", AuthController, :signup
-    post "/signin", AuthController, :signin
-    post "/signout", AuthController, :logout
+    get  "/auth/:string", AuthController, :pass_get_request
+    post "/auth/:string", AuthController, :pass_post_request
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
+    get  "/user/:string", UserController, :pass_get_request
+    post "/user/:string", UserController, :pass_post_request
 
     post "/tournament", TournamentController, :create
     post "/tournament/start", TournamentController, :start

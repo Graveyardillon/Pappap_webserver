@@ -22,7 +22,7 @@ defmodule Common.Tools do
           _ ->
             %{
               "result" => false,
-              "reason" => "Unexpected error"
+              "reason" => "unexpected error"
             }
         end
       end
