@@ -8,15 +8,9 @@ defmodule PappapWeb.TournamentController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
-  @users_for_add_assistant "/tournament/users_for_add_assistant"
-  @get "/tournament/get"
-  @get_by_master_id "/tournament/get_by_master_id"
-  @get_participating_tournaments_url "/tournament/get_participating_tournaments"
-  @get_tournament_topics_url "/tournament/get_tabs"
   @get_tournament_info_url "/tournament/get"
   @match_start_url "/start"
   @delete_loser_url "/deleteloser"
-  @match_list "/get_match_list"
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
@@ -36,7 +30,7 @@ defmodule PappapWeb.TournamentController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -56,7 +50,7 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)

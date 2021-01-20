@@ -3,14 +3,6 @@ defmodule PappapWeb.RelationController do
   use Common.Tools
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @follow_url "/relation"
-  @unfollow_url "/relation/unfollow"
-  @list_url "/relation/following_list"
-  @id_list_url "/relation/following_id_list"
-  @followers_list "/relation/followers_list"
-  @followers_id_list "/relation/followers_id_list"
-  @content_type [{"Content-Type", "application/json"}]
 
   @doc """
   Pass a get request to database server.
@@ -23,7 +15,7 @@ defmodule PappapWeb.RelationController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -43,7 +35,7 @@ defmodule PappapWeb.RelationController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)

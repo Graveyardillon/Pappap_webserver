@@ -2,6 +2,8 @@ defmodule PappapWeb.GameController do
   use PappapWeb, :controller
   use Common.Tools
 
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
+
   @doc """
   Pass a get request to database server.
   """
@@ -13,7 +15,7 @@ defmodule PappapWeb.GameController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -33,7 +35,7 @@ defmodule PappapWeb.GameController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)

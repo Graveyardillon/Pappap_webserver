@@ -15,7 +15,7 @@ defmodule PappapWeb.ChatRoomController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -35,7 +35,7 @@ defmodule PappapWeb.ChatRoomController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -53,7 +53,7 @@ defmodule PappapWeb.ChatRoomController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)

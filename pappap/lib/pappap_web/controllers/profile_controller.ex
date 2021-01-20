@@ -1,10 +1,8 @@
 defmodule PappapWeb.ProfileController do
   use PappapWeb, :controller
+  use Common.Tools
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @profile_url  "/profile"
-  @update_url "/update"
-  @content_type [{"Content-Type", "application/json"}]
 
   @doc """
   Pass a get request to database server.
@@ -17,7 +15,7 @@ defmodule PappapWeb.ProfileController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -37,31 +35,7 @@ defmodule PappapWeb.ProfileController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
-  end
-
-  def update(conn, params) do
-    url = @db_domain_url <> @api_url <> @profile_url <> @update_url
-
-    with {:ok, attrs} <- Poison.encode(params),
-    {:ok, _response} <- HTTPoison.post(url, attrs, @content_type) do
-        json(conn, %{msg: "Succeed"})
-    end
-  end
-
-  def send(conn, params) do
-    map =
-      @db_domain_url <> "/api/profile"
-      |> send_json(params)
-
-    case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)

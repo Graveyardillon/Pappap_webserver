@@ -3,8 +3,6 @@ defmodule PappapWeb.NotificationController do
   use Common.Tools
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @index_url "/notif/get_list"
 
   @doc """
   Pass a get request to database server.
@@ -17,7 +15,7 @@ defmodule PappapWeb.NotificationController do
       |> get_parammed_request(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
@@ -37,7 +35,7 @@ defmodule PappapWeb.NotificationController do
       |> send_json(params)
 
     case map do
-      %{"result" => false, "reason" => reason} ->
+      %{"result" => false, "reason" => _reason} ->
         conn
         |> put_status(500)
         |> json(map)
