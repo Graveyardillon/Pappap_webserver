@@ -1,10 +1,6 @@
-defmodule PappapWeb.NotificationController do
+defmodule PappapWeb.GameController do
   use PappapWeb, :controller
   use Common.Tools
-
-  @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @index_url "/notif/get_list"
 
   @doc """
   Pass a get request to database server.
@@ -13,7 +9,7 @@ defmodule PappapWeb.NotificationController do
     path = params["string"]
 
     map =
-      @db_domain_url <> "/api/notification/" <> path
+      @db_domain_url <> "/api/game/" <> path
       |> get_parammed_request(params)
 
     case map do
@@ -33,7 +29,7 @@ defmodule PappapWeb.NotificationController do
     path = params["string"]
 
     map =
-      @db_domain_url <> "/api/notification/" <> path
+      @db_domain_url <> "/api/game/" <> path
       |> send_json(params)
 
     case map do

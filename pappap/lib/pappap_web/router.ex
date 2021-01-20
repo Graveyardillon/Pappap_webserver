@@ -25,6 +25,7 @@ defmodule PappapWeb.Router do
 
     get  "/auth/:string", AuthController, :pass_get_request
     post "/auth/:string", AuthController, :pass_post_request
+    post "/user_report", UserController, :report
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
     get  "/user/:string", UserController, :pass_get_request
@@ -66,10 +67,18 @@ defmodule PappapWeb.Router do
     post "/entrant", EntrantController, :create
     get  "/entrant/rank/:tournament_id/:user_id", EntrantController, :show_rank
 
-    post "/profileupdate", ProfileController, :send
     post "/register/device", DeviceController, :register_device_id
 
-    get  "/notification/list", NotificationController, :index
+    get  "/game/:string", GameController, :pass_get_request
+    post "/game/:string", GameController, :pass_post_controller
+
+    get  "/notification/:string", NotificationController, :pass_get_request
+    post "/notification/:string", NotificationController, :pass_post_request
+
+    get  "/profile/:string", ProfileController, :pass_get_request
+    post "/profile/:string", ProfileController, :pass_post_request
+    post "/profile", ProfileController, :send
+
     post "/sync", SyncController, :sync
 
     post "/online/all", OnlineController, :get_online_users

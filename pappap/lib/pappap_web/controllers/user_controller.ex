@@ -62,4 +62,19 @@ defmodule PappapWeb.UserController do
 
     json(conn, map)
   end
+
+  def report(conn, params) do
+    map =
+      @db_domain_url <> "/api/user_report"
+      |> get_parammed_request(params)
+
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
 end
