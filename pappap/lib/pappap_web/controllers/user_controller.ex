@@ -37,14 +37,14 @@ defmodule PappapWeb.UserController do
       @db_domain_url <> "/api/user/" <> path
       |> send_json(params)
 
-      case map do
-        %{"result" => false, "reason" => _reason} ->
-          conn
-          |> put_status(500)
-          |> json(map)
-        map ->
-          json(conn, map)
-      end
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
   end
 
   def get(conn, %{"id" => id}) do

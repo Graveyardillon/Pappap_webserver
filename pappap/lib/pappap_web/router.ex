@@ -66,6 +66,8 @@ defmodule PappapWeb.Router do
 
     post "/entrant", EntrantController, :create
     get  "/entrant/rank/:tournament_id/:user_id", EntrantController, :show_rank
+    get  "/entrant/:string", EntrantController, :pass_get_request
+    post "/entrant/:string", EntrantController, :pass_post_request
 
     post "/register/device", DeviceController, :register_device_id
 
