@@ -43,4 +43,19 @@ defmodule PappapWeb.ProfileController do
         json(conn, map)
     end
   end
+
+  def send(conn, params) do
+    map =
+      @db_domain_url <> "/api/profile"
+      |> send_json(params)
+
+    case map do
+      %{"result" => false, "reason" => reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
 end
