@@ -17,9 +17,9 @@ config :logger, level: :info
 
 config :pappap, Pappap.Repo,
   username: "postgres",
-  password: "K42etH0my05kE",
-  database: "pappap",
-  socket_dir: "/tmp/cloudsql/crack-producer-298904:asia-northeast1:pappapdb",
+  password: "postgres",
+  database: "pappapdb",
+  socket_dir: "/tmp/cloudsql/e-players6814:asia-northeast1:pappapdb",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 

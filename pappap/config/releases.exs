@@ -25,9 +25,9 @@ import Config
 
 config :pappap, Pappap.Repo,
   username: "postgres",
-  password: "K42etH0my05kE",
-  database: "pappap",
-  socket_dir: "/tmp/cloudsql/crack-producer-298904:asia-northeast1:pappapdb",
+  password: "postgres",
+  database: "pappapdb",
+  socket_dir: "/tmp/cloudsql/e-players6814:asia-northeast1:pappapdb",
   pool_size: 10
 
 config :pappap, PappapWeb.Endpoint,
