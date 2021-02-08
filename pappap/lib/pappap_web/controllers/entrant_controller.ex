@@ -47,6 +47,26 @@ defmodule PappapWeb.EntrantController do
     end
   end
 
+  @doc """
+  Pass a delete request to database server.
+  """
+  def pass_delete_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/entrant/" <> path
+      |> delete_request(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
   def create(conn, params) do
     map =
       @db_domain_url <> @entrant_url
