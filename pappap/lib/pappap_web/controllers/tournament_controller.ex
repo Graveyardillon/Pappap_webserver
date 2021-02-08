@@ -131,11 +131,11 @@ defmodule PappapWeb.TournamentController do
   Starts a tournament.
   """
   def start(conn, params) do
-    log = Task.async(PappapWeb.TournamentController, :add_log, [params])
+    #log = Task.async(PappapWeb.TournamentController, :add_log, [params])
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @match_start_url
       |> send_json(params)
-    Task.await(log)
+    #Task.await(log)
 
     json(conn, map)
   end

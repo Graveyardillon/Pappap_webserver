@@ -11,7 +11,7 @@ defmodule PappapWeb.DeviceController do
     json(conn, %{device_id: device.device_id})
   end
 
-  # 通知送信
+  # 通知送信DEBUG
   def force_notify(conn, params) do
     Notifications.push("強制通知が送信されました！", params["device_id"], 4)
 
