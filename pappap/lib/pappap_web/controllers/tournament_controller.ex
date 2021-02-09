@@ -5,6 +5,8 @@ defmodule PappapWeb.TournamentController do
   alias Pappap.Notifications
   alias Pappap.Accounts
 
+  require Logger
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
@@ -163,8 +165,6 @@ defmodule PappapWeb.TournamentController do
   Claims win.
   """
   def claim_win(conn, params) do
-    IO.inspect("claim_win function was called up", label: :claim_win)
-
     tournament_id = params["tournament_id"]
     opponent_id = params["opponent_id"]
     user_id = params["user_id"]
@@ -187,6 +187,7 @@ defmodule PappapWeb.TournamentController do
           |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
 
         PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+        Logger.info("match_finihed notification has been sent.")
 
         updated_match_list = map["updated_match_list"]
         if is_integer(updated_match_list) do
@@ -198,6 +199,7 @@ defmodule PappapWeb.TournamentController do
           if map["result"] do
             topic = "tournament:" <> to_string(params["tournament_id"])
             PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+            Logger.info("tournament_finished notification has been sent.")
           end
         end
       end)
@@ -232,6 +234,7 @@ defmodule PappapWeb.TournamentController do
           |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
 
         PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+        Logger.info("match_finihed notification has been sent.")
 
         updated_match_list = map["updated_match_list"]
         if is_integer(updated_match_list) do
@@ -243,6 +246,7 @@ defmodule PappapWeb.TournamentController do
             if map["result"] do
               topic = "tournament:" <> to_string(params["tournament_id"])
               PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+              Logger.info("tournament_finished notification has been sent.")
             end
         end
       end)

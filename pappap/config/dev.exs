@@ -64,6 +64,16 @@ config :pappap, PappapWeb.Endpoint,
     ]
   ]
 
+config :pigeon, :apns,
+  apns_default: %{
+    key: "priv/cert/AuthKey_5KHYB5J926.p8",
+    key_identifier: "5KHYB5J926",
+    team_id: "32B5DRP9TS",
+    mode: :dev
+  }
+
+config :pappap, :db_domain_url, "http://localhost:4000"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
