@@ -181,28 +181,27 @@ defmodule PappapWeb.TournamentController do
     end
 
     if map["completed"] do
-      Task.start_link(fn ->
+      # もともと非同期処理で書いていた
+      map =
+        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+        |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+
+      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+      Logger.info("match_finihed notification has been sent.")
+
+      updated_match_list = map["updated_match_list"]
+      if is_integer(updated_match_list) do
         map =
-          @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-          |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+          @db_domain_url <> @api_url <> @tournament_url <> @finish
+          # FIXME: Using dummy user id.
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
 
-        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-        Logger.info("match_finihed notification has been sent.")
-
-        updated_match_list = map["updated_match_list"]
-        if is_integer(updated_match_list) do
-          map =
-            @db_domain_url <> @api_url <> @tournament_url <> @finish
-            # FIXME: Using dummy user id.
-            |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
-
-          if map["result"] do
-            topic = "tournament:" <> to_string(params["tournament_id"])
-            PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-            Logger.info("tournament_finished notification has been sent.")
-          end
+        if map["result"] do
+          topic = "tournament:" <> to_string(params["tournament_id"])
+          PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+          Logger.info("tournament_finished notification has been sent.")
         end
-      end)
+      end
     end
 
     json(conn, map)
@@ -228,28 +227,27 @@ defmodule PappapWeb.TournamentController do
     end
 
     if map["completed"] do
-      Task.start_link(fn ->
+      # もともと非同期処理で書いていた
+      map =
+        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+        |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
+
+      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+      Logger.info("match_finihed notification has been sent.")
+
+      updated_match_list = map["updated_match_list"]
+      if is_integer(updated_match_list) do
         map =
-          @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-          |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
+          @db_domain_url <> @api_url <> @tournament_url <> @finish
+          # FIXME: Using dummy user id.
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
 
-        PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-        Logger.info("match_finihed notification has been sent.")
-
-        updated_match_list = map["updated_match_list"]
-        if is_integer(updated_match_list) do
-          map =
-            @db_domain_url <> @api_url <> @tournament_url <> @finish
-            # FIXME: Using dummy user id.
-            |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
-
-            if map["result"] do
-              topic = "tournament:" <> to_string(params["tournament_id"])
-              PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-              Logger.info("tournament_finished notification has been sent.")
-            end
-        end
-      end)
+          if map["result"] do
+            topic = "tournament:" <> to_string(params["tournament_id"])
+            PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+            Logger.info("tournament_finished notification has been sent.")
+          end
+      end
     end
 
     json(conn, map)
@@ -291,6 +289,7 @@ defmodule PappapWeb.TournamentController do
 
   # DEBUG:
   def debug_tournament_ws(conn, %{"tournament_id" => id}) do
+    IO.inspect(conn, label: :conn)
     id = unless is_binary(id) do
       to_string(id)
     end

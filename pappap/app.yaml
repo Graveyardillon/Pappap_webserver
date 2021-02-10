@@ -6,3 +6,8 @@ runtime_config:
 
 beta_settings:
   cloud_sql_instances: e-players6814:asia-northeast1:pappapdb-test
+network:
+  session_affinity: true
+instance_class: b1
+manual_scaling:
+  instances: 1
