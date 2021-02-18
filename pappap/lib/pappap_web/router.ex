@@ -77,6 +77,7 @@ defmodule PappapWeb.Router do
 
     get  "/notification/:string", NotificationController, :pass_get_request
     post "/notification/:string", NotificationController, :pass_post_request
+    delete "/notification/:string", NotificationController, :pass_delete_request
 
     get  "/profile/:string", ProfileController, :pass_get_request
     post "/profile/:string", ProfileController, :pass_post_request
