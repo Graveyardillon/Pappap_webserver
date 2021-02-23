@@ -4,11 +4,19 @@ defmodule PappapWeb.DeviceController do
   alias Pappap.Accounts
   alias Pappap.Notifications
 
-  def register_device_id(conn, params) do
-    {:ok, device} = params
-      |> Accounts.create_device()
+  def register_device_id(conn, params \\ %{}) do
+    params["device_id"]
+    |> Accounts.from_device_id()
+    |> case do
+      nil ->
+        {:ok, device} =
+        params
+        |> Accounts.create_device()
 
-    json(conn, %{device_id: device.device_id})
+        json(conn, %{device_id: device.device_id})
+      user ->
+        json(conn, %{device_id: user.device_id})
+    end
   end
 
   # 通知送信DEBUG
