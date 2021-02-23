@@ -10,8 +10,8 @@ defmodule PappapWeb.DeviceController do
     |> case do
       nil ->
         {:ok, device} =
-        params
-        |> Accounts.create_device()
+          params
+          |> Accounts.create_device()
 
         json(conn, %{device_id: device.device_id})
       user ->
