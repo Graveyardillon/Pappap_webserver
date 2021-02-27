@@ -133,11 +133,18 @@ defmodule PappapWeb.TournamentController do
   Starts a tournament.
   """
   def start(conn, params) do
-    #log = Task.async(PappapWeb.TournamentController, :add_log, [params])
+    tournament_id = params["tournament"]["tournament_id"]
+      |> IO.inspect
+
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @match_start_url
       |> send_json(params)
-    #Task.await(log)
+    
+    if map["result"] do
+      topic = "tournament:" <> to_string(tournament_id)
+      PappapWeb.Endpoint.broadcast(topic, "tournament_started", %{msg: "tournament started"})
+      Logger.info("tournament_started notification has been sent.")
+    end
 
     json(conn, map)
   end
@@ -181,7 +188,7 @@ defmodule PappapWeb.TournamentController do
     end
 
     if map["completed"] do
-      # もともと非同期処理で書いていた
+      # TODO: もともと非同期処理で書いていた
       map =
         @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
         |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
@@ -242,11 +249,11 @@ defmodule PappapWeb.TournamentController do
           # FIXME: Using dummy user id.
           |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
 
-          if map["result"] do
-            topic = "tournament:" <> to_string(params["tournament_id"])
-            PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-            Logger.info("tournament_finished notification has been sent.")
-          end
+        if map["result"] do
+          topic = "tournament:" <> to_string(params["tournament_id"])
+          PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+          Logger.info("tournament_finished notification has been sent.")
+        end
       end
     end
 
