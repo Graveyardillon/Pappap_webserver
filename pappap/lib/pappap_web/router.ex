@@ -31,6 +31,9 @@ defmodule PappapWeb.Router do
     get  "/user/:string", UserController, :pass_get_request
     post "/user/:string", UserController, :pass_post_request
 
+    get  "/conf/:string", ConfController, :pass_get_request
+    post "/conf/:string", ConfController, :pass_post_request
+
     post "/tournament", TournamentController, :create
     post "/tournament/start", TournamentController, :start
     post "/tournament/claim_win", TournamentController, :claim_win
