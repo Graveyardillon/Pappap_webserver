@@ -43,4 +43,32 @@ defmodule PappapWeb.AuthController do
         json(conn, map)
     end
   end
+
+  @doc """
+  Signup process
+  """
+  def signup(conn, params) do
+    map =
+      @db_domain_url <> "/api/user/signup"
+      |> send_json(params)
+      |> IO.inspect()
+
+    if map["result"] do
+      Task.async(fn ->
+        user_id = map["data"]["id"]
+        params = %{"notif" => %{"user_id" => user_id, "process_code" => 0, "content" => "ようこそ（debug）", "data" => nil}}
+        @db_domain_url <> "/api/notification/create"
+        |> send_json(params)
+      end)
+    end
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
 end

@@ -44,6 +44,9 @@ defmodule PappapWeb.NotificationController do
     end
   end
 
+  @doc """
+  Pass a delete request to database server.
+  """
   def pass_delete_request(conn, params) do
     path = params["string"]
 
