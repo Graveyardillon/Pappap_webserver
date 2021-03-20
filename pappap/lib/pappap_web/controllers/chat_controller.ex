@@ -87,11 +87,9 @@ defmodule PappapWeb.ChatController do
     merged_map =
       Map.get(params, "chat")
       |> Map.put("index", index)
-      |> IO.inspect()
 
     @db_domain_url <> @api_url <> @chats_log_url
     |> send_json(merged_map)
-    |> IO.inspect
 
     json(conn, map)
   end

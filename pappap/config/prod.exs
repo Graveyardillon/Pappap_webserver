@@ -30,6 +30,7 @@ config :pigeon, :apns,
     team_id: "32B5DRP9TS",
     mode: :prod
   }
+
 config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
 
 #config :pappap, Pappap.Repo,

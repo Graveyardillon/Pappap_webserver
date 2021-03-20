@@ -15,6 +15,8 @@ defmodule PappapWeb.Router do
 
   scope "/", PappapWeb do
     pipe_through :browser
+
+    get "/", BrowserController, :index
   end
 
   scope "/api", PappapWeb do
