@@ -5,7 +5,7 @@ defmodule Common.Tools do
     quote do
       def get_request(url) do
         content_type = [{"Content-Type", "application/json"}]
-        with {:ok, response} <- HTTPoison.get(url, content_type),
+        with {:ok, response} <- HTTPoison.get(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}]]),
         {:ok, body} <- Poison.decode(response.body) do
           body
         else
@@ -30,7 +30,7 @@ defmodule Common.Tools do
       def get_parammed_request(url, params) do
         content_type = [{"Content-Type", "application/json"}]
 
-        with {:ok, response} <- HTTPoison.get(url, content_type, params: params),
+        with {:ok, response} <- HTTPoison.get(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
             body
           else
@@ -56,7 +56,7 @@ defmodule Common.Tools do
         content_type = [{"Content-Type", "application/json"}]
 
         with {:ok, attrs} <- Poison.encode(params),
-          {:ok, response} <- HTTPoison.post(url, attrs, content_type),
+          {:ok, response} <- HTTPoison.post(url, attrs, content_type, [ssl: [{:versions, [:'tlsv1.2']}]]),
           {:ok, body} <- Poison.decode(response.body) do
             body
         else
@@ -81,7 +81,7 @@ defmodule Common.Tools do
       def delete_parammed_request(url, params) do
         content_type = [{"Content-Type", "application/json"}]
 
-        with {:ok, response} <- HTTPoison.delete(url, content_type, params: params),
+        with {:ok, response} <- HTTPoison.delete(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
             body
           else
@@ -118,7 +118,8 @@ defmodule Common.Tools do
         with {:ok, response} <- HTTPoison.post(
           url,
           {:multipart, form},
-          content_type
+          content_type,
+          [ssl: [{:versions, [:'tlsv1.2']}]]
         ),
           {:ok, body} <- Poison.decode(response.body) do
             body
@@ -145,7 +146,7 @@ defmodule Common.Tools do
         content_type = [{"Content-Type", "application/json"}]
 
         with {:ok, attrs} <- Poison.encode(params),
-          {:ok, response} <- HTTPoison.delete(url, content_type, params: params),
+          {:ok, response} <- HTTPoison.delete(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
           body
         else
