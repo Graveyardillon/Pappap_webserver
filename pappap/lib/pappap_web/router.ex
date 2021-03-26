@@ -21,6 +21,7 @@ defmodule PappapWeb.Router do
 
   scope "/api", PappapWeb do
     pipe_through :api
+    get  "/check/connection", ConnectionCheckController, :connection_check
 
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
