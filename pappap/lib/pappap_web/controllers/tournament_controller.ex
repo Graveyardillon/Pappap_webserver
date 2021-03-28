@@ -65,13 +65,13 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Creates a tournament.
   """
-  #FIXME: 長いのでリファクタリングが必要
   def create(conn, params) do
     file_path = unless params["image"] == "" do
       uuid = SecureRandom.uuid()
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
+      # FIXME: temporary picture
       "./static/image/stones.png"
     end
 
@@ -79,55 +79,66 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
 
-    Task.start_link(fn ->
-      map["data"]["followers"]
-      |> Enum.each(fn follower ->
-        follower["id"]
-        |> Accounts.get_devices_by_user_id()
-        |> Enum.each(fn device ->
-          Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
-        end)
-      end)
-    end)
-    Task.start_link(fn ->
-      event_time =
-        map["data"]["event_date"]
-        |> Timex.parse!("{ISO:Extended}")
-        |> DateTime.to_unix()
+    Task.start_link(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
+    Task.start_link(fn -> notify_entrants_on_tournament_start(map) end)
+    # |> case do
+    #   {:ok, pid} -> register_pid(pid, map["data"]["id"])
+    #   {:error, _} -> {:error, nil}
+    # end
 
-      now =
-        DateTime.utc_now()
-        |> DateTime.to_unix()
-      IO.inspect(event_time - now, label: :left_second)
-      Process.sleep((event_time - now)*1000)
-
-      url = @db_domain_url <> @api_url <> @get_tournament_info_url
-      content_type = [{"Content-Type", "application/json"}]
-
-      p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
-
-      case HTTPoison.post(url, p, content_type) do
-        {:ok, response} ->
-          res = Poison.decode!(response.body)
-
-          res["data"]["entrants"]
-          |> Enum.each(fn entrant ->
-            entrant["id"]
-            |> Accounts.get_devices_by_user_id()
-            |> Enum.each(fn device ->
-              Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id)
-            end)
-          end)
-        {:error, reason} ->
-          IO.inspect(reason, label: :reason)
-      end
-    end)
-
-    unless params["image"] == "" do
-      File.rm(file_path)
-    end
+    unless params["image"] == "", do: File.rm(file_path)
 
     json(conn, map)
+  end
+
+  defp notify_followers_tournament_plans(followers) do
+    followers
+    |> Enum.each(fn follower ->
+      follower["id"]
+      |> Accounts.get_devices_by_user_id()
+      |> Enum.each(fn device ->
+        Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
+      end)
+    end)
+  end
+
+  defp notify_entrants_on_tournament_start(map) do
+    event_time =
+      map["data"]["event_date"]
+      |> Timex.parse!("{ISO:Extended}")
+      |> DateTime.to_unix()
+
+    now =
+      DateTime.utc_now()
+      |> DateTime.to_unix()
+    #IO.inspect(event_time - now, label: :left_second)
+
+    Process.sleep((event_time - now)*1000)
+
+    url = @db_domain_url <> @api_url <> @get_tournament_info_url
+    content_type = [{"Content-Type", "application/json"}]
+
+    p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
+
+    case HTTPoison.post(url, p, content_type) do
+      {:ok, response} ->
+        res = Poison.decode!(response.body)
+
+        res["data"]["entrants"]
+        |> Enum.each(fn entrant ->
+          entrant["id"]
+          |> Accounts.get_devices_by_user_id()
+          |> Enum.each(fn device ->
+            Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id)
+          end)
+        end)
+      {:error, reason} ->
+        IO.inspect(reason, label: :reason)
+    end
+  end
+
+  defp register_pid(pid, tournament_id) do
+
   end
 
   @doc """
