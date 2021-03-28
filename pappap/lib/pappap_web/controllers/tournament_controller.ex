@@ -14,6 +14,8 @@ defmodule PappapWeb.TournamentController do
   @start_url "/start"
   @start_match_url "/start_match"
   @delete_loser_url "/deleteloser"
+  @register_url "/tournament/register/pid"
+  @get_pid "/tournament/pid"
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
@@ -81,10 +83,13 @@ defmodule PappapWeb.TournamentController do
 
     Task.start_link(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
     Task.start_link(fn -> notify_entrants_on_tournament_start(map) end)
-    # |> case do
-    #   {:ok, pid} -> register_pid(pid, map["data"]["id"])
-    #   {:error, _} -> {:error, nil}
-    # end
+    |> case do
+      {:ok, pid} ->
+        pid_str = pid
+          |> :erlang.pid_to_list()
+          |> inspect()
+        register_pid(pid_str, map["data"]["id"])
+    end
 
     unless params["image"] == "", do: File.rm(file_path)
 
@@ -138,7 +143,14 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp register_pid(pid, tournament_id) do
+    params = %{"pid" => pid, "tournament_id" => tournament_id}
+    map =
+      @db_domain_url <> @api_url <> @register_url
+      |> send_json(params)
 
+    if map["result"] do
+      Logger.info("pid has been stored")
+    end
   end
 
   @doc """
@@ -146,7 +158,15 @@ defmodule PappapWeb.TournamentController do
   """
   def start(conn, params) do
     tournament_id = params["tournament"]["tournament_id"]
-      |> IO.inspect
+
+    params["is_forced"]
+    |> is_nil()
+    |> unless do
+      # nilじゃなければ
+      if params["is_forced"] do
+        cancel_notification(tournament_id)
+      end
+    end
 
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @start_url
@@ -167,6 +187,19 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params["tournament"])
     @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
     |> send_json(tournament_data)
+  end
+
+  defp cancel_notification(tournament_id) do
+    params = %{"tournament_id" => tournament_id}
+    map =
+      @db_domain_url <> @api_url <> @get_pid
+      |> get_parammed_request(params)
+
+    pid_str = map["pid"]
+    {pid_charlist, _} = Code.eval_string(pid_str)
+    pid = :erlang.list_to_pid(pid_charlist)
+
+    Process.exit(pid, :kill)
   end
 
   @doc """
