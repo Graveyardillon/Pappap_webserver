@@ -4,7 +4,7 @@ defmodule PappapWeb.OnlineChannel do
 
   def join("online", %{"user_id" => user_id, "chat_room" => chat_room}, socket) do
     # send(self(), {:after_join, user_id})
-    #IO.inspect Presence.list(socket)
+    IO.inspect Presence.list(socket)
     {:ok, _} = Presence.track(socket, "#{inspect socket.transport_pid}", %{
       chat_room: chat_room,
       user_id: user_id,
@@ -34,6 +34,7 @@ defmodule PappapWeb.OnlineChannel do
     {:noreply, socket}
   end
 
+  # FIXME: リファクタリングします
   intercept ["presence_diff"]
   def handle_out("presence_diff", %{joins: joins, leaves: leaves}, socket) do
     chat_room = Presence.get_by_key("online", "#{inspect socket.transport_pid}")

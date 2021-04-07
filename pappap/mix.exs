@@ -30,7 +30,7 @@ defmodule Pappap.MixProject do
     [
       mod: {Pappap.Application, []},
       extra_applications: [
-        :logger, 
+        :logger,
         :runtime_tools,
         :httpoison
       ]
