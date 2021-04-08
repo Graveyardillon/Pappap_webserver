@@ -1,16 +1,23 @@
 defmodule PappapWeb.OnlineChannel do
   use PappapWeb, :channel
-  alias PappapWeb.Presence
+  use Common.Tools
 
-  def join("online", %{"user_id" => user_id, "chat_room" => chat_room}, socket) do
+  alias PappapWeb.Presence
+  alias Pappap.Online
+
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
+  @api_url "/api"
+  @relevant "/tournament/relevant"
+  @entrants "/tournament/get_entrants"
+
+  def join("online", %{"user_id" => user_id}, socket) do
     # send(self(), {:after_join, user_id})
-    #IO.inspect Presence.list(socket)
     {:ok, _} = Presence.track(socket, "#{inspect socket.transport_pid}", %{
-      chat_room: chat_room,
       user_id: user_id,
       online_at: inspect(System.system_time(:second))
     })
-    # Presence.track(socket, socket.channel_pid, %{user_id: user_id})
+    Online.join(user_id)
+
     {:ok, socket}
   end
 
@@ -19,9 +26,8 @@ defmodule PappapWeb.OnlineChannel do
       user_id: user_id,
       online_at: inspect(System.system_time(:second))
     })
-    # IO.inspect(Presence.list(socket))
-    # push(socket, "presence_state", Presence.list(socket))
-    # {:noreply, socket}
+
+    {:noreply, socket}
   end
 
   def handle_in("get_online", _params, socket) do
@@ -34,52 +40,74 @@ defmodule PappapWeb.OnlineChannel do
     {:noreply, socket}
   end
 
+  # FIXME: リファクタリングします
   intercept ["presence_diff"]
   def handle_out("presence_diff", %{joins: joins, leaves: leaves}, socket) do
-    chat_room = Presence.get_by_key("online", "#{inspect socket.transport_pid}")
-      |> Map.get(:metas)
-      |> hd
-      |> Map.get(:chat_room)
+    # IO.inspect(joins, label: :joins)
+    # IO.inspect(leaves, label: :leaves)
 
     if !Enum.empty?(joins) do
-      map = Map.values(joins)
-        |> Enum.map(fn %{metas: metas} ->
-          x = metas
-            |> hd
-          Enum.any?(x.chat_room, fn a -> Enum.member?(chat_room, a) end)
-          |> if do
-            x.user_id
-          else
-            nil
-          end
+      joins
+      |> Map.values()
+      |> Enum.each(fn %{metas: metas} ->
+        metas
+        |> Enum.each(fn meta ->
+          notify_online_on_tournament_channel(meta.user_id)
         end)
-        |> Enum.filter(fn x -> !is_nil(x) end)
-      if !Enum.empty?(map) do
-        push(socket, "online", %{online: map})
-      end
+      end)
     end
 
     if !Enum.empty?(leaves) do
-      map = Map.values(leaves)
-        |> Enum.map(fn %{metas: metas} ->
-          x = metas
-            |> hd
-          Enum.any?(x.chat_room, fn a -> Enum.member?(chat_room, a) end)
-          |> if do
-            x.user_id
-          else
-            nil
-          end
+      leaves
+      |> Map.values()
+      |> Enum.each(fn %{metas: metas} ->
+        metas
+        |> Enum.each(fn meta ->
+          Online.leave(meta.user_id)
+          notify_online_on_tournament_channel(meta.user_id)
         end)
-        |> Enum.filter(fn x -> !is_nil(x) end)
-      if !Enum.empty?(map) do
-        push(socket, "offline", %{offline: map})
-      end
+      end)
     end
 
     # IO.inspect "#{inspect socket.channel_pid}"
     {:noreply, socket}
   end
+
+  defp notify_online_on_tournament_channel(user_id) do
+    params = %{"user_id" => user_id}
+
+    @db_domain_url <> @api_url <> @relevant
+    |> get_parammed_request(params)
+    |> case do
+      %{"result" => false, "reason" => _} -> []
+      map -> map["data"]
+    end
+    |> Enum.each(fn tournament ->
+      online_user_id_list =
+        Online.list_online_users()
+        |> Enum.map(fn ouser -> ouser.user_id end)
+      entrant_num =
+        tournament["id"]
+        |> get_entrants()
+        |> Enum.filter(fn entrant ->
+          Enum.member?(online_user_id_list, entrant["user_id"])
+        end)
+        |> length()
+      topic = "tournament:" <> to_string(tournament["id"])
+      PappapWeb.Endpoint.broadcast(topic, "online_increment", %{user_id: user_id, msg: "online_increment", entrant_num: entrant_num})
+    end)
+  end
+
+  defp get_entrants(tournament_id) do
+    params = %{"tournament_id" => tournament_id}
+    @db_domain_url <> @api_url <> @entrants
+    |> get_parammed_request(params)
+    |> case do
+      %{"result" => false, "reason" => _} -> []
+      map -> map["data"]
+    end
+  end
+
   def broadcast_all(event, payload) do
     PappapWeb.Endpoint.broadcast("online", event, payload)
   end
