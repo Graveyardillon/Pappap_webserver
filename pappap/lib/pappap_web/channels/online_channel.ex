@@ -96,7 +96,7 @@ defmodule PappapWeb.OnlineChannel do
         end)
         |> length()
       topic = "tournament:" <> to_string(tournament["id"])
-      PappapWeb.Endpoint.broadcast(topic, "online_increment", %{user_id: user_id, msg: "online_increment", entrant_num: entrant_num})
+      PappapWeb.Endpoint.broadcast(topic, "online_num_change", %{user_id: user_id, msg: "online_increment", entrant_num: entrant_num})
     end)
   end
 
