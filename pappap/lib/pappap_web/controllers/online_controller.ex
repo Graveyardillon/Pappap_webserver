@@ -33,6 +33,6 @@ defmodule PappapWeb.OnlineController do
       end)
       |> length()
 
-    json(conn, %{online_num: entrant_num})
+    json(conn, %{online_num: entrant_num, result: true})
   end
 end

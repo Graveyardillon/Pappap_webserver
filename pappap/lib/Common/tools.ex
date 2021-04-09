@@ -1,6 +1,14 @@
 defmodule Common.Tools do
   use Timex
 
+  def to_integer_as_needed(data) do
+    if is_binary(data) do
+      String.to_integer(data)
+    else
+      data
+    end
+  end
+
   defmacro __using__(_opts) do
     quote do
       def get_request(url) do
