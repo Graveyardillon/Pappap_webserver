@@ -222,7 +222,6 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     if map["result"] do
-      # FIXME: 通知を個人で行う必要がある
       topic = "tournament:" <> to_string(params["tournament_id"])
       PappapWeb.Endpoint.broadcast(topic, "match_started", %{msg: "match started"})
       Logger.info("match_started notification has been sent.")
