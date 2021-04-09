@@ -4,6 +4,7 @@ defmodule PappapWeb.OnlineChannel do
 
   alias PappapWeb.Presence
   alias Pappap.Online
+  alias Common.Tools
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
@@ -11,11 +12,12 @@ defmodule PappapWeb.OnlineChannel do
   @entrants "/tournament/get_entrants"
 
   def join("online", %{"user_id" => user_id}, socket) do
-    # send(self(), {:after_join, user_id})
+    user_id = Tools.to_integer_as_needed(user_id)
     {:ok, _} = Presence.track(socket, "#{inspect socket.transport_pid}", %{
       user_id: user_id,
       online_at: inspect(System.system_time(:second))
     })
+    |> IO.inspect(label: :online_detect)
     Online.join(user_id)
 
     {:ok, socket}
@@ -94,7 +96,7 @@ defmodule PappapWeb.OnlineChannel do
         end)
         |> length()
       topic = "tournament:" <> to_string(tournament["id"])
-      PappapWeb.Endpoint.broadcast(topic, "online_increment", %{user_id: user_id, msg: "online_increment", entrant_num: entrant_num})
+      PappapWeb.Endpoint.broadcast(topic, "online_num_change", %{user_id: user_id, msg: "online_increment", entrant_num: entrant_num})
     end)
   end
 

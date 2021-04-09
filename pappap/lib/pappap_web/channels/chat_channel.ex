@@ -41,7 +41,8 @@ defmodule PappapWeb.ChatChannel do
         |> (if do
           members
           |> Enum.each(fn member_id ->
-            Accounts.get_devices_by_user_id(member_id)
+            member_id
+            |> Accounts.get_devices_by_user_id()
             |> notify(message, member_id)
           end)
         end)
