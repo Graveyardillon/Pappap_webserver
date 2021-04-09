@@ -94,6 +94,7 @@ defmodule PappapWeb.Router do
     post "/sync", SyncController, :sync
 
     post "/online/all", OnlineController, :get_online_users
+    get  "/online/entrants", OnlineController, :get_online_entrants
   end
 
   # DEBUG
