@@ -20,9 +20,6 @@ defmodule PappapWeb.TournamentController do
   @claim_lose "/claim_lose"
   @masters "/masters"
   @finish "/finish"
-  @get_url "/get"
-  @add_url "/add"
-  @tournament_log_url "/tournament_log"
 
   @doc """
   Pass a get request to database server.
@@ -85,10 +82,12 @@ defmodule PappapWeb.TournamentController do
     Task.start_link(fn -> notify_entrants_on_tournament_start(map) end)
     |> case do
       {:ok, pid} ->
-        pid_str = pid
-          |> :erlang.pid_to_list()
-          |> inspect()
-        register_pid(pid_str, map["data"]["id"])
+        pid
+        |> :erlang.pid_to_list()
+        |> inspect()
+        |> register_pid(map["data"]["id"])
+      {:error, _} ->
+        Logger.info("failed to register pid")
     end
 
     unless params["image"] == "", do: File.rm(file_path)
@@ -162,7 +161,6 @@ defmodule PappapWeb.TournamentController do
     params["is_forced"]
     |> is_nil()
     |> unless do
-      # nilじゃなければ
       if params["is_forced"] do
         cancel_notification(tournament_id)
       end
@@ -181,14 +179,6 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  defp add_log(params) do
-    tournament_data =
-      @db_domain_url <> @api_url <> @tournament_url <> @get_url
-      |> send_json(params["tournament"])
-    @db_domain_url <> @api_url <> @tournament_log_url <> @add_url
-    |> send_json(tournament_data)
-  end
-
   defp cancel_notification(tournament_id) do
     params = %{"tournament_id" => tournament_id}
     map =
@@ -200,6 +190,7 @@ defmodule PappapWeb.TournamentController do
     pid = :erlang.list_to_pid(pid_charlist)
 
     Process.exit(pid, :kill)
+    Logger.info("tournament notification " <> to_string(tournament_id) <> " is canceled")
   end
 
   @doc """
