@@ -13,9 +13,10 @@ defmodule Pappap.Notifications do
   def push(message, device_id, process_code \\ -1, data \\ "") do
     Pigeon.APNS.Notification.new(message, device_id, Notifications.topic())
     |> Pigeon.APNS.push()
+    |> IO.inspect(label: :pigeon_apn)
 
     device = Accounts.from_device_id(device_id)
-      params = %{"notif" => %{"user_id" => device.user_id, "content" => message, "process_code" => process_code, "data" => data}}
+    params = %{"notif" => %{"user_id" => device.user_id, "content" => message, "process_code" => process_code, "data" => data}}
 
     Task.start_link(fn ->
       @db_domain_url <> @api_url <> @create_notif

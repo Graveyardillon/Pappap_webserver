@@ -111,7 +111,6 @@ defmodule Common.Tools do
           end
       end
 
-      #FIXME: この関数をtournament_controllerから別で書く必要はないかも
       def send_tournament_multipart(url, params, file_path) do
         content_type = [{"Content-Type", "multipart/form-data"}]
 

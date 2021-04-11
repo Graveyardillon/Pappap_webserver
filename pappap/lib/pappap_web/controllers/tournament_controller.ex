@@ -78,16 +78,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
 
-    Task.start_link(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
-    Task.start_link(fn -> notify_entrants_on_tournament_start(map) end)
+    Task.async(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
+    Task.async(fn -> notify_entrants_on_tournament_start(map) end)
     |> case do
-      {:ok, pid} ->
+      %Task{pid: pid} ->
         pid
         |> :erlang.pid_to_list()
         |> inspect()
         |> register_pid(map["data"]["id"])
-      {:error, _} ->
-        Logger.info("failed to register pid")
     end
 
     unless params["image"] == "", do: File.rm(file_path)
@@ -115,7 +113,6 @@ defmodule PappapWeb.TournamentController do
     now =
       DateTime.utc_now()
       |> DateTime.to_unix()
-    #IO.inspect(event_time - now, label: :left_second)
 
     Process.sleep((event_time - now)*1000)
 
@@ -124,16 +121,20 @@ defmodule PappapWeb.TournamentController do
 
     p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
 
-    case HTTPoison.post(url, p, content_type) do
+    HTTPoison.post(url, p, content_type)
+    |> case do
       {:ok, response} ->
         res = Poison.decode!(response.body)
 
         res["data"]["entrants"]
+        |> IO.inspect(label: :entrants)
         |> Enum.each(fn entrant ->
           entrant["id"]
           |> Accounts.get_devices_by_user_id()
+          |> IO.inspect(label: :device)
           |> Enum.each(fn device ->
-            Notifications.push(res["data"]["name"]<>"がスタートしました！", device.device_id)
+            Logger.info("通知を" <> to_string(device.user_id) <> "に送信しました。")
+            Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id)
           end)
         end)
       {:error, reason} ->
@@ -156,12 +157,13 @@ defmodule PappapWeb.TournamentController do
   Starts a tournament.
   """
   def start(conn, params) do
+    Logger.info(params["tournament"]["tournament_id"])
     tournament_id = params["tournament"]["tournament_id"]
 
     params["is_forced"]
     |> is_nil()
     |> unless do
-      if params["is_forced"] do
+      if params["is_forced"] == true || params["is_forced"] == "1" do
         cancel_notification(tournament_id)
       end
     end
