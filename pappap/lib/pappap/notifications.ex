@@ -8,7 +8,7 @@ defmodule Pappap.Notifications do
   @create_notif "/notif/create"
   @create_log "/notif_log/create"
 
-  def topic, do: "Papillon-inc.eplayers"
+  def topic, do: "PapillonKK.e-players"
 
   def push(message, device_id, process_code \\ -1, data \\ "") do
     Pigeon.APNS.Notification.new(message, device_id, Notifications.topic())

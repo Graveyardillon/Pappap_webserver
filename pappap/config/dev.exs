@@ -66,9 +66,9 @@ config :pappap, PappapWeb.Endpoint,
 
 config :pigeon, :apns,
   apns_default: %{
-    key: "priv/cert/AuthKey_5KHYB5J926.p8",
-    key_identifier: "5KHYB5J926",
-    team_id: "32B5DRP9TS",
+    key: "priv/cert/AuthKey_MHN824H499.p8",
+    key_identifier: "MHN824H499",
+    team_id: "6ZMC8WKZZQ",
     mode: :dev
   }
 

@@ -5,7 +5,6 @@ defmodule PappapWeb.DeviceController do
     Accounts,
     Notifications
   }
-  alias Pappap.Accounts.Device
 
   def register_device_id(conn, params \\ %{}) do
     params["device_id"]
