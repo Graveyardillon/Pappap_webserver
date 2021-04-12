@@ -1,8 +1,10 @@
 defmodule PappapWeb.DeviceController do
   use PappapWeb, :controller
 
-  alias Pappap.Accounts
-  alias Pappap.Notifications
+  alias Pappap.{
+    Accounts,
+    Notifications
+  }
 
   def register_device_id(conn, params \\ %{}) do
     params["device_id"]
@@ -14,8 +16,11 @@ defmodule PappapWeb.DeviceController do
           |> Accounts.create_device()
 
         json(conn, %{device_id: device.device_id})
-      user ->
-        json(conn, %{device_id: user.device_id})
+      device ->
+        device
+        |> Accounts.update_device(%{user_id: params["user_id"]})
+        |> IO.inspect(label: :updation)
+        json(conn, %{device_id: device.device_id})
     end
   end
 
