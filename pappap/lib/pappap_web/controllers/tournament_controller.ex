@@ -128,7 +128,6 @@ defmodule PappapWeb.TournamentController do
         res = Poison.decode!(response.body)
 
         res["data"]["entrants"]
-        |> IO.inspect(label: :entrants)
         |> Enum.each(fn entrant ->
           entrant["id"]
           |> Accounts.get_devices_by_user_id()
@@ -238,8 +237,12 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     unless map["validated"] do
-      notify_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "invalid_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
+      map =
+        @db_domain_url <> @api_url <> @get_tournament_info_url
+        |> get_parammed_request(%{"tournament_id" => tournament_id})
+
+      push_notification_on_game_masters(tournament_id)
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
     end
 
     if map["completed"] do
@@ -285,8 +288,8 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     unless map["validated"] do
-      notify_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "invalid_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
+      push_notification_on_game_masters(tournament_id)
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
     end
 
     if map["completed"] do
@@ -317,7 +320,7 @@ defmodule PappapWeb.TournamentController do
   end
 
   # FIXME: 通知の動作確認まだ
-  defp notify_game_masters(tournament_id) do
+  defp push_notification_on_game_masters(tournament_id) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @masters
       |> get_parammed_request(%{"tournament_id" => tournament_id})
