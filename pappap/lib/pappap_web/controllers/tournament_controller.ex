@@ -100,7 +100,7 @@ defmodule PappapWeb.TournamentController do
       follower["id"]
       |> Accounts.get_devices_by_user_id()
       |> Enum.each(fn device ->
-        Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id)
+        Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id, 5)
       end)
     end)
   end
@@ -133,7 +133,7 @@ defmodule PappapWeb.TournamentController do
           |> Accounts.get_devices_by_user_id()
           |> IO.inspect(label: :device)
           |> Enum.each(fn device ->
-            Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id)
+            Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id, 6)
           end)
         end)
       {:error, reason} ->
@@ -246,12 +246,10 @@ defmodule PappapWeb.TournamentController do
     end
 
     if map["completed"] do
-      # TODO: もともと非同期処理で書いていた
       map =
         @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
         |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
 
-      # FIXME: match_finishedの通知を個人で行う必要がある
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
       Logger.info("match_finihed notification has been sent.")
 
@@ -288,12 +286,15 @@ defmodule PappapWeb.TournamentController do
       |> send_json(params)
 
     unless map["validated"] do
+      map =
+        @db_domain_url <> @api_url <> @get_tournament_info_url
+        |> get_parammed_request(%{"tournament_id" => tournament_id})
+
       push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id})
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
     end
 
     if map["completed"] do
-      # もともと非同期処理で書いていた
       map =
         @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
         |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
@@ -319,7 +320,6 @@ defmodule PappapWeb.TournamentController do
     json(conn, map)
   end
 
-  # FIXME: 通知の動作確認まだ
   defp push_notification_on_game_masters(tournament_id) do
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @masters
@@ -332,7 +332,7 @@ defmodule PappapWeb.TournamentController do
         |> Accounts.get_devices_by_user_id()
         |> Enum.each(fn device ->
           users_str = get_duplicate_users(tournament_id)
-          Notifications.push("勝敗報告にズレが生じています！ : " <> users_str, device.device_id, -1)
+          Notifications.push("勝敗報告にズレが生じています！ : " <> users_str, device.device_id, 7)
         end)
       end)
     end
