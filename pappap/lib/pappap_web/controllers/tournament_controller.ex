@@ -19,6 +19,7 @@ defmodule PappapWeb.TournamentController do
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @masters "/masters"
+  @duplicate_users "/duplicate_claims"
   @finish "/finish"
 
   @doc """
@@ -133,7 +134,6 @@ defmodule PappapWeb.TournamentController do
           |> Accounts.get_devices_by_user_id()
           |> IO.inspect(label: :device)
           |> Enum.each(fn device ->
-            Logger.info("通知を" <> to_string(device.user_id) <> "に送信しました。")
             Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id)
           end)
         end)
@@ -295,7 +295,6 @@ defmodule PappapWeb.TournamentController do
         @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
         |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
 
-      # FIXME: match_finishedの通知を個人で行う必要がある
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
       Logger.info("match_finihed notification has been sent.")
 
@@ -320,8 +319,8 @@ defmodule PappapWeb.TournamentController do
   # FIXME: 通知の動作確認まだ
   defp notify_game_masters(tournament_id) do
     map =
-      @db_domain_url <> @api_url <> @tournament_url <> @masters <> "?tournament_id=" <> to_string(tournament_id)
-      |> get_request()
+      @db_domain_url <> @api_url <> @tournament_url <> @masters
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
 
     if is_list(map["data"]) do
       map["data"]
@@ -329,10 +328,20 @@ defmodule PappapWeb.TournamentController do
         master["id"]
         |> Accounts.get_devices_by_user_id()
         |> Enum.each(fn device ->
-          Notifications.push("勝敗報告にズレが生じています！", device.device_id, -1)
+          users_str = get_duplicate_users(tournament_id)
+          Notifications.push("勝敗報告にズレが生じています！ : " <> users_str, device.device_id, -1)
         end)
       end)
     end
+  end
+
+  defp get_duplicate_users(tournament_id) do
+    @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
+    |> get_parammed_request(%{"tournament_id" => tournament_id})
+    |> Map.get("data")
+    |> Enum.reduce("", fn user, acc ->
+      acc <> user["name"] <> " "
+    end)
   end
 
   @doc """
