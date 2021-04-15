@@ -17,6 +17,11 @@ RUN mix release ${app_name} \
   && mv _build/${build_env}/rel/${app_name} /opt/release \
   && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
 
+RUN mkdir /opt/release/static
+COPY ./static /opt/release/static
+RUN chmod 777 /opt/release/static
+RUN ls /opt/release
+
 FROM alpine:latest
 ARG project_id
 RUN apk update \
