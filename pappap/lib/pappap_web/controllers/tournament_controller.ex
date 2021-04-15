@@ -68,11 +68,11 @@ defmodule PappapWeb.TournamentController do
   def create(conn, params) do
     file_path = unless params["image"] == "" do
       uuid = SecureRandom.uuid()
+      IO.inspect(params["image"].path, label: :path)
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      # FIXME: temporary picture
-      "./static/image/stones.png"
+      "./static/image/fire-free.jpg"
     end
 
     map =
@@ -106,8 +106,11 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp notify_entrants_on_tournament_start(map) do
+    IO.inspect(map, label: :map)
+
     event_time =
       map["data"]["event_date"]
+      |> IO.inspect(label: :event_date)
       |> Timex.parse!("{ISO:Extended}")
       |> DateTime.to_unix()
 
