@@ -70,14 +70,19 @@ defmodule PappapWeb.TournamentController do
       uuid = SecureRandom.uuid()
       IO.inspect(params["image"].path, label: :path)
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
+      |> IO.inspect(label: :cp)
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      "./static/image/fire-free.jpg"
+      #"./static/image/fire-free.jpg"
+      # params["image"]
+      # nil
+      ""
     end
 
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
+      |> IO.inspect(label: :map)
 
     Task.async(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
     Task.async(fn -> notify_entrants_on_tournament_start(map) end)
@@ -106,8 +111,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp notify_entrants_on_tournament_start(map) do
-    IO.inspect(map, label: :map)
-
     event_time =
       map["data"]["event_date"]
       |> IO.inspect(label: :event_date)
