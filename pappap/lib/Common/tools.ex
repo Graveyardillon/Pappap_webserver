@@ -130,8 +130,8 @@ defmodule Common.Tools do
           url,
           {:multipart, form},
           content_type,
-          [ssl: [{:versions, [:'tlsv1.2']}]]
-        ),
+          [ssl: [{:versions, [:'tlsv1.2']}], timeout: 10000]
+        )|>IO.inspect(label: debug0),
           {:ok, body} <- Poison.decode(response.body) do
             body
         else
