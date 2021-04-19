@@ -74,8 +74,6 @@ defmodule PappapWeb.TournamentController do
       "./static/image/tmp/"<>uuid<>".jpg"
     else
       #"./static/image/fire-free.jpg"
-      # params["image"]
-      # nil
       ""
     end
 
@@ -84,10 +82,10 @@ defmodule PappapWeb.TournamentController do
       |> send_tournament_multipart(params, file_path)
       |> IO.inspect(label: :map)
 
-    Task.async(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
-    Task.async(fn -> notify_entrants_on_tournament_start(map) end)
+    Task.start(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
+    Task.start(fn -> notify_entrants_on_tournament_start(map) end)
     |> case do
-      %Task{pid: pid} ->
+      {:ok, pid} ->
         pid
         |> :erlang.pid_to_list()
         |> inspect()
@@ -192,11 +190,15 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @get_pid
       |> get_parammed_request(params)
 
-    pid_str = map["pid"]
-    {pid_charlist, _} = Code.eval_string(pid_str)
-    pid = :erlang.list_to_pid(pid_charlist)
+    unless is_nil(map["pid"]) do
+      pid_str = map["pid"]
+      {pid_charlist, _} = Code.eval_string(pid_str)
+      pid = :erlang.list_to_pid(pid_charlist)
 
-    Process.exit(pid, :kill)
+      Process.monitor(pid)
+      Process.exit(pid, :kill)
+    end
+
     Logger.info("tournament notification " <> to_string(tournament_id) <> " is canceled")
   end
 
