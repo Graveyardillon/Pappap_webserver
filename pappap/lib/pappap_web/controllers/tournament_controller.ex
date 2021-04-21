@@ -265,8 +265,7 @@ defmodule PappapWeb.TournamentController do
       if is_integer(updated_match_list) do
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @finish
-          # XXX: Using dummy user id.
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => user_id})
 
         if map["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])
@@ -314,8 +313,7 @@ defmodule PappapWeb.TournamentController do
       if is_integer(updated_match_list) do
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @finish
-          # XXX: Using dummy user id.
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => opponent_id})
 
         if map["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])
