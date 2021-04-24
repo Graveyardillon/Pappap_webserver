@@ -1,5 +1,5 @@
 env: flex
-service: webserver
+service: webserver-staging
 runtime: custom
 runtime_config:
   release_app: pappap
