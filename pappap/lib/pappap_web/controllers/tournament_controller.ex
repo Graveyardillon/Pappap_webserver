@@ -70,19 +70,22 @@ defmodule PappapWeb.TournamentController do
       uuid = SecureRandom.uuid()
       IO.inspect(params["image"].path, label: :path)
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
+      |> IO.inspect(label: :cp)
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      "./static/image/fire-free.jpg"
+      #"./static/image/fire-free.jpg"
+      ""
     end
 
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
+      |> IO.inspect(label: :map)
 
-    Task.async(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
-    Task.async(fn -> notify_entrants_on_tournament_start(map) end)
+    Task.start(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
+    Task.start(fn -> notify_entrants_on_tournament_start(map) end)
     |> case do
-      %Task{pid: pid} ->
+      {:ok, pid} ->
         pid
         |> :erlang.pid_to_list()
         |> inspect()
@@ -106,8 +109,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp notify_entrants_on_tournament_start(map) do
-    IO.inspect(map, label: :map)
-
     event_time =
       map["data"]["event_date"]
       |> IO.inspect(label: :event_date)
@@ -189,11 +190,15 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @get_pid
       |> get_parammed_request(params)
 
-    pid_str = map["pid"]
-    {pid_charlist, _} = Code.eval_string(pid_str)
-    pid = :erlang.list_to_pid(pid_charlist)
+    unless is_nil(map["pid"]) do
+      pid_str = map["pid"]
+      {pid_charlist, _} = Code.eval_string(pid_str)
+      pid = :erlang.list_to_pid(pid_charlist)
 
-    Process.exit(pid, :kill)
+      Process.monitor(pid)
+      Process.exit(pid, :kill)
+    end
+
     Logger.info("tournament notification " <> to_string(tournament_id) <> " is canceled")
   end
 
@@ -260,8 +265,7 @@ defmodule PappapWeb.TournamentController do
       if is_integer(updated_match_list) do
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @finish
-          # XXX: Using dummy user id.
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => user_id})
 
         if map["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])
@@ -309,8 +313,7 @@ defmodule PappapWeb.TournamentController do
       if is_integer(updated_match_list) do
         map =
           @db_domain_url <> @api_url <> @tournament_url <> @finish
-          # XXX: Using dummy user id.
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => 0})
+          |> send_json(%{"tournament_id" => tournament_id, "user_id" => opponent_id})
 
         if map["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])

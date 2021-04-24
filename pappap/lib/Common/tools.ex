@@ -120,7 +120,11 @@ defmodule Common.Tools do
           Poison.encode!(params["tournament"])
         end
 
-        form = [{:file, file_path}, {"tournament", tournament}]
+        form = unless file_path == "" do
+          [{:file, file_path}, {"tournament", tournament}]
+        else
+          [{"file", ""}, {"tournament", tournament}]
+        end
 
         with {:ok, response} <- HTTPoison.post(
           url,
