@@ -2,10 +2,13 @@ defmodule PappapWeb.TournamentController do
   use PappapWeb, :controller
   use Common.Tools
   use Timex
-  alias Pappap.Notifications
-  alias Pappap.Accounts
 
   require Logger
+
+  alias Pappap.{
+    Accounts,
+    Notifications
+  }
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
@@ -20,6 +23,7 @@ defmodule PappapWeb.TournamentController do
   @claim_lose "/claim_lose"
   @masters "/masters"
   @duplicate_users "/duplicate_claims"
+  @report "/tournament_report"
   @finish "/finish"
 
   @doc """
@@ -366,6 +370,17 @@ defmodule PappapWeb.TournamentController do
       topic = "tournament:" <> to_string(id)
       PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished", id: id})
     end
+
+    json(conn, map)
+  end
+
+  @doc """
+  Report
+  """
+  def report(conn, params) do
+    map =
+      @db_domain_url <> @api_url <> @report
+      |> send_json(params)
 
     json(conn, map)
   end

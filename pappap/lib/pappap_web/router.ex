@@ -30,6 +30,7 @@ defmodule PappapWeb.Router do
     post "/auth/signup", AuthController, :signup
     post "/auth/:string", AuthController, :pass_post_request
     post "/user_report", UserController, :report
+    post "/tournament_report", TournamentController, :report
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
     get  "/user/:string", UserController, :pass_get_request
