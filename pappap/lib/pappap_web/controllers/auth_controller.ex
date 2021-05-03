@@ -56,7 +56,7 @@ defmodule PappapWeb.AuthController do
     if map["result"] do
       Task.async(fn ->
         user_id = map["data"]["id"]
-        params = %{"notif" => %{"user_id" => user_id, "process_code" => 0, "content" => "ようこそ（debug）", "data" => nil}}
+        params = %{"notif" => %{"user_id" => user_id, "process_code" => 0, "content" => "e-playersへようこそ！", "data" => nil}}
         @db_domain_url <> "/api/notification/create"
         |> send_json(params)
       end)
