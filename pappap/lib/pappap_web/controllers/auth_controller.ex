@@ -56,7 +56,15 @@ defmodule PappapWeb.AuthController do
     if map["result"] do
       Task.async(fn ->
         user_id = map["data"]["id"]
-        params = %{"notif" => %{"user_id" => user_id, "process_code" => 0, "content" => "e-playersへようこそ！", "data" => nil}}
+        params = %{
+          "notif" => %{
+            "user_id" => user_id, 
+            "process_code" => 0, 
+            "content" => "e-playersへようこそ！\n現在私たちはベータ版の機能を提供しています。\nもしよければコミュニティに参加してアプリの改善に力を貸してください！\nhttps://discord.gg/cfZw6EAYrv",
+            "data" => nil
+          }
+        }
+        
         @db_domain_url <> "/api/notification/create"
         |> send_json(params)
       end)
