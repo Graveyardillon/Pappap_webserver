@@ -35,6 +35,7 @@ defmodule PappapWeb.Router do
     post "/user/get_with_room", UserController, :get_with_room_id
     get  "/user/:string", UserController, :pass_get_request
     post "/user/:string", UserController, :pass_post_request
+    delete "/user/:string", UserController, :pass_delete_request
 
     get  "/conf/:string", ConfController, :pass_get_request
     post "/conf/:string", ConfController, :pass_post_request
