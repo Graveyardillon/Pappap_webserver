@@ -15,6 +15,15 @@ defmodule Pappap.Notifications do
 
   def topic, do: "PapillonKK.e-players"
 
+  def create(user_id, message, process_code \\ -1, data \\ "") do
+    params = %{"notif" => %{"user_id" => user_id, "content" => message, "process_code" => process_code, "data" => data}}
+
+    @db_domain_url <> @api_url <> @create_notif
+    |> send_json(params)
+    # @db_domain_url <> @api_url <> @create_log
+    # |> send_json(params)
+  end
+
   def push(message, device_id, process_code \\ -1, data \\ "") do
     Pigeon.APNS.Notification.new(message, device_id, Notifications.topic())
     |> Pigeon.APNS.push()
@@ -25,12 +34,12 @@ defmodule Pappap.Notifications do
 
     Task.async(fn ->
       @db_domain_url <> @api_url <> @create_notif
-        |> send_json(params)
+      |> send_json(params)
     end)
 
-    Task.async(fn ->
-      @db_domain_url <> @api_url <> @create_log
-        |> send_json(params)
-    end)
+    # Task.async(fn ->
+    #   @db_domain_url <> @api_url <> @create_log
+    #     |> send_json(params)
+    # end)
   end
 end
