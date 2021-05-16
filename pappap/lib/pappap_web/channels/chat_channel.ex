@@ -38,14 +38,18 @@ defmodule PappapWeb.ChatChannel do
 
         members
         |> is_list()
-        |> (if do
+        |> if do
           members
           |> Enum.each(fn member_id ->
             member_id
             |> Accounts.get_devices_by_user_id()
-            |> notify(message, member_id)
+            |> case do
+              [] -> Notifications.create(member_id, message, 4, member_id)
+              device_list when is_list(device_list)
+                -> notify(device_list, message, member_id)
+            end
           end)
-        end)
+        end
 
         broadcast!(socket, "new_chat", %{payload: payload})
       else
