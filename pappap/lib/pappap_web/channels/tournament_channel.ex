@@ -16,6 +16,7 @@ defmodule PappapWeb.TournamentChannel do
   # by sending replies to requests from the client
   @impl true
   def handle_in("ping", payload, socket) do
+    PappapWeb.Endpoint.broadcast("tournament:1", "new_msg", %{payload: payload})
     {:reply, {:ok, payload}, socket}
   end
 
