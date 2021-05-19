@@ -13,9 +13,10 @@ defmodule PappapWeb.EntrantController do
   """
   def pass_get_request(conn, params) do
     path = params["string"]
+    IO.inspect(path)
 
     map =
-      @db_domain_url <> "/api/entrant/" <> path
+      @db_domain_url <> "/entrant/" <> path
       |> get_parammed_request(params)
 
     case map do
@@ -35,7 +36,7 @@ defmodule PappapWeb.EntrantController do
     path = params["string"]
 
     map =
-      @db_domain_url <> "/api/entrant/" <> path
+      @db_domain_url <> "/entrant/" <> path
       |> send_json(params)
 
     case map do
