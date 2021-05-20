@@ -345,12 +345,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url <> @claim_score
       |> send_json(params)
 
+    IO.inspect(map, label: :map)
     unless map["validated"] do
       map =
         @db_domain_url <> @api_url <> @get_tournament_info_url
         |> get_parammed_request(%{"tournament_id" => tournament_id})
 
       push_notification_on_game_masters(tournament_id)
+      IO.inspect(topic, label: :topic)
       PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
     end
 
@@ -369,9 +371,11 @@ defmodule PappapWeb.TournamentController do
 
     if is_list(map["data"]) do
       map["data"]
+      |> IO.inspect()
       |> Enum.each(fn master ->
         master["id"]
         |> Accounts.get_devices_by_user_id()
+        |> IO.inspect()
         |> Enum.each(fn device ->
           users_str = get_duplicate_users(tournament_id)
           Notifications.push("勝敗報告にズレが生じています！ : " <> users_str, device.device_id, 7)
@@ -381,12 +385,18 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp get_duplicate_users(tournament_id) do
-    @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
-    |> get_parammed_request(%{"tournament_id" => tournament_id})
-    |> Map.get("data")
-    |> Enum.reduce("", fn user, acc ->
-      acc <> user["name"] <> " "
-    end)
+    data =
+      @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
+      |> Map.get("data")
+
+    unless is_nil(data) do
+      Enum.reduce(data, "", fn user, acc ->
+        acc <> user["name"] <> " "
+      end)
+    else
+      ""
+    end
   end
 
   @doc """
