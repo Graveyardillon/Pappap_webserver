@@ -345,12 +345,14 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url <> @claim_score
       |> send_json(params)
 
+    IO.inspect(map, label: :map)
     unless map["validated"] do
       map =
         @db_domain_url <> @api_url <> @get_tournament_info_url
         |> get_parammed_request(%{"tournament_id" => tournament_id})
 
       push_notification_on_game_masters(tournament_id)
+      IO.inspect(topic, label: :topic)
       PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
     end
 
@@ -386,7 +388,6 @@ defmodule PappapWeb.TournamentController do
     data =
       @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
       |> get_parammed_request(%{"tournament_id" => tournament_id})
-      |> IO.inspect()
       |> Map.get("data")
 
     unless is_nil(data) do
