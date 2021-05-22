@@ -1,4 +1,4 @@
-FROM elixir:alpine
+FROM elixir:1.10-alpine
 ARG app_name=pappap
 ARG phoenix_subdir=.
 ARG build_env=prod
