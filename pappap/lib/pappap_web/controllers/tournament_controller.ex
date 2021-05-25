@@ -22,6 +22,7 @@ defmodule PappapWeb.TournamentController do
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @claim_score "/claim_score"
+  @force_to_defeat "/defeat"
   @masters "/masters"
   @duplicate_users "/duplicate_claims"
   @report "/tournament_report"
@@ -397,6 +398,22 @@ defmodule PappapWeb.TournamentController do
     else
       ""
     end
+  end
+
+  @doc """
+  Force to defeat a user.
+  """
+  def force_to_defeat(conn, params) do
+    map =
+      @db_domain_url <> @api_url <> @tournament_url <> @force_to_defeat
+      |> send_json(params)
+
+    if map["result"] do
+      topic = "tournament:" <> to_string(params["tournament_id"])
+      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
+    end
+
+    json(conn, map)
   end
 
   @doc """

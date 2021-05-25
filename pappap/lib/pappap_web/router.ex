@@ -46,6 +46,7 @@ defmodule PappapWeb.Router do
     post "/tournament/claim_win", TournamentController, :claim_win
     post "/tournament/claim_lose", TournamentController, :claim_lose
     post "/tournament/claim_score", TournamentController, :claim_score
+    post "/tournament/defeat", TournamentController, :force_to_defeat
     post "/tournament/finish", TournamentController, :finish
 
     get  "/tournament/:string", TournamentController, :pass_get_request
