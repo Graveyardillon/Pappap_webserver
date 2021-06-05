@@ -63,10 +63,7 @@ defmodule PappapWeb.ChatChannel do
 
   defp notify(device_list, message, user_id) do
     device_list
-    |> Enum.empty?()
-    |> (unless do
-      # XXX: デバイス２つ以上使ってる人は通知がおかしくなるかも
-      device = hd(device_list)
+    |> Enum.each(fn device ->
       Notifications.push(message, device.device_id, 4, user_id)
     end)
   end
