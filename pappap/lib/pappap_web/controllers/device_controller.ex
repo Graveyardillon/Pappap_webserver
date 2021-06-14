@@ -1,26 +1,41 @@
 defmodule PappapWeb.DeviceController do
   use PappapWeb, :controller
+  use Common.Tools
 
   alias Pappap.{
     Accounts,
     Notifications
   }
 
-  def register_device_id(conn, params \\ %{}) do
-    params["device_id"]
-    |> Accounts.from_device_id()
-    |> case do
-      nil ->
-        {:ok, device} =
-          params
-          |> Accounts.create_device()
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
-        json(conn, %{device_id: device.device_id})
-      device ->
-        device
-        |> Accounts.update_device(%{user_id: params["user_id"]})
-        |> IO.inspect(label: :updation)
-        json(conn, %{device_id: device.device_id})
+  def register_device_id(conn, params \\ %{}) do
+    # params["device_id"]
+    # |> Accounts.from_device_id()
+    # |> case do
+    #   nil ->
+    #     {:ok, device} =
+    #       params
+    #       |> Accounts.create_device()
+
+    #     json(conn, %{device_id: device.device_id})
+    #   device ->
+    #     device
+    #     |> Accounts.update_device(%{user_id: params["user_id"]})
+    #     |> IO.inspect(label: :updation)
+    #     json(conn, %{device_id: device.device_id})
+    # end
+
+    map = @db_domain_url <> "/api/register/device"
+      |> send_json(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
     end
   end
 
