@@ -62,9 +62,9 @@ defmodule PappapWeb.ChatChannel do
   end
 
   defp notify(device_list, message, user_id) do
-    device_list
-    |> Enum.each(fn device ->
-      Notifications.push(message, device.device_id, 4, user_id)
-    end)
+    # device_list
+    # |> Enum.each(fn device ->
+    #   Notifications.push(message, device.device_id, 4, user_id)
+    # end)
   end
 end

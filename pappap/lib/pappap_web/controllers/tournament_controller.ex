@@ -104,51 +104,51 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp notify_followers_tournament_plans(followers) do
-    followers
-    |> Enum.each(fn follower ->
-      follower["id"]
-      |> Accounts.get_devices_by_user_id()
-      |> Enum.each(fn device ->
-        Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id, 5)
-      end)
-    end)
+    # followers
+    # |> Enum.each(fn follower ->
+    #   follower["id"]
+    #   |> Accounts.get_devices_by_user_id()
+    #   |> Enum.each(fn device ->
+    #     Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id, 5)
+    #   end)
+    # end)
   end
 
   defp notify_entrants_on_tournament_start(map) do
-    event_time =
-      map["data"]["event_date"]
-      |> IO.inspect(label: :event_date)
-      |> Timex.parse!("{ISO:Extended}")
-      |> DateTime.to_unix()
+    # event_time =
+    #   map["data"]["event_date"]
+    #   |> IO.inspect(label: :event_date)
+    #   |> Timex.parse!("{ISO:Extended}")
+    #   |> DateTime.to_unix()
 
-    now =
-      DateTime.utc_now()
-      |> DateTime.to_unix()
+    # now =
+    #   DateTime.utc_now()
+    #   |> DateTime.to_unix()
 
-    Process.sleep((event_time - now)*1000)
+    # Process.sleep((event_time - now)*1000)
 
-    url = @db_domain_url <> @api_url <> @get_tournament_info_url
-    content_type = [{"Content-Type", "application/json"}]
+    # url = @db_domain_url <> @api_url <> @get_tournament_info_url
+    # content_type = [{"Content-Type", "application/json"}]
 
-    p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
+    # p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
 
-    HTTPoison.post(url, p, content_type)
-    |> case do
-      {:ok, response} ->
-        res = Poison.decode!(response.body)
+    # HTTPoison.post(url, p, content_type)
+    # |> case do
+    #   {:ok, response} ->
+    #     res = Poison.decode!(response.body)
 
-        res["data"]["entrants"]
-        |> Enum.each(fn entrant ->
-          entrant["id"]
-          |> Accounts.get_devices_by_user_id()
-          |> IO.inspect(label: :device)
-          |> Enum.each(fn device ->
-            Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id, 6)
-          end)
-        end)
-      {:error, reason} ->
-        IO.inspect(reason, label: :reason)
-    end
+    #     res["data"]["entrants"]
+    #     |> Enum.each(fn entrant ->
+    #       entrant["id"]
+    #       |> Accounts.get_devices_by_user_id()
+    #       |> IO.inspect(label: :device)
+    #       |> Enum.each(fn device ->
+    #         Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id, 6)
+    #       end)
+    #     end)
+    #   {:error, reason} ->
+    #     IO.inspect(reason, label: :reason)
+    # end
   end
 
   defp register_pid(pid, tournament_id) do
