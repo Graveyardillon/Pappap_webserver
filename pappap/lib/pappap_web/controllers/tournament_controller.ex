@@ -88,15 +88,15 @@ defmodule PappapWeb.TournamentController do
       |> send_tournament_multipart(params, file_path)
       |> IO.inspect(label: :map)
 
-    Task.start(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
-    Task.start(fn -> notify_entrants_on_tournament_start(map) end)
-    |> case do
-      {:ok, pid} ->
-        pid
-        |> :erlang.pid_to_list()
-        |> inspect()
-        |> register_pid(map["data"]["id"])
-    end
+    # Task.start(fn -> notify_followers_tournament_plans(map["data"]["followers"]) end)
+    # Task.start(fn -> notify_entrants_on_tournament_start(map) end)
+    # |> case do
+    #   {:ok, pid} ->
+    #     pid
+    #     |> :erlang.pid_to_list()
+    #     |> inspect()
+    #     |> register_pid(map["data"]["id"])
+    # end
 
     unless params["image"] == "", do: File.rm(file_path)
 
