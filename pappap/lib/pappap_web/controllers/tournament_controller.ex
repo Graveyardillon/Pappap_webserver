@@ -69,6 +69,26 @@ defmodule PappapWeb.TournamentController do
   end
 
   @doc """
+  Pass a request of home to database server
+  """
+  def pass_home_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/tournament/home/" <> path
+      |> get_parammed_request(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
+  @doc """
   Creates a tournament.
   """
   def create(conn, params) do
