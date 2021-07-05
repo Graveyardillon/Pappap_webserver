@@ -83,6 +83,10 @@ defmodule PappapWeb.Router do
     post "/entrant/:string", EntrantController, :pass_post_request
     delete "/entrant/:string", EntrantController, :pass_delete_request
 
+    post "/team", TeamController, :create
+    get "/team/:string", TeamController, :pass_get_request
+    post "/team/:string", TeamController, :pass_post_request
+
     post "/register/device", DeviceController, :register_device_id
 
     get  "/game/:string", GameController, :pass_get_request
