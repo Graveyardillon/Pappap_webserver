@@ -84,6 +84,7 @@ defmodule PappapWeb.Router do
     delete "/entrant/:string", EntrantController, :pass_delete_request
 
     post "/team", TeamController, :create
+    delete "/team", TeamController, :delete
     get "/team/:string", TeamController, :pass_get_request
     post "/team/:string", TeamController, :pass_post_request
 

@@ -5,6 +5,7 @@ defmodule PappapWeb.TeamController do
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
+
   @doc """
   Pass a get request to database server.
   """
@@ -46,12 +47,50 @@ defmodule PappapWeb.TeamController do
   end
 
   @doc """
+  Delete a team.
+  """
+  def pass_delete_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/team/" <> path
+      |> delete_request(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
+  @doc """
   Create a team.
   """
   def create(conn, params) do
     map =
       @db_domain_url <> "/api/team/"
       |> send_json(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
+  @doc """
+  Delete a team
+  """
+  def delete(conn, params) do
+    map =
+      @db_domain_url <> "/api/team/"
+      |> delete_request(params)
 
     case map do
       %{"result" => false, "reason" => _reason} ->
