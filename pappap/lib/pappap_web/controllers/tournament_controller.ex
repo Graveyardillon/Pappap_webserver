@@ -464,4 +464,14 @@ defmodule PappapWeb.TournamentController do
 
     json(conn, %{msg: "done"})
   end
+
+  def debug_tournament_ws(conn, %{"tournament_id" => id, "state" => state}) do
+    IO.inspect(conn, label: :conn)
+    id = unless is_binary(id), do: to_string(id)
+
+    #PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
+    PappapWeb.Endpoint.broadcast("tournament:"<>id, state, %{msg: state, id: id})
+
+    json(conn, %{msg: "done"})
+  end
 end
