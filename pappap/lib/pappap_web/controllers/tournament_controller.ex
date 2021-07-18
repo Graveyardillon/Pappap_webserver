@@ -454,6 +454,16 @@ defmodule PappapWeb.TournamentController do
   end
 
   # DEBUG:
+  def debug_tournament_ws(conn, %{"tournament_id" => id, "state" => state}) do
+    IO.inspect(conn, label: :state_conn)
+    id = unless is_binary(id), do: to_string(id)
+
+    #PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
+    PappapWeb.Endpoint.broadcast("tournament:"<>id, state, %{msg: state, id: id})
+
+    json(conn, %{msg: "done"})
+  end
+
   def debug_tournament_ws(conn, %{"tournament_id" => id}) do
     IO.inspect(conn, label: :conn)
     id = unless is_binary(id), do: to_string(id)
@@ -461,16 +471,6 @@ defmodule PappapWeb.TournamentController do
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_started", %{msg: "debug notification", id: id})
     #PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_finished", %{msg: "debug notification"})
-
-    json(conn, %{msg: "done"})
-  end
-
-  def debug_tournament_ws(conn, %{"tournament_id" => id, "state" => state}) do
-    IO.inspect(conn, label: :conn)
-    id = unless is_binary(id), do: to_string(id)
-
-    #PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
-    PappapWeb.Endpoint.broadcast("tournament:"<>id, state, %{msg: state, id: id})
 
     json(conn, %{msg: "done"})
   end
