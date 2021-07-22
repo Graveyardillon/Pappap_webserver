@@ -5,6 +5,21 @@ defmodule PappapWeb.TeamController do
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
+  def show(conn, params) do
+    map =
+      @db_domain_url <> "/api/team"
+      |> get_parammed_request(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
 
   @doc """
   Pass a get request to database server.
