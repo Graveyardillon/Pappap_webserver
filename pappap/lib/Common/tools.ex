@@ -121,9 +121,9 @@ defmodule Common.Tools do
         end
 
         form = unless file_path == "" do
-          [{:file, file_path}, {"tournament", tournament}]
+          [{:file, file_path}, {"tournament", tournament}, {"token", params["token"]}]
         else
-          [{"file", ""}, {"tournament", tournament}]
+          [{"file", ""}, {"tournament", tournament}, {"token", params["token"]}]
         end
 
         with {:ok, response} <- HTTPoison.post(
