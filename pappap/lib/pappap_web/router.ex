@@ -11,6 +11,7 @@ defmodule PappapWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CORSPlug
   end
 
   scope "/", PappapWeb do
@@ -34,6 +35,7 @@ defmodule PappapWeb.Router do
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
     get  "/user/:string", UserController, :pass_get_request
+    options "/user/:string", UserController, :pass_post_request
     post "/user/:string", UserController, :pass_post_request
     delete "/user/:string", UserController, :pass_delete_request
 
