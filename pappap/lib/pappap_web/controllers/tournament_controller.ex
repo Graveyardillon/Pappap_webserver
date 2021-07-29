@@ -355,7 +355,6 @@ defmodule PappapWeb.TournamentController do
       @db_domain_url <> @api_url <> @tournament_url <> @claim_score
       |> send_json(params)
 
-    IO.inspect(map, label: :map)
     unless map["validated"] do
       map =
         @db_domain_url <> @api_url <> @get_tournament_info_url
@@ -368,7 +367,12 @@ defmodule PappapWeb.TournamentController do
 
     if map["completed"] do
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-      Logger.info("match_finihed notification has been sent.")
+
+      if map["is_finished"] do
+        topic = "tournament:" <> to_string(params["tournament_id"])
+        PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
+        Logger.info("tournament_finished notification has been sent.")
+      end
     end
 
     json(conn, map)
