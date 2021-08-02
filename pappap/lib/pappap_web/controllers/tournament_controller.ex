@@ -99,7 +99,7 @@ defmodule PappapWeb.TournamentController do
       |> IO.inspect(label: :cp)
       "./static/image/tmp/"<>uuid<>".jpg"
     else
-      "./static/image/fire-free.jpg"
+      "./static/image/default_BG.png"
     end
 
     map =
