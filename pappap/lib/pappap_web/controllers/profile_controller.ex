@@ -28,6 +28,7 @@ defmodule PappapWeb.ProfileController do
   Pass a post request to database server.
   """
   def pass_post_request(conn, params) do
+    IO.inspect(params, label: :params)
     path = params["string"]
 
     map =
@@ -75,5 +76,24 @@ defmodule PappapWeb.ProfileController do
       map ->
         json(conn, map)
     end
+  end
+
+  @doc """
+  Updates an icon.
+  """
+  def update_icon(conn, params) do
+    file_path = unless params["image"] == "" do
+      uuid = SecureRandom.uuid()
+      File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
+      "./static/image/tmp/"<>uuid<>".jpg"
+    end
+
+    map =
+      @db_domain_url <> "/api/profile/update_icon"
+      |> send_profile_multipart(params, file_path)
+
+    unless params["image"] == "", do: File.rm(file_path)
+
+    json(conn, map)
   end
 end

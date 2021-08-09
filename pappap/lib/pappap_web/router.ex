@@ -123,6 +123,7 @@ defmodule PappapWeb.Router do
 
     get "/profile", ProfileController, :show
     get  "/profile/:string", ProfileController, :pass_get_request
+    post "/profile/update_icon", ProfileController, :update_icon
     post "/profile/:string", ProfileController, :pass_post_request
     options "/profile/:string", ProfileController, :options
     post "/profile", ProfileController, :send
