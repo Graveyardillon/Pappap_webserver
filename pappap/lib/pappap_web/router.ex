@@ -109,8 +109,8 @@ defmodule PappapWeb.Router do
     post "/team/:string", TeamController, :pass_post_request
     options "/team/:string", TeamController, :options
 
-    post "/register/device", DeviceController, :register_device_id
-    options "/register/device", DeviceController, :options
+    options "/device/:string", DeviceController, :options
+    post "/device/:string", DeviceController, :pass_post_request
 
     get  "/game/:string", GameController, :pass_get_request
     post "/game/:string", GameController, :pass_post_controller

@@ -8,8 +8,26 @@ defmodule PappapWeb.DeviceController do
   }
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
+  @api_url "/api"
 
-  def register_device_id(conn, params \\ %{}) do
+  def pass_post_request(conn, params) do
+    path = params["string"]
+
+    map =
+      @db_domain_url <> "/api/device/" <> path 
+      |> send_json(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
+
+  # def register_device_id(conn, params \\ %{}) do
     # params["device_id"]
     # |> Accounts.from_device_id()
     # |> case do
@@ -26,18 +44,18 @@ defmodule PappapWeb.DeviceController do
     #     json(conn, %{device_id: device.device_id})
     # end
 
-    map = @db_domain_url <> "/api/register/device"
-      |> send_json(params)
+  #   map = @db_domain_url <> "/api/register/device"
+  #     |> send_json(params)
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
-  end
+  #   case map do
+  #     %{"result" => false, "reason" => _reason} ->
+  #       conn
+  #       |> put_status(500)
+  #       |> json(map)
+  #     map ->
+  #       json(conn, map)
+  #   end
+  # end
 
   # 通知送信DEBUG
   def force_notify(conn, params) do
