@@ -121,6 +121,7 @@ defmodule PappapWeb.Router do
     options "/notification/:string", NotificationController, :options
     delete "/notification/:string", NotificationController, :pass_delete_request
 
+    get "/profile", ProfileController, :show
     get  "/profile/:string", ProfileController, :pass_get_request
     post "/profile/:string", ProfileController, :pass_post_request
     options "/profile/:string", ProfileController, :options
