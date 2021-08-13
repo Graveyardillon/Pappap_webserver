@@ -178,14 +178,6 @@ defmodule PappapWeb.TournamentController do
     Logger.info(params["tournament"]["tournament_id"])
     tournament_id = params["tournament"]["tournament_id"]
 
-    params["is_forced"]
-    |> is_nil()
-    |> unless do
-      if params["is_forced"] == true || params["is_forced"] == "1" do
-        cancel_notification(tournament_id)
-      end
-    end
-
     map =
       @db_domain_url <> @api_url <> @tournament_url <> @start_url
       |> send_json(params)
