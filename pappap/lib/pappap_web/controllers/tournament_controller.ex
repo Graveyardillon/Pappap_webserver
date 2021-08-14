@@ -94,9 +94,7 @@ defmodule PappapWeb.TournamentController do
   def create(conn, params) do
     file_path = unless params["image"] == "" do
       uuid = SecureRandom.uuid()
-      IO.inspect(params["image"].path, label: :path)
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
-      |> IO.inspect(label: :cp)
       "./static/image/tmp/"<>uuid<>".jpg"
     else
       "./static/image/default_BG.png"
@@ -105,7 +103,6 @@ defmodule PappapWeb.TournamentController do
     map =
       @db_domain_url <> @api_url <> @tournament_url
       |> send_tournament_multipart(params, file_path)
-      |> IO.inspect(label: :map)
 
     unless params["image"] == "", do: File.rm(file_path)
 

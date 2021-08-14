@@ -83,6 +83,7 @@ defmodule PappapWeb.TeamController do
 
   @doc """
   Create a team.
+  TODO: pendingのチャンネルに参加
   """
   def create(conn, params) do
     map =
