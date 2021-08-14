@@ -101,6 +101,8 @@ defmodule PappapWeb.Router do
     options "/entrant/:string", EntrantController, :options
     delete "/entrant/:string", EntrantController, :pass_delete_request
 
+    post "/team/invitation_confirm", TeamController, :confirm_invitation
+    options "/team/invitation_confirm", TeamController, :options
     post "/team", TeamController, :create
     options "/team", TeamController, :options
     delete "/team", TeamController, :delete

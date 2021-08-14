@@ -117,4 +117,29 @@ defmodule PappapWeb.TeamController do
         json(conn, map)
     end
   end
+
+  @doc """
+  Confirm invitation.
+  """
+  def confirm_invitation(conn, params) do
+    map =
+      @db_domain_url <> "/api/team/invitation_confirm"
+      |> send_json(params)
+
+    if map["is_confirmed"] do
+      IO.inspect(map, label: :worked!)
+      topic = "pending_tournament:#{map["tournament_id"]}"
+      |> IO.inspect()
+      PappapWeb.Endpoint.broadcast(topic, "confirmed", %{tournament_id: params["tournament_id"], msg: "confirmed"})
+    end
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
 end
