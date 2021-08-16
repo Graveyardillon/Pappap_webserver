@@ -57,6 +57,7 @@ defmodule PappapWeb.Router do
     post "/tournament/defeat", TournamentController, :force_to_defeat
     post "/tournament/finish", TournamentController, :finish
     get "/tournament/home/:string", TournamentController, :pass_home_request
+    get "/tournament/url/:url", TournamentController, :redirect_by_url
 
     get  "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request

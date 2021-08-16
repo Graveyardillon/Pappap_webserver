@@ -32,7 +32,8 @@ defmodule Pappap.MixProject do
       extra_applications: [
         :logger,
         :runtime_tools,
-        :httpoison
+        :httpoison,
+        :ua_inspector
       ]
     ]
   end
@@ -65,7 +66,8 @@ defmodule Pappap.MixProject do
       {:pigeon, "~> 1.5.1"},
       {:kadabra, "~> 0.4.4"},
       {:timex, "~> 3.5"},
-      {:cors_plug, "~> 2.0"}
+      {:cors_plug, "~> 2.0"},
+      {:ua_inspector, "~> 2.0"}
     ]
   end
 

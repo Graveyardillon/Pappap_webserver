@@ -467,4 +467,34 @@ defmodule PappapWeb.TournamentController do
 
     json(conn, %{msg: "done"})
   end
+
+  def redirect_by_url(conn, params) do
+    conn
+    |> Map.get(:req_headers)
+    |> Enum.filter(fn header ->
+      header
+      |> elem(0)
+      |> Kernel.==("user-agent")
+    end)
+    |> hd()
+    |> elem(1)
+    |> IO.inspect()
+    |> UAInspector.parse()
+    |> IO.inspect()
+
+    path = params["url"]
+
+    map =
+      @db_domain_url <> "/api/tournament/url/#{path}"
+      |> get_parammed_request(params)
+
+    case map do
+      %{"result" => false, "reason" => _reason} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        json(conn, map)
+    end
+  end
 end
