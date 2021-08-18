@@ -5,6 +5,8 @@ defmodule PappapWeb.TournamentController do
 
   require Logger
 
+  import Common.Sperm
+
   alias Pappap.{
     Accounts,
     Notifications
@@ -484,20 +486,23 @@ defmodule PappapWeb.TournamentController do
     |> Map.get(:os)
     |> Map.get(:name)
     |> IO.inspect()
+    ~> os_name
 
     path = params["url"]
 
-    map =
-      @db_domain_url <> "/api/tournament/url/#{path}"
-      |> get_parammed_request(params)
+    params = Map.put(params, "os_name", os_name)
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
+    @db_domain_url <> "/api/tournament/url/#{path}"
+    |> get_parammed_request(params)
+    ~> map
+    |> case do
+      %{"result" => false} ->
         conn
         |> put_status(500)
         |> json(map)
       map ->
-        json(conn, map)
+        url = map["url"]
+        redirect(conn, external: url)
     end
   end
 end
