@@ -481,6 +481,9 @@ defmodule PappapWeb.TournamentController do
     |> IO.inspect()
     |> UAInspector.parse()
     |> IO.inspect()
+    |> Map.get(:os)
+    |> Map.get(:name)
+    |> IO.inspect()
 
     path = params["url"]
 
