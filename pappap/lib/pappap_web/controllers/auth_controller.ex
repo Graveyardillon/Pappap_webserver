@@ -59,8 +59,9 @@ defmodule PappapWeb.AuthController do
         params = %{
           "notif" => %{
             "user_id" => user_id,
-            "process_code" => 0,
-            "content" => "e-playersへようこそ！\nもしよければコミュニティに参加してアプリの改善に力を貸してください！\nhttps://discord.gg/cfZw6EAYrv",
+            "process_id" => "COMMON",
+            "title" => "e-playersへようこそ！",
+            "body_text" => "もしよければコミュニティに参加してアプリの改善に力を貸してください！\nhttps://discord.gg/cfZw6EAYrv",
             "data" => nil
           }
         }
