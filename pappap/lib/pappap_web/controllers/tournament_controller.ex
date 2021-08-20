@@ -5,6 +5,8 @@ defmodule PappapWeb.TournamentController do
 
   require Logger
 
+  import Common.Sperm
+
   alias Pappap.{
     Accounts,
     Notifications
@@ -466,5 +468,41 @@ defmodule PappapWeb.TournamentController do
     #PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_finished", %{msg: "debug notification"})
 
     json(conn, %{msg: "done"})
+  end
+
+  def redirect_by_url(conn, params) do
+    conn
+    |> Map.get(:req_headers)
+    |> Enum.filter(fn header ->
+      header
+      |> elem(0)
+      |> Kernel.==("user-agent")
+    end)
+    |> hd()
+    |> elem(1)
+    |> IO.inspect()
+    |> UAInspector.parse()
+    |> IO.inspect()
+    |> Map.get(:os)
+    |> Map.get(:name)
+    |> IO.inspect()
+    ~> os_name
+
+    path = params["url"]
+
+    params = Map.put(params, "os_name", os_name)
+
+    @db_domain_url <> "/api/tournament/url/#{path}"
+    |> get_parammed_request(params)
+    ~> map
+    |> case do
+      %{"result" => false} ->
+        conn
+        |> put_status(500)
+        |> json(map)
+      map ->
+        url = map["url"]
+        redirect(conn, external: url)
+    end
   end
 end
