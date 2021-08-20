@@ -65,12 +65,13 @@ defmodule PappapWeb.Router do
     # get  "/tournament/get_game", TournamentController, :get_game
     # TODO: 画像なのでwebserverでもいろいろしないといけない
     # get  "/tournament/get_thumbnail", TournamentController, :get_thumbnail_image
-    # TODO: 動作未確認
-    # post "/tournament/update_tabs", TournamentController, :tournament_update_topics
 
     get  "/relation/:string", RelationController, :pass_get_request
     post "/relation/:string", RelationController, :pass_post_request
     options "/relation/:string", RelationController, :options
+
+    post "/chat/upload/image", ImageController, :upload
+    get "/chat/load/image", ImageController, :load
 
     # TODO: チャットのリクエストのルーティングの、ファイルの中の関数を含めた調整
     get  "/chat/:string", ChatController, :pass_get_request
