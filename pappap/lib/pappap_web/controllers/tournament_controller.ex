@@ -94,17 +94,18 @@ defmodule PappapWeb.TournamentController do
   Creates a tournament.
   """
   def create(conn, params) do
-    file_path = unless params["image"] == "" do
+    unless params["image"] == "" do
       uuid = SecureRandom.uuid()
       File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
       "./static/image/default_BG.png"
     end
+    ~> file_path
 
-    map =
-      @db_domain_url <> @api_url <> @tournament_url
-      |> send_tournament_multipart(params, file_path)
+    @db_domain_url <> @api_url <> @tournament_url
+    |> send_tournament_multipart(params, file_path)
+    ~> map
 
     unless params["image"] == "", do: File.rm(file_path)
 

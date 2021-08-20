@@ -41,6 +41,7 @@ ENV MIX_ENV=prod
 EXPOSE ${PORT}
 WORKDIR /opt/app
 COPY --from=0 /opt/release .
+#RUN mix ua_inspector.download
 CMD (/usr/local/bin/cloud_sql_proxy \
   -projects=${GCLOUD_PROJECT_ID} -dir=/tmp/cloudsql &); \
   exec /opt/app/bin/start_server start
