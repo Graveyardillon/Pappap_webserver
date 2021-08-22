@@ -214,6 +214,48 @@ defmodule Common.Tools do
             }
         end
       end
+
+      def send_chat_image_multipart(url, params, file_path) do
+        content_type = [{"Content-Type", "multipart/form-data"}]
+
+        token = if is_binary(params["token"]) do
+          params["token"]
+        else
+          Poison.encode!(params["token"])
+        end
+
+        form = unless file_path == "" do
+          [{:file, file_path}, {"token", token}]
+        else
+          [{"file", ""}, {"token", token}]
+        end
+
+        with {:ok, response} <- HTTPoison.post(
+          url,
+          {:multipart, form},
+          content_type,
+          [ssl: [{:versions, [:'tlsv1.2']}]]
+        ),
+          {:ok, body} <- Poison.decode(response.body) do
+            body
+          else
+            {:error, {reason, _, _}} ->
+              %{
+                "result" => false,
+                "reason" => reason
+              }
+            {:error, reason} ->
+              %{
+                "result" => false,
+                "reason" => reason
+              }
+            _ ->
+              %{
+                "result" => false,
+                "reason" => "Unexpected error"
+              }
+          end
+      end
     end
   end
 end
