@@ -11,19 +11,17 @@ defmodule PappapWeb.ImageController do
   @upload_url "/chat/upload/image"
   @load_url "/chat/load/image"
 
-  def upload(conn, params = %{"image" => _image_b64}) do
+  def upload(conn, params) do
+    IO.inspect(params, label: :params)
+
     @db_domain_url <> @api_url <> @upload_url
-    |> send_json(params)
+    |> send_chat_image_multipart(params, params["image"].path)
     ~> map
 
     json(conn, map)
   end
 
-  def load(conn, params = %{"path" => _path}) do
-    # File.read!("./static/image/#{path}.png")
-    # |> Base.encode64()
-    # ~> b64
-
+  def load(conn, params) do
     @db_domain_url <> @api_url <> @load_url
     |> get_parammed_request(params)
     ~> map
