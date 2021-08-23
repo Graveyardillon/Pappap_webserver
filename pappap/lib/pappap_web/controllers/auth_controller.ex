@@ -2,6 +2,8 @@ defmodule PappapWeb.AuthController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
   @doc """
@@ -10,18 +12,13 @@ defmodule PappapWeb.AuthController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/user/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/user/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -30,32 +27,26 @@ defmodule PappapWeb.AuthController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/user/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/user/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Signup process
   """
   def signup(conn, params) do
-    map =
-      @db_domain_url <> "/api/user/signup"
-      |> send_json(params)
-      |> IO.inspect()
+    @db_domain_url <> "/api/user/signup"
+    |> send_json(params)
+    ~> response
 
-    if map["result"] do
+    if response.body["result"] do
       Task.async(fn ->
-        user_id = map["data"]["id"]
+        user_id = response.body["data"]["id"]
         params = %{
           "notif" => %{
             "user_id" => user_id,
@@ -71,13 +62,8 @@ defmodule PappapWeb.AuthController do
       end)
     end
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

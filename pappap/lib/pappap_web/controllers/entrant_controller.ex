@@ -2,6 +2,8 @@ defmodule PappapWeb.EntrantController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url) <> "/api"
   @entrant_url "/entrant"
   @entrant_log_url "/entrant_log"
@@ -13,20 +15,14 @@ defmodule PappapWeb.EntrantController do
   """
   def pass_get_request(conn, params) do
     path = params["string"]
-    IO.inspect(path)
 
-    map =
-      @db_domain_url <> "/entrant/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/entrant/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -35,18 +31,13 @@ defmodule PappapWeb.EntrantController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/entrant/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/entrant/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -55,52 +46,37 @@ defmodule PappapWeb.EntrantController do
   def pass_delete_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/entrant/" <> path
-      |> delete_request(params)
+    @db_domain_url <> "/entrant/" <> path
+    |> delete_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def create(conn, params) do
-    map =
-      @db_domain_url <> @entrant_url
-      |> send_json(params)
+    @db_domain_url <> @entrant_url
+    |> send_json(params)
+    ~> response
 
-    if map["result"] do
+    if response.body["result"] do
       @db_domain_url <> @entrant_log_url
-      |> send_json(map)
+      |> send_json(response.body)
     end
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def show_rank(conn, %{"tournament_id" => tournament_id, "user_id" => user_id}) do
-    map =
-      @db_domain_url <> @entrant_url <> @rank_url <> "/" <> to_string(tournament_id) <> "/" <> to_string(user_id)
-      |> get_request()
+    @db_domain_url <> @entrant_url <> @rank_url <> "/" <> to_string(tournament_id) <> "/" <> to_string(user_id)
+    |> get_request()
+    ~> response
 
-      case map do
-        %{"result" => false, "reason" => _reason} ->
-          conn
-          |> put_status(500)
-          |> json(map)
-        map ->
-          json(conn, map)
-      end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

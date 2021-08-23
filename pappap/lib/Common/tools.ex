@@ -15,7 +15,7 @@ defmodule Common.Tools do
         content_type = [{"Content-Type", "application/json"}]
         with {:ok, response} <- HTTPoison.get(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}]]),
         {:ok, body} <- Poison.decode(response.body) do
-          body
+          Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{
@@ -40,7 +40,7 @@ defmodule Common.Tools do
 
         with {:ok, response} <- HTTPoison.get(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
           else
             {:error, {reason, _, _}} ->
               %{
@@ -66,7 +66,7 @@ defmodule Common.Tools do
         with {:ok, attrs} <- Poison.encode(params),
           {:ok, response} <- HTTPoison.post(url, attrs, content_type, [ssl: [{:versions, [:'tlsv1.2']}]]),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{
@@ -91,7 +91,7 @@ defmodule Common.Tools do
 
         with {:ok, response} <- HTTPoison.delete(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
           else
             {:error, {reason, _, _}} ->
               %{
@@ -133,7 +133,7 @@ defmodule Common.Tools do
           [ssl: [{:versions, [:'tlsv1.2']}]]
         ),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{
@@ -159,7 +159,7 @@ defmodule Common.Tools do
         with {:ok, attrs} <- Poison.encode(params),
           {:ok, response} <- HTTPoison.delete(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]),
           {:ok, body} <- Poison.decode(response.body) do
-          body
+            Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{
@@ -195,7 +195,7 @@ defmodule Common.Tools do
           [ssl: [{:versions, [:'tlsv1.2']}]]
         ),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{
@@ -237,7 +237,7 @@ defmodule Common.Tools do
           [ssl: [{:versions, [:'tlsv1.2']}]]
         ),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
           else
             {:error, {reason, _, _}} ->
               %{

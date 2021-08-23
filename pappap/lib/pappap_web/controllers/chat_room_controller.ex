@@ -2,6 +2,8 @@ defmodule PappapWeb.ChatRoomController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
   @doc """
@@ -10,18 +12,13 @@ defmodule PappapWeb.ChatRoomController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/chat_room/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/chat_room/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -30,35 +27,25 @@ defmodule PappapWeb.ChatRoomController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/chat_room/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/chat_room/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Show chat room.
   """
   def show(conn, params) do
-    map =
-      @db_domain_url <> "/api/chat_room"
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/chat_room"
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

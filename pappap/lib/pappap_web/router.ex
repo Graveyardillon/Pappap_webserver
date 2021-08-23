@@ -150,7 +150,7 @@ defmodule PappapWeb.Router do
     post "/dtw", TournamentController, :debug_tournament_ws
 
     post "/match", ReportController, :register_match
-    post "/report", ReportController, :report
+    #post "/report", ReportController, :report
   end
 
   # Enables LiveDashboard only for development

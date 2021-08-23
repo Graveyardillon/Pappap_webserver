@@ -36,18 +36,13 @@ defmodule PappapWeb.TournamentController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/tournament/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/tournament/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -56,18 +51,13 @@ defmodule PappapWeb.TournamentController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/tournament/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/tournament/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -76,18 +66,13 @@ defmodule PappapWeb.TournamentController do
   def pass_home_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/tournament/home/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/tournament/home/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -105,11 +90,13 @@ defmodule PappapWeb.TournamentController do
 
     @db_domain_url <> @api_url <> @tournament_url
     |> send_tournament_multipart(params, file_path)
-    ~> map
+    ~> response
 
     unless params["image"] == "", do: File.rm(file_path)
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   defp notify_followers_tournament_plans(followers) do
@@ -175,20 +162,20 @@ defmodule PappapWeb.TournamentController do
   Starts a tournament.
   """
   def start(conn, params) do
-    Logger.info(params["tournament"]["tournament_id"])
     tournament_id = params["tournament"]["tournament_id"]
 
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @start_url
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @start_url
+    |> send_json(params)
+    ~> response
 
-    if map["result"] do
+    if response.body["result"] do
       topic = "tournament:" <> to_string(tournament_id)
       PappapWeb.Endpoint.broadcast(topic, "tournament_started", %{msg: "tournament started", id: tournament_id})
-      Logger.info("tournament_started notification has been sent.")
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   defp cancel_notification(tournament_id) do
@@ -213,28 +200,31 @@ defmodule PappapWeb.TournamentController do
   Deletes losers.
   """
   def delete_loser(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+    |> send_json(params)
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Starts a match.
   """
   def start_match(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @start_match_url
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @start_match_url
+    |> send_json(params)
+    ~> response
 
-    if map["result"] do
+    if response.body["result"] do
       topic = "tournament:" <> to_string(params["tournament_id"])
       PappapWeb.Endpoint.broadcast(topic, "match_started", %{msg: "match started"})
-      Logger.info("match_started notification has been sent.")
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -247,42 +237,42 @@ defmodule PappapWeb.TournamentController do
 
     topic = "tournament:" <> to_string(tournament_id)
 
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @claim_win
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @claim_win
+    |> send_json(params)
+    ~> response
 
-    unless map["validated"] do
-      map =
-        @db_domain_url <> @api_url <> @get_tournament_info_url
-        |> get_parammed_request(%{"tournament_id" => tournament_id})
+    unless response.body["validated"] do
+      @db_domain_url <> @api_url <> @get_tournament_info_url
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
+      ~> response
 
       push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
     end
 
-    if map["completed"] do
-      map =
-        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-        |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+    if response.body["completed"] do
+      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+      |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
+      ~> response
 
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-      Logger.info("match_finihed notification has been sent.")
 
-      updated_match_list = map["updated_match_list"]
+      updated_match_list = response.body["updated_match_list"]
       if is_integer(updated_match_list) do
-        map =
-          @db_domain_url <> @api_url <> @tournament_url <> @finish
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => user_id})
+        @db_domain_url <> @api_url <> @tournament_url <> @finish
+        |> send_json(%{"tournament_id" => tournament_id, "user_id" => user_id})
+        ~> response
 
-        if map["result"] do
+        if response.body["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])
           PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-          Logger.info("tournament_finished notification has been sent.")
         end
       end
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -295,42 +285,42 @@ defmodule PappapWeb.TournamentController do
 
     topic = "tournament:" <> to_string(tournament_id)
 
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
+    |> send_json(params)
+    ~> response
 
-    unless map["validated"] do
-      map =
-        @db_domain_url <> @api_url <> @get_tournament_info_url
-        |> get_parammed_request(%{"tournament_id" => tournament_id})
+    unless response.body["validated"] do
+      @db_domain_url <> @api_url <> @get_tournament_info_url
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
+      ~> response
 
       push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
     end
 
-    if map["completed"] do
-      map =
-        @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-        |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
+    if response.body["completed"] do
+      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
+      |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
+      ~> response
 
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-      Logger.info("match_finihed notification has been sent.")
 
-      updated_match_list = map["updated_match_list"]
+      updated_match_list = response.body["updated_match_list"]
       if is_integer(updated_match_list) do
-        map =
-          @db_domain_url <> @api_url <> @tournament_url <> @finish
-          |> send_json(%{"tournament_id" => tournament_id, "user_id" => opponent_id})
+        @db_domain_url <> @api_url <> @tournament_url <> @finish
+        |> send_json(%{"tournament_id" => tournament_id, "user_id" => opponent_id})
+        ~> response
 
-        if map["result"] do
+        if response.body["result"] do
           topic = "tournament:" <> to_string(params["tournament_id"])
           PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-          Logger.info("tournament_finished notification has been sent.")
         end
       end
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -343,40 +333,40 @@ defmodule PappapWeb.TournamentController do
 
     topic = "tournament:" <> to_string(tournament_id)
 
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @claim_score
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @claim_score
+    |> send_json(params)
+    ~> response
 
-    unless map["validated"] do
-      map =
-        @db_domain_url <> @api_url <> @get_tournament_info_url
-        |> get_parammed_request(%{"tournament_id" => tournament_id})
+    unless response.body["validated"] do
+      @db_domain_url <> @api_url <> @get_tournament_info_url
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
+      ~> response
 
       push_notification_on_game_masters(tournament_id)
-      IO.inspect(topic, label: :topic)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: map["data"]["master_id"]})
+      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
     end
 
-    if map["completed"] do
+    if response.body["completed"] do
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
-      if map["is_finished"] do
+      if response.body["is_finished"] do
         topic = "tournament:" <> to_string(params["tournament_id"])
         PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-        Logger.info("tournament_finished notification has been sent.")
       end
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   defp push_notification_on_game_masters(tournament_id) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @masters
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
+    @db_domain_url <> @api_url <> @tournament_url <> @masters
+    |> get_parammed_request(%{"tournament_id" => tournament_id})
+    ~> response
 
-    if is_list(map["data"]) do
-      map["data"]
+    if is_list(response.body["data"]) do
+      response.body["data"]
       |> IO.inspect()
       |> Enum.each(fn master ->
         master["id"]
@@ -391,10 +381,11 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp get_duplicate_users(tournament_id) do
-    data =
-      @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
-      |> Map.get("data")
+    @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
+    |> get_parammed_request(%{"tournament_id" => tournament_id})
+    |> Map.get(:body)
+    |> Map.get("data")
+    ~> data
 
     unless is_nil(data) do
       Enum.reduce(data, "", fn user, acc ->
@@ -409,44 +400,51 @@ defmodule PappapWeb.TournamentController do
   Force to defeat a user.
   """
   def force_to_defeat(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @force_to_defeat
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @force_to_defeat
+    |> send_json(params)
+    ~> response
 
-    if map["result"] do
+    if response.body["result"] do
       topic = "tournament:" <> to_string(params["tournament_id"])
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Finishes a tournament.
   """
   def finish(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @tournament_url <> @finish
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @tournament_url <> @finish
+    |> send_json(params)
+    ~> response
+
     id = params["tournament_id"]
 
-    if map["result"] do
+    if response.body["result"] do
       topic = "tournament:" <> to_string(id)
       PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished", id: id})
     end
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Report
   """
   def report(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @report
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @report
+    |> send_json(params)
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   # DEBUG:
@@ -495,15 +493,10 @@ defmodule PappapWeb.TournamentController do
 
     @db_domain_url <> "/api/tournament/url/#{path}"
     |> get_parammed_request(params)
-    ~> map
-    |> case do
-      %{"result" => false} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        url = map["url"]
-        redirect(conn, external: url)
-    end
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

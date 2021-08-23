@@ -2,6 +2,8 @@ defmodule PappapWeb.ChatController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @chats_url "/chat"
@@ -19,18 +21,13 @@ defmodule PappapWeb.ChatController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/chat/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/chat/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -39,76 +36,79 @@ defmodule PappapWeb.ChatController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/chat/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/chat/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Delete a chat.
   """
   def delete(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @delete
-      |> delete_request(params)
+    @db_domain_url <> @api_url <> @delete
+    |> delete_request(params)
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def create_chatroom(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @chat_room_url
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @chat_room_url
+    |> send_json(params)
+    ~> response
 
-    @db_domain_url <> @api_url <> @chat_room_log_url
-    |> send_json(map)
-
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def create_chats(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @chats_url
-      |> send_json(params)
+    @db_domain_url <> @api_url <> @chats_url
+    |> send_json(params)
+    ~> response
 
-    index =
-      Map.get(map, "data")
-      |> Map.get("index")
+    # index =
+    #   Map.get(map, "data")
+    #   |> Map.get("index")
 
-    merged_map =
-      Map.get(params, "chat")
-      |> Map.put("index", index)
+    # merged_map =
+    #   Map.get(params, "chat")
+    #   |> Map.put("index", index)
 
-    @db_domain_url <> @api_url <> @chats_log_url
-    |> send_json(merged_map)
+    # @db_domain_url <> @api_url <> @chats_log_url
+    # |> send_json(merged_map)
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def create_chatmember(conn, params) do
-    map =
-      @db_domain_url <> @api_url <> @chat_member_url
-      |> send_json(params)
-    @db_domain_url <> @api_url <> @chat_member_log_url
-    |> send_json(map)
+    @db_domain_url <> @api_url <> @chat_member_url
+    |> send_json(params)
+    ~> response
 
-    json(conn, map)
+    # @db_domain_url <> @api_url <> @chat_member_log_url
+    # |> send_json(map)
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def private_rooms(conn, %{"user_id" => user_id}) do
-    map =
-      @db_domain_url <> @api_url <> @private_rooms <> "?user_id=" <> to_string(user_id)
-      |> get_request()
+    @db_domain_url <> @api_url <> @private_rooms <> "?user_id=" <> to_string(user_id)
+    |> get_request()
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end
