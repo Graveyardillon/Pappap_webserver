@@ -16,16 +16,20 @@ defmodule PappapWeb.ImageController do
 
     @db_domain_url <> @api_url <> @upload_url
     |> send_chat_image_multipart(params, params["image"].path)
-    ~> map
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def load(conn, params) do
     @db_domain_url <> @api_url <> @load_url
     |> get_parammed_request(params)
-    ~> map
+    ~> response
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

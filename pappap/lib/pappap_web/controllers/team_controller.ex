@@ -3,21 +3,18 @@ defmodule PappapWeb.TeamController do
   use Common.Tools
   use Timex
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
   def show(conn, params) do
-    map =
-      @db_domain_url <> "/api/team"
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/team"
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
 
@@ -27,18 +24,13 @@ defmodule PappapWeb.TeamController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/team/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/team/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -47,18 +39,13 @@ defmodule PappapWeb.TeamController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/team/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/team/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -67,18 +54,13 @@ defmodule PappapWeb.TeamController do
   def pass_delete_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/team/" <> path
-      |> delete_request(params)
+    @db_domain_url <> "/team/" <> path
+    |> delete_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -86,60 +68,43 @@ defmodule PappapWeb.TeamController do
   TODO: pendingのチャンネルに参加
   """
   def create(conn, params) do
-    map =
-      @db_domain_url <> "/api/team/"
-      |> send_json(params)
+    @db_domain_url <> "/api/team/"
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Delete a team
   """
   def delete(conn, params) do
-    map =
-      @db_domain_url <> "/api/team/"
-      |> delete_request(params)
+    @db_domain_url <> "/api/team/"
+    |> delete_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Confirm invitation.
   """
   def confirm_invitation(conn, params) do
-    map =
-      @db_domain_url <> "/api/team/invitation_confirm"
-      |> send_json(params)
+    @db_domain_url <> "/api/team/invitation_confirm"
+    |> send_json(params)
+    ~> response
 
-    if map["is_confirmed"] do
-      IO.inspect(map, label: :worked!)
-      topic = "pending_tournament:#{map["tournament_id"]}"
-      |> IO.inspect()
+    if response.body["is_confirmed"] do
+      topic = "pending_tournament:#{response.body["tournament_id"]}"
       PappapWeb.Endpoint.broadcast(topic, "confirmed", %{tournament_id: params["tournament_id"], msg: "confirmed"})
     end
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

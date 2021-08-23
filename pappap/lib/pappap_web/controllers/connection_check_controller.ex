@@ -2,6 +2,8 @@ defmodule PappapWeb.ConnectionCheckController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @connection_check "/check/connection"
@@ -11,16 +13,12 @@ defmodule PappapWeb.ConnectionCheckController do
   """
   def connection_check(conn, _params) do
     map =
-      @db_domain_url <> @api_url <> @connection_check
-      |> get_request()
+    @db_domain_url <> @api_url <> @connection_check
+    |> get_request()
+    ~> response
 
-    case map do
-      %{"result" => false} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

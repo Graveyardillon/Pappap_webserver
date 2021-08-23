@@ -2,6 +2,8 @@ defmodule PappapWeb.ProfileController do
   use PappapWeb, :controller
   use Common.Tools
 
+  import Common.Sperm
+
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
 
   @doc """
@@ -10,72 +12,51 @@ defmodule PappapWeb.ProfileController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/profile/" <> path
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/profile/" <> path
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Pass a post request to database server.
   """
   def pass_post_request(conn, params) do
-    IO.inspect(params, label: :params)
     path = params["string"]
 
-    map =
-      @db_domain_url <> "/api/profile/" <> path
-      |> send_json(params)
+    @db_domain_url <> "/api/profile/" <> path
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   def send(conn, params) do
-    map =
-      @db_domain_url <> "/api/profile"
-      |> send_json(params)
+    @db_domain_url <> "/api/profile"
+    |> send_json(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
   Show profile
   """
   def show(conn, params) do
-    map =
-      @db_domain_url <> "/api/profile"
-      |> get_parammed_request(params)
+    @db_domain_url <> "/api/profile"
+    |> get_parammed_request(params)
+    ~> response
 
-    case map do
-      %{"result" => false, "reason" => _reason} ->
-        conn
-        |> put_status(500)
-        |> json(map)
-      map ->
-        json(conn, map)
-    end
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   @doc """
@@ -88,12 +69,14 @@ defmodule PappapWeb.ProfileController do
       "./static/image/tmp/"<>uuid<>".jpg"
     end
 
-    map =
-      @db_domain_url <> "/api/profile/update_icon"
-      |> send_profile_multipart(params, file_path)
+    @db_domain_url <> "/api/profile/update_icon"
+    |> send_profile_multipart(params, file_path)
+    ~> response
 
     unless params["image"] == "", do: File.rm(file_path)
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end
