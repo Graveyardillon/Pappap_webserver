@@ -133,7 +133,7 @@ defmodule Common.Tools do
           [ssl: [{:versions, [:'tlsv1.2']}]]
         ),
           {:ok, body} <- Poison.decode(response.body) do
-            body
+            Map.put(response, :body, body)
         else
           {:error, {reason, _, _}} ->
             %{

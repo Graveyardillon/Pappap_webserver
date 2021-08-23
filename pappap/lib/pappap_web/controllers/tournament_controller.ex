@@ -105,11 +105,14 @@ defmodule PappapWeb.TournamentController do
 
     @db_domain_url <> @api_url <> @tournament_url
     |> send_tournament_multipart(params, file_path)
-    ~> map
+    |> IO.inspect()
+    ~> response
 
     unless params["image"] == "", do: File.rm(file_path)
 
-    json(conn, map)
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
   defp notify_followers_tournament_plans(followers) do
