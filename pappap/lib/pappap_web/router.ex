@@ -132,6 +132,7 @@ defmodule PappapWeb.Router do
     options "/profile/:string", ProfileController, :options
     post "/profile", ProfileController, :send
     options "/profile", ProfileController, :options
+    delete "/profile/:string", ProfileController, :pass_delete_request
 
     post "/sync", SyncController, :sync
     options "/sync", SyncController, :options
