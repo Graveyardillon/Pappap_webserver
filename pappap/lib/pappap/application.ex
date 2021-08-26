@@ -18,7 +18,11 @@ defmodule Pappap.Application do
       # Start a worker by calling: Pappap.Worker.start_link(arg)
       #Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
       PappapWeb.Presence,
-      {Task, fn -> UAInspector.Downloader.download() end}
+      {Task, fn ->
+        IO.inspect("uainspector will download")
+        UAInspector.Downloader.download()
+        |> IO.inspect()
+      end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
