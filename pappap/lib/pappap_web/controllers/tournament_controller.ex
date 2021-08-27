@@ -494,9 +494,15 @@ defmodule PappapWeb.TournamentController do
     @db_domain_url <> "/api/tournament/url/#{path}"
     |> get_parammed_request(params)
     ~> response
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
+    |> Map.get(:body)
+    |> case do
+      %{"result" => false} ->
+        conn
+        |> put_status(response.status_code)
+        |> json(map)
+      map ->
+        url = map["url"]
+        redirect(conn, external: url)
+    end
   end
 end
