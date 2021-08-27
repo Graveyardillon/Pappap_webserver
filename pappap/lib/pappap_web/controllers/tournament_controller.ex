@@ -499,7 +499,7 @@ defmodule PappapWeb.TournamentController do
       %{"result" => false} ->
         conn
         |> put_status(response.status_code)
-        |> json(map)
+        |> json(response.body)
       map ->
         url = map["url"]
         redirect(conn, external: url)

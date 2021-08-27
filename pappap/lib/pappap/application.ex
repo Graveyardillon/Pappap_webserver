@@ -17,12 +17,12 @@ defmodule Pappap.Application do
       PappapWeb.Endpoint,
       # Start a worker by calling: Pappap.Worker.start_link(arg)
       #Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
-      # PappapWeb.Presence,
-      # {Task, fn ->
-      #   IO.inspect("uainspector will download")
-      #   UAInspector.Downloader.download()
-      #   |> IO.inspect()
-      # end}
+      PappapWeb.Presence,
+      {Task, fn ->
+        IO.inspect("uainspector will be downloaded")
+        UAInspector.Downloader.download()
+        |> IO.inspect()
+      end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
