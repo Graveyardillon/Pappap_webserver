@@ -1,4 +1,4 @@
-defmodule PappapWeb.RelationController do
+defmodule PappapWeb.GameController do
   use PappapWeb, :controller
   use Common.Tools
 
@@ -12,7 +12,7 @@ defmodule PappapWeb.RelationController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/relation/" <> path
+    @db_domain_url <> "/api/game/" <> path
     |> get_parammed_request(params)
     ~> response
 
@@ -27,7 +27,7 @@ defmodule PappapWeb.RelationController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/relation/" <> path
+    @db_domain_url <> "/api/game/" <> path
     |> send_json(params)
     ~> response
 

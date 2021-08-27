@@ -1,30 +1,42 @@
 defmodule Pappap.Notifications do
-  alias Pappap.Notifications
-  alias Pappap.Accounts
   use Common.Tools
+
+  require Logger
+
+  alias Pappap.{
+    Notifications,
+    Accounts
+  }
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
-  @create_notif "/notif/create"
-  @create_log "/notif_log/create"
+  @create_notif "/notification/create"
+  @create_log "/notification_log/create"
 
-  def topic, do: "Papillon-inc.eplayers"
+  def topic, do: "PapillonKK.e-players"
 
-  def push(message, device_id, process_code, data \\ "") do
-    Pigeon.APNS.Notification.new(message, device_id, Notifications.topic())
+  def create(user_id, message, process_id \\ -1, data \\ "") do
+    params = %{"notif" => %{"user_id" => user_id, "title" => message, "process_id" => process_id, "data" => data}}
+
+    @db_domain_url <> @api_url <> @create_notif
+    |> send_json(params)
+    # @db_domain_url <> @api_url <> @create_log
+    # |> send_json(params)
+  end
+
+  def push(message, device_id, process_id \\ -1, data \\ "") do
+    message
+    |> Pigeon.APNS.Notification.new(device_id, Notifications.topic())
+    |> Pigeon.APNS.Notification.put_alert(%{"body" => message, "title" => "ユーザー名"})
     |> Pigeon.APNS.push()
 
     device = Accounts.from_device_id(device_id)
-      params = %{"notif" => %{"user_id" => device.user_id, "content" => message, "process_code" => process_code, "data" => data}}
+    params = %{"notif" => %{"user_id" => device.user_id, "content" => message, "process_id" => process_id, "data" => data}}
+    Logger.debug("通知を" <> to_string(device.user_id) <> "に送信しました。")
 
-    Task.start_link(fn -> 
+    Task.async(fn ->
       @db_domain_url <> @api_url <> @create_notif
-        |> send_json(params)
-    end)
-
-    Task.start_link(fn -> 
-      @db_domain_url <> @api_url <> @create_log
-        |> send_json(params)
+      |> send_json(params)
     end)
   end
 end

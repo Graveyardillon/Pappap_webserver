@@ -20,3 +20,4 @@ config :pappap, Pappap.Repo,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+config :pappap, :db_domain_url, "http://localhost:4000"

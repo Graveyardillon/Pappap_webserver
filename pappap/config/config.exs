@@ -26,26 +26,27 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Configuration for deployment.
-# config :pigeon, :apns,
-#   apns_default: %{
-#     key: "lib/pappap-0.1.3/priv/cert/AuthKey_5KHYB5J926.p8",
-#     key_identifier: "5KHYB5J926",
-#     team_id: "32B5DRP9TS",
-#     mode: :prod
-#   }
+remote_database = "https://raw.githubusercontent.com/matomo-org/device-detector/3.13.1/regexes"
+remote_shortcode = "https://raw.githubusercontent.com/matomo-org/device-detector/3.13.1"
 
-config :pigeon, :apns,
- apns_default: %{
-   key: "priv/cert/AuthKey_5KHYB5J926.p8",
-   key_identifier: "5KHYB5J926",
-   team_id: "32B5DRP9TS",
-   mode: :dev
- }
+config :ua_inspector,
+  # database_path: Application.app_dir(:ua_inspector, "priv"),
+  # http_opts: [],
+  database_path: remote_database,
+  remote_path: [
+    bot: remote_database,
+    browser_engine: remote_database <> "/client",
+    client: remote_database <> "/client",
+    device: remote_database <> "/device",
+    os: remote_database,
+    short_code_map: remote_shortcode,
+    vendor_fragment: remote_database
+  ],
+  remote_release: "3.13.1",
+  startup_silent: false,
+  startup_sync: true,
+  yaml_file_reader: {:yamerl_constr, :file, [[:str_node_as_binary]]}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
-
-#config :pappap, :db_domain_url, "http://34.84.190.238"
-config :pappap, :db_domain_url, "http://localhost:4000"

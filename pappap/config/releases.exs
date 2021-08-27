@@ -25,9 +25,9 @@ import Config
 
 config :pappap, Pappap.Repo,
   username: "postgres",
-  password: "K42etH0my05kE",
-  database: "pappap",
-  socket_dir: "/tmp/cloudsql/e-players-293208:asia-northeast1:pappapdb",
+  password: "postgres",
+  database: "pappapdb",
+  socket_dir: "/tmp/cloudsql/e-players6814:asia-northeast1:pappapdb",
   pool_size: 10
 
 config :pappap, PappapWeb.Endpoint,
@@ -38,6 +38,14 @@ config :pappap, PappapWeb.Endpoint,
   root: ".",
   secret_key_base: "jNdYCx7OQTVpeGd5gH2Mto+spavwuG6RzMFE4+UAH/QgP8C5EP4BLcVCyWSkv+TI"
 
+config :pigeon, :apns,
+  apns_default: %{
+    key: "lib/pappap-0.1.0/priv/cert/AuthKey_MHN824H499.p8",
+    key_identifier: "MHN824H499",
+    team_id: "6ZMC8WKZZQ",
+    mode: :prod
+  }
+config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
 
 # ## Using releases (Elixir v1.9+)
 #

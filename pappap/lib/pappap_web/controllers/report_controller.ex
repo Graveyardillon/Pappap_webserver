@@ -2,16 +2,16 @@ defmodule PappapWeb.ReportController do
   use PappapWeb, :controller
   use Common.Tools
 
-  def register_match(conn, %{"match" => match_params}) do
-    id =
-      :ets.match(:match_result, {"last_match", :"$1"})
-      |>hd()
-      |>hd()
-      |>Kernel.+(1)
-      |>insert_with_number(match_params)
-    :ets.insert(:match_result, {"last_match", id})
-    json(conn, %{match_id: id})
-  end
+  # def register_match(conn, %{"match" => match_params}) do
+  #   id =
+  #     :ets.match(:match_result, {"last_match", :"$1"})
+  #     |> hd()
+  #     |> hd()
+  #     |> Kernel.+(1)
+  #     |> insert_with_number(match_params)
+  #   :ets.insert(:match_result, {"last_match", id})
+  #   json(conn, %{match_id: id})
+  # end
 
   def report(conn, %{"report" => result_params}) do
     [{id, players, result}] = :ets.lookup(:match_result, result_params["id"])

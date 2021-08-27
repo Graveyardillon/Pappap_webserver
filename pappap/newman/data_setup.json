@@ -34,7 +34,7 @@
         ],
         "body": {
 	  "mode": "raw",
-	  "raw": "{\"device_id\": \"321c52013bd44e18a471478cb8c82e88385810a086f8fa8b06ae5dbea1aa0345\", \"user_id\": 2}"
+	  "raw": "{\"device_id\": \"321c55003bd44e18a471478cb8c82e88385810a086f8fa8b06ae5dbea1aa0345\", \"user_id\": 2}"
         }
       }
     }

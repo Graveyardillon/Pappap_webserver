@@ -1,8 +1,10 @@
 defmodule PappapWeb.TournamentChannel do
   use PappapWeb, :channel
+  require Logger
 
   @impl true
-  def join("tournament:" <> _tournament_id, %{"user_id" => user_id}, socket) do
+  def join("tournament:" <> tournament_id, %{"user_id" => user_id}, socket) do
+    Logger.info("user #{user_id} has joined tournament #{tournament_id}")
     if authorized?(user_id) do
       {:ok, socket}
     else
@@ -14,6 +16,7 @@ defmodule PappapWeb.TournamentChannel do
   # by sending replies to requests from the client
   @impl true
   def handle_in("ping", payload, socket) do
+    PappapWeb.Endpoint.broadcast("tournament:1", "new_msg", %{payload: payload})
     {:reply, {:ok, payload}, socket}
   end
 
@@ -31,7 +34,7 @@ defmodule PappapWeb.TournamentChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(user_id) do
+  defp authorized?(_user_id) do
     true
   end
 end

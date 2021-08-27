@@ -4,7 +4,7 @@ defmodule Pappap.MixProject do
   def project do
     [
       app: :pappap,
-      version: "0.1.3",
+      version: "0.1.0",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -30,9 +30,10 @@ defmodule Pappap.MixProject do
     [
       mod: {Pappap.Application, []},
       extra_applications: [
-        :logger, 
+        :logger,
         :runtime_tools,
-        :httpoison
+        :httpoison,
+        :ua_inspector
       ]
     ]
   end
@@ -56,14 +57,17 @@ defmodule Pappap.MixProject do
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
+      {:hackney, "~> 1.17"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:httpoison, "~> 1.7"},
+      {:httpoison, "~> 1.8"},
       {:poison, "~> 3.1"},
       {:secure_random, "~> 0.5"},
       {:pigeon, "~> 1.5.1"},
       {:kadabra, "~> 0.4.4"},
-      {:timex, "~> 3.5"}
+      {:timex, "~> 3.5"},
+      {:cors_plug, "~> 2.0"},
+      {:ua_inspector, "~> 2.0"}
     ]
   end
 
@@ -78,7 +82,14 @@ defmodule Pappap.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      check: [
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "credo --strict",
+        "coveralls.html",
+        "dialyzer --format short"
+      ]
     ]
   end
 end

@@ -11,6 +11,7 @@ defmodule PappapWeb.ChatChannel do
     {:ok, socket}
   end
 
+  # FIXME: もしかしたら冗長かもしれない
   def handle_in("new_chat", payload, socket) do
     payload
     |> Map.has_key?("chat")
@@ -37,31 +38,33 @@ defmodule PappapWeb.ChatChannel do
 
         members
         |> is_list()
-        |> (if do
+        |> if do
           members
           |> Enum.each(fn member_id ->
-            Accounts.get_devices_by_user_id(member_id)
-            |> notify(message, member_id)
+            member_id
+            |> Accounts.get_devices_by_user_id()
+            |> case do
+              [] -> Notifications.create(member_id, message, 4, member_id)
+              device_list when is_list(device_list)
+                -> notify(device_list, message, member_id)
+            end
           end)
-        end)
+        end
 
         broadcast!(socket, "new_chat", %{payload: payload})
       else
         {:error, _} -> Logger.error("Error on sending group chat")
         _ -> Logger.error("Unexpected error on sending chat")
       end
-      
+
       {:noreply, socket}
     end)
   end
 
   defp notify(device_list, message, user_id) do
-    device_list
-    |> Enum.empty?()
-    |> (unless do
-      # XXX: デバイス２つ以上使ってる人は通知がおかしくなるかも
-      device = hd(device_list)
-      Notifications.push(message, device.device_id, 4, user_id)
-    end)
+    # device_list
+    # |> Enum.each(fn device ->
+    #   Notifications.push(message, device.device_id, 4, user_id)
+    # end)
   end
 end

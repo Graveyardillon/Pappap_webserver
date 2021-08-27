@@ -1,26 +1,35 @@
 defmodule PappapWeb.ImageController do
   use PappapWeb, :controller
+  use Common.Tools
 
-  def upload(conn, %{"image_b64" => image_b64}) do
-    if String.starts_with?(image_b64, "data:image/png;base64,") do
-      "data:image/png;base64," <> raw = image_b64
-      uuid = SecureRandom.uuid()
-      File.write!("./static/image/#{uuid}.png", Base.decode64!(raw))
+  import Common.Sperm
 
-      render(conn, %{local_path: uuid})
-    else
-      raw = image_b64
-      uuid = SecureRandom.uuid()
-      File.write!("./static/image/#{uuid}.png", Base.decode64!(raw))
+  #alias Common.FileUtils
 
-      render(conn, %{local_path: uuid})
-    end
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
+  @api_url "/api"
+  @upload_url "/chat/upload/image"
+  @load_url "/chat/load/image"
+
+  def upload(conn, params) do
+    IO.inspect(params, label: :params)
+
+    @db_domain_url <> @api_url <> @upload_url
+    |> send_chat_image_multipart(params, params["image"].path)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
-  def load(conn, %{"path" => path}) do
-    b64 = File.read!("./static/image/#{path}.png")
-          |> Base.encode64()
+  def load(conn, params) do
+    @db_domain_url <> @api_url <> @load_url
+    |> get_parammed_request(params)
+    ~> response
 
-    render(conn, %{b64: b64})
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 end

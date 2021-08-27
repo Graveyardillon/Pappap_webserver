@@ -1,13 +1,22 @@
-defmodule PappapWeb.UserController do
+defmodule PappapWeb.TeamController do
   use PappapWeb, :controller
   use Common.Tools
+  use Timex
 
   import Common.Sperm
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
-  @get_url "/user/get"
-  @get_with_room_id_url "/chat_room/private_room"
+
+  def show(conn, params) do
+    @db_domain_url <> "/api/team"
+    |> get_parammed_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
 
   @doc """
   Pass a get request to database server.
@@ -15,7 +24,7 @@ defmodule PappapWeb.UserController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/user/" <> path
+    @db_domain_url <> "/api/team/" <> path
     |> get_parammed_request(params)
     ~> response
 
@@ -30,7 +39,7 @@ defmodule PappapWeb.UserController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/user/" <> path
+    @db_domain_url <> "/api/team/" <> path
     |> send_json(params)
     ~> response
 
@@ -39,11 +48,14 @@ defmodule PappapWeb.UserController do
     |> json(response.body)
   end
 
+  @doc """
+  Delete a team.
+  """
   def pass_delete_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/user/" <> path
-    |> delete_parammed_request(params)
+    @db_domain_url <> "/team/" <> path
+    |> delete_request(params)
     ~> response
 
     conn
@@ -51,30 +63,45 @@ defmodule PappapWeb.UserController do
     |> json(response.body)
   end
 
-  def get(conn, %{"id" => id}) do
-    @db_domain_url <> @api_url <> @get_url <> "?id=" <> to_string(id)
-    |> get_request()
-    ~> response
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  def get_with_room_id(conn, %{"my_id" => my_id, "partner_id" => partner_id}) do
-    @db_domain_url <> @api_url <> @get_with_room_id_url <> "?my_id=" <> to_string(my_id) <> "&partner_id=" <> partner_id
-    |> get_request()
-    ~> response
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  def report(conn, params) do
-    @db_domain_url <> "/api/user_report"
+  @doc """
+  Create a team.
+  TODO: pendingのチャンネルに参加
+  """
+  def create(conn, params) do
+    @db_domain_url <> "/api/team/"
     |> send_json(params)
     ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
+  @doc """
+  Delete a team
+  """
+  def delete(conn, params) do
+    @db_domain_url <> "/api/team/"
+    |> delete_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
+  @doc """
+  Confirm invitation.
+  """
+  def confirm_invitation(conn, params) do
+    @db_domain_url <> "/api/team/invitation_confirm"
+    |> send_json(params)
+    ~> response
+
+    if response.body["is_confirmed"] do
+      topic = "pending_tournament:#{response.body["tournament_id"]}"
+      PappapWeb.Endpoint.broadcast(topic, "confirmed", %{tournament_id: params["tournament_id"], msg: "confirmed"})
+    end
 
     conn
     |> put_status(response.status_code)

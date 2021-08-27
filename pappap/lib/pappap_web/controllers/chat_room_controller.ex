@@ -1,4 +1,4 @@
-defmodule PappapWeb.RelationController do
+defmodule PappapWeb.ChatRoomController do
   use PappapWeb, :controller
   use Common.Tools
 
@@ -12,7 +12,7 @@ defmodule PappapWeb.RelationController do
   def pass_get_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/relation/" <> path
+    @db_domain_url <> "/api/chat_room/" <> path
     |> get_parammed_request(params)
     ~> response
 
@@ -27,8 +27,21 @@ defmodule PappapWeb.RelationController do
   def pass_post_request(conn, params) do
     path = params["string"]
 
-    @db_domain_url <> "/api/relation/" <> path
+    @db_domain_url <> "/api/chat_room/" <> path
     |> send_json(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
+  @doc """
+  Show chat room.
+  """
+  def show(conn, params) do
+    @db_domain_url <> "/api/chat_room"
+    |> get_parammed_request(params)
     ~> response
 
     conn

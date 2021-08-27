@@ -1,19 +1,30 @@
 defmodule PappapWeb.DeviceController do
   use PappapWeb, :controller
+  use Common.Tools
 
-  alias Pappap.Accounts
-  alias Pappap.Notifications
-  alias PappapWeb.OnlineChannel
-  alias Phoenix.PubSub
+  import Common.Sperm
 
-  def register_device_id(conn, params) do
-    {:ok, device} = params
-      |> Accounts.create_device()
+  alias Pappap.{
+    Accounts,
+    Notifications
+  }
 
-    json(conn, %{device_id: device.device_id})
+  @db_domain_url Application.get_env(:pappap, :db_domain_url)
+  @api_url "/api"
+
+  def pass_post_request(conn, params) do
+    path = params["string"]
+
+    @db_domain_url <> "/api/device/" <> path
+    |> send_json(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
   end
 
-  # 通知送信
+  # 通知送信DEBUG
   def force_notify(conn, params) do
     Notifications.push("強制通知が送信されました！", params["device_id"], 4)
 
@@ -22,9 +33,7 @@ defmodule PappapWeb.DeviceController do
 
   # WebSocket送信DEBUG
   def broadcast(conn, _params) do
-    #PubSub.broadcast(Pappap.PubSub, "online", "force", "msg!")
     PappapWeb.Endpoint.broadcast("online", "force", %{msg: "done"})
-    #OnlineChannel.broadcast_all("force", "messaaaaaage")
 
     json(conn, %{msg: "broadcast done"})
   end
