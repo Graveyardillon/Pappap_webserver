@@ -1,6 +1,8 @@
 defmodule Common.Tools do
   use Timex
 
+  import Common.Sperm
+
   def to_integer_as_needed(data) do
     if is_binary(data) do
       String.to_integer(data)
@@ -114,17 +116,40 @@ defmodule Common.Tools do
       def send_tournament_multipart(url, params, file_path) do
         content_type = [{"Content-Type", "multipart/form-data"}]
 
-        tournament = if is_binary(params["tournament"]) do
+        if is_binary(params["tournament"]) do
           params["tournament"]
         else
           Poison.encode!(params["tournament"])
         end
+        ~> tournament
 
-        form = unless file_path == "" do
+        unless file_path == "" do
           [{:file, file_path}, {"tournament", tournament}, {"token", params["token"]}]
         else
           [{"file", ""}, {"tournament", tournament}, {"token", params["token"]}]
         end
+        ~> form
+
+        params
+        |> Map.has_key?("options")
+        |> if do
+          params["options"]
+          |> IO.inspect()
+          ~> options
+
+          # if length(options) == 0 do
+          #   []
+          # else
+          #   [{:options, options}]
+          # end
+          [{"options", options}]
+        else
+          []
+        end
+        ~> options
+
+        form = options ++ form
+        |> IO.inspect()
 
         with {:ok, response} <- HTTPoison.post(
           url,
