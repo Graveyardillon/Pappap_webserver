@@ -501,6 +501,7 @@ defmodule PappapWeb.TournamentController do
         |> put_status(response.status_code)
         |> json(response.body)
       map ->
+        IO.inspect(map)
         url = map["url"]
         redirect(conn, external: url)
     end
