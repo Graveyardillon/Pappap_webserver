@@ -55,6 +55,23 @@ defmodule PappapWeb.TournamentController do
     |> send_json(params)
     ~> response
 
+    if response.body["result"] do
+      topic = "tournament:#{params["tournament_id"]}"
+
+      case params["string"] do
+        "ban_maps" ->
+          IO.inspect("ban_maps: #{params["tournament_id"]}")
+          PappapWeb.Endpoint.broadcast(topic, "banned_map", %{msg: "banned map", tournament_id: params["tournament_id"]})
+        "choose_map" ->
+          IO.inspect("choose_map: #{params["tournament_id"]}")
+          PappapWeb.Endpoint.broadcast(topic, "chose_map", %{msg: "chose map", tournament_id: params["tournament_id"]})
+        "choose_ad" ->
+          IO.inspect("choose_ad: #{params["tournament_id"]}")
+          PappapWeb.Endpoint.broadcast(topic, "chose_ad", %{msg: "chose ad", tournament_id: params["tournament_id"]})
+        _ ->
+      end
+    end
+
     conn
     |> put_status(response.status_code)
     |> json(response.body)
@@ -464,7 +481,6 @@ defmodule PappapWeb.TournamentController do
 
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_started", %{msg: "debug notification", id: id})
-    #PappapWeb.Endpoint.broadcast("tournament:"<>id, "tournament_finished", %{msg: "debug notification"})
 
     json(conn, %{msg: "done"})
   end
