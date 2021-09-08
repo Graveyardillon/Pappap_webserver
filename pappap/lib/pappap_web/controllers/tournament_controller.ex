@@ -68,6 +68,9 @@ defmodule PappapWeb.TournamentController do
         "choose_ad" ->
           IO.inspect("choose_ad: #{params["tournament_id"]}")
           PappapWeb.Endpoint.broadcast(topic, "chose_ad", %{msg: "chose ad", tournament_id: params["tournament_id"]})
+        "flip_coin" ->
+          IO.inspect("flip_coin: #{params["tournament_id"]}")
+          PappapWeb.Endpoint.broadcast(topic, "flip_coin", %{msg: "flip_coin", tournament_id: params["tournament_id"]})
         _ ->
       end
     end
