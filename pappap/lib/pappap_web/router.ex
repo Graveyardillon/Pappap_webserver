@@ -92,6 +92,9 @@ defmodule PappapWeb.Router do
     post "/chat_room/:string", ChatRoomController, :pass_post_request
     options "/chat_room/:string", ChatController, :options
 
+    get "/discord/:string", DiscordController, :pass_get_request
+    post "/discord/:string", DiscordController, :pass_post_request
+
     post "/assistant", AssistantController, :create_assistant
     options "/assistant", AssistantController, :options
 
