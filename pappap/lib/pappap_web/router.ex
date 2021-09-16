@@ -59,6 +59,9 @@ defmodule PappapWeb.Router do
     get "/tournament/home/:string", TournamentController, :pass_home_request
     get "/tournament/url/:url", TournamentController, :redirect_by_url
 
+    get "/image/thumbnail", ImageController, :pass_get_image_thumbnail_request
+    get "/image/icon", ImageController, :pass_get_image_icon_request
+
     get  "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request
     options "/tournament/:string", TournamentController, :options

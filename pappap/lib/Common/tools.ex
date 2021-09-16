@@ -281,6 +281,24 @@ defmodule Common.Tools do
               }
           end
       end
+
+      def get_image_request(url, params) do
+        content_type = [{"Content-Type", "application/json"}]
+        with {:ok, response} <- HTTPoison.get(url, content_type, [ssl: [{:versions, [:'tlsv1.2']}], params: params]) do
+          {:ok, response}
+        else
+          {:error, error} ->
+            %{
+              "result" => false,
+              "reason" => error.reason
+            }
+          _ ->
+            %{
+              "result" => false,
+              "reason" => "unexpected error"
+            }
+        end
+      end
     end
   end
 end
