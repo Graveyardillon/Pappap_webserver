@@ -27,6 +27,7 @@ defmodule PappapWeb.Router do
 
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
+    get "/image/path", ImageController, :pass_get_image_by_path_request
 
     get  "/auth/:string", AuthController, :pass_get_request
     post "/auth/signup", AuthController, :signup
@@ -58,9 +59,6 @@ defmodule PappapWeb.Router do
     post "/tournament/finish", TournamentController, :finish
     get "/tournament/home/:string", TournamentController, :pass_home_request
     get "/tournament/url/:url", TournamentController, :redirect_by_url
-
-    get "/image/thumbnail", ImageController, :pass_get_image_thumbnail_request
-    get "/image/icon", ImageController, :pass_get_image_icon_request
 
     get  "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request

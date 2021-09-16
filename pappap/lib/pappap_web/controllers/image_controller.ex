@@ -10,8 +10,7 @@ defmodule PappapWeb.ImageController do
   @api_url "/api"
   @upload_url "/chat/upload/image"
   @load_url "/chat/load/image"
-  @image_thumbnail "/image/thumbnail"
-  @image_icon "/image/icon"
+  @image_by_path "/image/path"
 
   def upload(conn, params) do
     IO.inspect(params, label: :params)
@@ -35,8 +34,8 @@ defmodule PappapWeb.ImageController do
     |> json(response.body)
   end
 
-  def pass_get_image_icon_request(conn, params) do
-    @db_domain_url <> @api_url <> @image_icon
+  def pass_get_image_by_path_request(conn, params) do
+    @db_domain_url <> @api_url <> @image_by_path
     |> get_image_request(params)
     ~> response
     |> case do
@@ -48,10 +47,10 @@ defmodule PappapWeb.ImageController do
         |> List.first()
         ~> content_type
 
-        if content_type == "image/jpeg" do
+        if content_type == "image/jpg" do
           conn
           |> put_status(response.status_code)
-          |> put_resp_content_type("image/jpeg", nil)
+          |> put_resp_content_type("image/jpg", nil)
           |> send_resp(200, response.body)
         else
           conn
@@ -62,34 +61,5 @@ defmodule PappapWeb.ImageController do
       json(conn, response)
     end
   end
-
-  def pass_get_image_thumbnail_request(conn, params) do
-    @db_domain_url <> @api_url <> @image_thumbnail
-    |> get_image_request(params)
-    ~> response
-    |> case do
-      {:ok, response} ->
-        Enum.map(response.headers, fn header -> 
-          if elem(header, 0) == "content-type", do: elem(header, 1)
-        end)
-        |> Enum.filter(& !is_nil(&1))
-        |> List.first()
-        ~> content_type
-
-        if content_type == "image/jpeg" do
-          conn
-          |> put_status(response.status_code)
-          |> put_resp_content_type("image/jpeg", nil)
-          |> send_resp(200, response.body)
-        else
-          conn
-          |> put_status(response.status_code)
-          |> json(response.body)
-        end
-    _ ->
-      json(conn, response)
-    end
-  end
-  
 
 end
