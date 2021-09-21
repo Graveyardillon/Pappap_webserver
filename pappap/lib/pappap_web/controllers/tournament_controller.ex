@@ -7,6 +7,7 @@ defmodule PappapWeb.TournamentController do
 
   import Common.Sperm
 
+  alias Common.FileUtils
   alias Pappap.{
     Accounts,
     Notifications
@@ -101,7 +102,7 @@ defmodule PappapWeb.TournamentController do
   def create(conn, params) do
     unless params["image"] == "" do
       uuid = SecureRandom.uuid()
-      File.cp(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
+      FileUtils.copy(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
     else
       "./static/image/default_BG.png"
