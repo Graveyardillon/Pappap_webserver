@@ -15,7 +15,6 @@ defmodule Pappap.Chat do
       {:ok, response} <- HTTPoison.post(url, attrs, @content_type),
       {:ok, body} <- Poison.decode(response.body) do
       Logger.info("Sent chat to DBServer!")
-      IO.inspect(body, label: :body)
       {:ok, body}
     else
       {:error, reason} ->
@@ -25,7 +24,6 @@ defmodule Pappap.Chat do
           "error_no" => 10000
         }
         Logger.warn("Failed to send chat to DBServer")
-        IO.inspect(map, label: :result)
         {:error, map}
       _ ->
         map = %{
@@ -34,7 +32,6 @@ defmodule Pappap.Chat do
           "error_no" => 10000
         }
         Logger.warn("Failed to send chat to DBServer")
-        IO.inspect(map, label: :result)
         {:error, map}
     end
   end

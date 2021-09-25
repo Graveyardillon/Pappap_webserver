@@ -13,8 +13,6 @@ defmodule PappapWeb.ImageController do
   @image_by_path "/image/path"
 
   def upload(conn, params) do
-    IO.inspect(params, label: :params)
-
     @db_domain_url <> @api_url <> @upload_url
     |> send_chat_image_multipart(params, params["image"].path)
     ~> response
@@ -40,8 +38,13 @@ defmodule PappapWeb.ImageController do
     ~> response
     |> case do
       {:ok, response} ->
-        Enum.map(response.headers, fn header -> 
-          if elem(header, 0) == "content-type", do: elem(header, 1)
+        response
+        |> Map.get(:headers)
+        |> IO.inspect(label: :image_headers)
+        |> Enum.map(fn header ->
+          if elem(header, 0) == "Content-Type" do
+            elem(header, 1)
+          end
         end)
         |> Enum.filter(& !is_nil(&1))
         |> List.first()
