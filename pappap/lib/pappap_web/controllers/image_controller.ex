@@ -42,7 +42,7 @@ defmodule PappapWeb.ImageController do
         |> Map.get(:headers)
         |> IO.inspect(label: :image_headers)
         |> Enum.map(fn header ->
-          if elem(header, 0) == "Content-Type" do
+          if elem(header, 0) == "Content-Type" || elem(header, 0) == "content-type" do
             elem(header, 1)
           end
         end)

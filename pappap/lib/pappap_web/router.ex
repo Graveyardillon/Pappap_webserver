@@ -11,7 +11,7 @@ defmodule PappapWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "jpeg", "png"]
     plug CORSPlug, origin: ["https://e-players-web.web.app"]
   end
 
@@ -31,25 +31,25 @@ defmodule PappapWeb.Router do
 
     get  "/auth/:string", AuthController, :pass_get_request
     post "/auth/signup", AuthController, :signup
-    options "/auth/signup", AuthController, :options
+    options "/auth/signup", PreflightController, :preflight
     post "/auth/:string", AuthController, :pass_post_request
-    options "/auth/:string", AuthController, :options
+    options "/auth/:string", PreflightController, :preflight
     post "/user_report", UserController, :report
-    options "/user_report", UserController, :options
+    options "/user_report", PreflightController, :preflight
     post "/tournament_report", TournamentController, :report
-    options "/tournament_report", TournamentController, :options
+    options "/tournament_report", PreflightController, :preflight
     post "/user/get", UserController, :get
     post "/user/get_with_room", UserController, :get_with_room_id
     get  "/user/:string", UserController, :pass_get_request
     post "/user/:string", UserController, :pass_post_request
     delete "/user/:string", UserController, :pass_delete_request
-    options "/user/:string", UserController, :options
+    options "/user/:string", PreflightController, :preflight
 
     get  "/conf/:string", ConfController, :pass_get_request
     post "/conf/:string", ConfController, :pass_post_request
 
     post "/tournament", TournamentController, :create
-    options "/tournament", TournamentController, :options
+    options "/tournament", PreflightController, :preflight
     post "/tournament/start", TournamentController, :start
     post "/tournament/start_match", TournamentController, :start_match
     post "/tournament/claim_win", TournamentController, :claim_win
@@ -62,14 +62,14 @@ defmodule PappapWeb.Router do
 
     get  "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request
-    options "/tournament/:string", TournamentController, :options
+    options "/tournament/:string", PreflightController, :preflight
     # get  "/tournament/get_game", TournamentController, :get_game
     # TODO: 画像なのでwebserverでもいろいろしないといけない
     # get  "/tournament/get_thumbnail", TournamentController, :get_thumbnail_image
 
     get  "/relation/:string", RelationController, :pass_get_request
     post "/relation/:string", RelationController, :pass_post_request
-    options "/relation/:string", RelationController, :options
+    options "/relation/:string", PreflightController, :preflight
 
     post "/chat/upload/image", ImageController, :upload
     get "/chat/load/image", ImageController, :load
@@ -77,74 +77,75 @@ defmodule PappapWeb.Router do
     # TODO: チャットのリクエストのルーティングの、ファイルの中の関数を含めた調整
     get  "/chat/:string", ChatController, :pass_get_request
     post "/chat/:string", ChatController, :pass_post_request
-    options "/chat/:string", ChatController, :options
+    options "/chat/:string", PreflightController, :preflight
     delete "/chat", ChatController, :delete
 
     post "/chat/chat_room/create", ChatController, :create_chatroom
-    options "/chat/chat_room/create", ChatController, :options
+    options "/chat/chat_room/create", PreflightController, :preflight
     post "/chat_room/private_rooms", ChatController, :private_rooms
     post "/chat/chat_member/create", ChatController, :create_chatmember
-    options "/chat/chat_member/:string", ChatController, :options
+    options "/chat/chat_member/:string", PreflightController, :preflight
     post "/chat/chats/create", ChatController, :create_chats
-    options "/chat/chats/:string", ChatController, :_options
+    options "/chat/chats/:string", PreflightController, :preflight
 
     get  "/chat_room", ChatRoomController, :show
     get  "/chat_room/:string", ChatRoomController, :pass_get_request
     post "/chat_room/:string", ChatRoomController, :pass_post_request
-    options "/chat_room/:string", ChatController, :options
+    options "/chat_room/:string", PreflightController, :preflight
 
     get "/discord/:string", DiscordController, :pass_get_request
     post "/discord/:string", DiscordController, :pass_post_request
     delete "/discord/:string", DiscordController, :pass_delete_request
-    options "/discord/:string", DiscordController, :options
+    options "/discord/:string", PreflightController, :preflight
 
     post "/assistant", AssistantController, :create_assistant
-    options "/assistant", AssistantController, :options
+    options "/assistant", PreflightController, :preflight
 
     post "/entrant", EntrantController, :create
-    options "/entrant", EntrantController, :options
+    options "/entrant", PreflightController, :preflight
     get  "/entrant/rank/:tournament_id/:user_id", EntrantController, :show_rank
     get  "/entrant/:string", EntrantController, :pass_get_request
     post "/entrant/:string", EntrantController, :pass_post_request
-    options "/entrant/:string", EntrantController, :options
+    options "/entrant/:string", PreflightController, :preflight
     delete "/entrant/:string", EntrantController, :pass_delete_request
 
     post "/team/invitation_confirm", TeamController, :confirm_invitation
     options "/team/invitation_confirm", TeamController, :options
     post "/team", TeamController, :create
-    options "/team", TeamController, :options
+    options "/team", PreflightController, :preflight
     delete "/team", TeamController, :delete
     get "/team", TeamController, :show
     get "/team/:string", TeamController, :pass_get_request
     post "/team/:string", TeamController, :pass_post_request
-    options "/team/:string", TeamController, :options
+    options "/team/:string", PreflightController, :preflight
 
-    options "/device/:string", DeviceController, :options
+    options "/device/:string", PreflightController, :preflight
     post "/device/:string", DeviceController, :pass_post_request
 
     get  "/game/:string", GameController, :pass_get_request
     post "/game/:string", GameController, :pass_post_controller
-    options "/game/:string", GameController, :options
+    options "/game/:string", PreflightController, :preflight
 
     get  "/notification/:string", NotificationController, :pass_get_request
     post "/notification/:string", NotificationController, :pass_post_request
-    options "/notification/:string", NotificationController, :options
+    options "/notification/:string", PreflightController, :preflight
     delete "/notification/:string", NotificationController, :pass_delete_request
 
     get "/profile", ProfileController, :show
     get  "/profile/:string", ProfileController, :pass_get_request
     post "/profile/update_icon", ProfileController, :update_icon
+    options "/profile/update_icon", PreflightController, :preflight
     post "/profile/:string", ProfileController, :pass_post_request
-    options "/profile/:string", ProfileController, :options
+    options "/profile/:string", PreflightController, :preflight
     post "/profile", ProfileController, :send
-    options "/profile", ProfileController, :options
+    options "/profile", PreflightController, :preflight
     delete "/profile/:string", ProfileController, :pass_delete_request
 
     post "/sync", SyncController, :sync
-    options "/sync", SyncController, :options
+    options "/sync", PreflightController, :preflight
 
     post "/online/all", OnlineController, :get_online_users
-    options  "/online/all", OnlineController, :options
+    options  "/online/all", PreflightController, :preflight
     get  "/online/entrants", OnlineController, :get_online_entrants
   end
 
