@@ -96,6 +96,7 @@ defmodule PappapWeb.Router do
     get "/discord/:string", DiscordController, :pass_get_request
     post "/discord/:string", DiscordController, :pass_post_request
     delete "/discord/:string", DiscordController, :pass_delete_request
+    options "/discord/:string", DiscordController, :options
 
     post "/assistant", AssistantController, :create_assistant
     options "/assistant", AssistantController, :options

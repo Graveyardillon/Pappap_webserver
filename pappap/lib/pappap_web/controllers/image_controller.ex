@@ -48,17 +48,32 @@ defmodule PappapWeb.ImageController do
         end)
         |> Enum.filter(& !is_nil(&1))
         |> List.first()
-        ~> content_type
-
-        if content_type == "image/jpg" do
-          conn
-          |> put_status(response.status_code)
-          |> put_resp_content_type("image/jpg", nil)
-          |> send_resp(200, response.body)
-        else
-          conn
-          |> put_status(response.status_code)
-          |> json(response.body)
+        |> IO.inspect(label: :image_type)
+        |> case do
+          "image/jpg" ->
+            conn
+            |> put_status(response.status_code)
+            |> put_resp_content_type("image/jpg")
+            |> send_resp(200, response.body)
+          "image/jpg; charset=utf-8" ->
+            conn
+            |> put_status(response.status_code)
+            |> put_resp_content_type("image/jpg")
+            |> send_resp(200, response.body)
+          "image/png" ->
+            conn
+            |> put_status(response.status_code)
+            |> put_resp_content_type("image/png")
+            |> send_resp(200, response.body)
+          "image/png; charset=utf-8" ->
+            conn
+            |> put_status(response.status_code)
+            |> put_resp_content_type("image/png")
+            |> send_resp(200, response.body)
+          _ ->
+            conn
+            |> put_status(response.status_code)
+            |> json(response.body)
         end
     _ ->
       json(conn, response)
