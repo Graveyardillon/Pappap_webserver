@@ -13,8 +13,6 @@ defmodule PappapWeb.ImageController do
   @image "/image/"
 
   def upload(conn, params) do
-    IO.inspect(params, label: :params)
-
     @db_domain_url <> @api_url <> @upload_url
     |> send_chat_image_multipart(params, params["image"].path)
     ~> response

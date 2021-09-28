@@ -35,4 +35,19 @@ defmodule PappapWeb.DiscordController do
     |> put_status(response.status_code)
     |> json(response.body)
   end
+
+  @doc """
+  Pass a delete request to database server.
+  """
+  def pass_delete_request(conn, params) do
+    path = params["string"]
+
+    @db_domain_url <> "/api/discord/" <> path
+    |> delete_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
 end

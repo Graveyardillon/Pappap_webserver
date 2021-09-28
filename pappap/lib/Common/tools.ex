@@ -131,25 +131,15 @@ defmodule Common.Tools do
         ~> form
 
         params
-        |> Map.has_key?("options")
+        |> Map.has_key?("maps")
         |> if do
-          params["options"]
-          |> IO.inspect()
-          ~> options
-
-          # if length(options) == 0 do
-          #   []
-          # else
-          #   [{:options, options}]
-          # end
-          [{"options", options}]
+          [{"maps", params["maps"]}]
         else
           []
         end
         ~> options
 
         form = options ++ form
-        |> IO.inspect()
 
         with {:ok, response} <- HTTPoison.post(
           url,
