@@ -27,7 +27,7 @@ defmodule PappapWeb.Router do
 
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
-    get "/image/path", ImageController, :pass_get_image_by_path_request
+    get "/image/:string", ImageController, :pass_get_image_by_path_request
 
     get  "/auth/:string", AuthController, :pass_get_request
     post "/auth/signup", AuthController, :signup
