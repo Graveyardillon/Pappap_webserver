@@ -23,14 +23,6 @@ config :pappap, Pappap.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :pigeon, :apns,
-  apns_default: %{
-    key: "lib/pappap-0.1.0/priv/cert/AuthKey_MHN824H499.p8",
-    key_identifier: "MHN824H499",
-    team_id: "6ZMC8WKZZQ",
-    mode: :prod
-  }
-
 config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
 
 #config :pappap, Pappap.Repo,

@@ -20,23 +20,5 @@ defmodule Pappap.Notifications do
 
     @db_domain_url <> @api_url <> @create_notif
     |> send_json(params)
-    # @db_domain_url <> @api_url <> @create_log
-    # |> send_json(params)
-  end
-
-  def push(message, device_id, process_id \\ -1, data \\ "") do
-    message
-    |> Pigeon.APNS.Notification.new(device_id, Notifications.topic())
-    |> Pigeon.APNS.Notification.put_alert(%{"body" => message, "title" => "ユーザー名"})
-    |> Pigeon.APNS.push()
-
-    device = Accounts.from_device_id(device_id)
-    params = %{"notif" => %{"user_id" => device.user_id, "content" => message, "process_id" => process_id, "data" => data}}
-    Logger.debug("通知を" <> to_string(device.user_id) <> "に送信しました。")
-
-    Task.async(fn ->
-      @db_domain_url <> @api_url <> @create_notif
-      |> send_json(params)
-    end)
   end
 end

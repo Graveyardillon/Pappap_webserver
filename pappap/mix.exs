@@ -63,7 +63,6 @@ defmodule Pappap.MixProject do
       {:httpoison, "~> 1.8"},
       {:poison, "~> 3.1"},
       {:secure_random, "~> 0.5"},
-      {:pigeon, "~> 1.5.1"},
       {:kadabra, "~> 0.4.4"},
       {:timex, "~> 3.5"},
       {:cors_plug, "~> 2.0"},
