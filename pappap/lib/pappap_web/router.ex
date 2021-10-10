@@ -24,6 +24,8 @@ defmodule PappapWeb.Router do
   scope "/api", PappapWeb do
     pipe_through :api
     get  "/check/connection", ConnectionCheckController, :connection_check
+    post "/check/data_for_web", ConnectionCheckController, :data_for_web
+    options "/check/data_for_web", PreflightController, :preflight
 
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
