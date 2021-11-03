@@ -272,6 +272,7 @@ defmodule PappapWeb.TournamentController do
     end
 
     if response.body["completed"] do
+      # FIXME: ここのdelete_loserはいらなくなる
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
       |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
       ~> response
@@ -320,6 +321,7 @@ defmodule PappapWeb.TournamentController do
     end
 
     if response.body["completed"] do
+      # FIXME: ここのdelete_loserはいらなくなる
       @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
       |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
       ~> response
