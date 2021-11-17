@@ -190,7 +190,7 @@ defmodule PappapWeb.TournamentController do
     ~> response
 
     if response.body["result"] do
-      topic = "tournament:" <> to_string(tournament_id)
+      topic = "tournament:#{tournament_id}"
       PappapWeb.Endpoint.broadcast(topic, "tournament_started", %{msg: "tournament started", id: tournament_id})
     end
 
@@ -321,11 +321,6 @@ defmodule PappapWeb.TournamentController do
     end
 
     if response.body["completed"] do
-      # FIXME: ここのdelete_loserはいらなくなる
-      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-      |> send_json(%{"tournament" => %{"tournament_id" => params["tournament_id"], "loser_list" => [params["user_id"]]}})
-      ~> response
-
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
       updated_match_list = response.body["updated_match_list"]
