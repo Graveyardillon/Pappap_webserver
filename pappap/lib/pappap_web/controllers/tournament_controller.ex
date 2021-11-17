@@ -12,16 +12,13 @@ defmodule PappapWeb.TournamentController do
     Accounts,
     Notifications
   }
+  alias PappapWeb.Endpoint
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
   @get_tournament_info_url "/tournament/get"
-  @start_url "/start"
   @start_match_url "/start_match"
-  @delete_loser_url "/deleteloser"
-  @register_url "/tournament/register/pid"
-  @get_pid "/tournament/pid"
   @claim_win "/claim_win"
   @claim_lose "/claim_lose"
   @claim_score "/claim_score"
@@ -50,6 +47,7 @@ defmodule PappapWeb.TournamentController do
   Pass a post request to database server.
   """
   # TODO: ban_mapsとかの場合の処理をここでなんとかする
+  # TODO: startとかclaim_scoreここに含めて、defp内で処理を分ける。
   def pass_post_request(conn, params) do
     path = params["string"]
 
@@ -58,28 +56,98 @@ defmodule PappapWeb.TournamentController do
     ~> response
 
     if response.body["result"] do
-      topic = "tournament:#{params["tournament_id"]}"
-
-      case params["string"] do
-        "ban_maps" ->
-          IO.inspect("ban_maps: #{params["tournament_id"]}")
-          PappapWeb.Endpoint.broadcast(topic, "banned_map", %{msg: "banned map", tournament_id: params["tournament_id"]})
-        "choose_map" ->
-          IO.inspect("choose_map: #{params["tournament_id"]}")
-          PappapWeb.Endpoint.broadcast(topic, "chose_map", %{msg: "chose map", tournament_id: params["tournament_id"]})
-        "choose_ad" ->
-          IO.inspect("choose_ad: #{params["tournament_id"]}")
-          PappapWeb.Endpoint.broadcast(topic, "chose_ad", %{msg: "chose ad", tournament_id: params["tournament_id"]})
-        "flip_coin" ->
-          IO.inspect("flip_coin: #{params["tournament_id"]}")
-          PappapWeb.Endpoint.broadcast(topic, "flip_coin", %{msg: "flip_coin", tournament_id: params["tournament_id"]})
-        _ ->
+      case path do
+        "start"       -> on_start(response.body["user_id_list"], params["tournament_id"])
+        "start_match" -> on_interaction("match_started", response.body["messages"], params["tournament_id"])
+        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], params["tournament_id"])
+        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], params["tournament_id"])
+        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], params["tournament_id"])
+        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], params["tournament_id"])
+        "claim" <> _  -> on_claim(response.body, params)
+        _             -> nil
       end
     end
 
     conn
     |> put_status(response.status_code)
     |> json(response.body)
+  end
+
+  defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
+    Enum.each(user_id_list, fn user_id ->
+      topic ="user:#{user_id}"
+      msg = "tournament_started"
+      payload = %{
+        msg: msg,
+        tournament_id: tournament_id
+      }
+      Endpoint.broadcast(topic, msg, payload)
+    end)
+  end
+  defp on_start(_, _), do: :error
+
+  defp on_interaction(msg, messages, tournament_id) when is_list(messages) and is_integer(tournament_id) do
+    Enum.each(messages, fn message ->
+      topic = "user:#{message["user_id"]}"
+      payload = %{
+        msg: msg,
+        tournament_id: tournament_id,
+        state: message["state"]
+      }
+      Endpoint.broadcast(topic, msg, payload)
+    end)
+  end
+  defp on_interaction(_, _, _), do: :error
+
+  defp on_claim(
+    %{"validated" => validated, "completed" => completed,  "is_finished" => is_finished, "messages" => messages},
+    %{"user_id" => user_id, "opponent_id" => opponent_id, "tournament_id" => tournament_id}
+  )
+  do
+    # NOTE: 重複報告時
+    unless validated do
+      @db_domain_url <> @api_url <> @get_tournament_info_url
+      |> get_parammed_request(%{"tournament_id" => tournament_id})
+      |> Map.get(:body)
+      |> Map.get("data")
+      |> Map.get("master_id")
+      ~> master_id
+
+      push_notification_on_game_masters(tournament_id)
+
+      payload = %{
+        tournament_id: tournament_id,
+        opponent_id:   opponent_id,
+        user_id:       user_id,
+        master_id:     master_id
+      }
+      msg = "duplicate_claim"
+
+      Enum.each(messages, fn message ->
+        topic = "user:#{message["user_id"]}"
+        Endpoint.broadcast(topic, msg, payload)
+      end)
+    end
+
+    if completed do
+      msg = "match_finished"
+      payload = %{msg: msg}
+
+      Enum.each(messages, fn message ->
+        topic = "user:#{message["user_id"]}"
+        Endpoint.broadcast(topic, msg, payload)
+      end)
+    end
+
+    if is_finished do
+      msg = "tournament_finished"
+      payload = %{msg: msg}
+
+      Enum.each(messages, fn message ->
+        topic = "user:#{message["user_id"]}"
+        Endpoint.broadcast(topic, msg, payload)
+      end)
+    end
   end
 
   @doc """
@@ -115,182 +183,6 @@ defmodule PappapWeb.TournamentController do
     ~> response
 
     unless params["image"] == "", do: File.rm(file_path)
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Starts a tournament.
-  """
-  def start(conn, params) do
-    tournament_id = params["tournament"]["tournament_id"]
-
-    @db_domain_url <> @api_url <> @tournament_url <> @start_url
-    |> send_json(params)
-    ~> response
-
-    if response.body["result"] do
-      topic = "tournament:#{tournament_id}"
-      PappapWeb.Endpoint.broadcast(topic, "tournament_started", %{msg: "tournament started", id: tournament_id})
-    end
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Deletes losers.
-  """
-  def delete_loser(conn, params) do
-    @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-    |> send_json(params)
-    ~> response
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Starts a match.
-  """
-  def start_match(conn, params) do
-    @db_domain_url <> @api_url <> @tournament_url <> @start_match_url
-    |> send_json(params)
-    ~> response
-
-    if response.body["result"] do
-      topic = "tournament:" <> to_string(params["tournament_id"])
-      PappapWeb.Endpoint.broadcast(topic, "match_started", %{msg: "match started"})
-    end
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Claims win.
-  """
-  def claim_win(conn, params) do
-    tournament_id = params["tournament_id"]
-    opponent_id = params["opponent_id"]
-    user_id = params["user_id"]
-
-    topic = "tournament:" <> to_string(tournament_id)
-
-    @db_domain_url <> @api_url <> @tournament_url <> @claim_win
-    |> send_json(params)
-    ~> response
-
-    unless response.body["validated"] do
-      @db_domain_url <> @api_url <> @get_tournament_info_url
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
-      ~> response
-
-      push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
-    end
-
-    if response.body["completed"] do
-      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-
-      updated_match_list = response.body["updated_match_list"]
-      if is_integer(updated_match_list) do
-        @db_domain_url <> @api_url <> @tournament_url <> @finish
-        |> send_json(%{"tournament_id" => tournament_id, "user_id" => user_id})
-        ~> response
-
-        if response.body["result"] do
-          topic = "tournament:" <> to_string(params["tournament_id"])
-          PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-        end
-      end
-    end
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Claims lose.
-  """
-  def claim_lose(conn, params) do
-    tournament_id = params["tournament_id"]
-    opponent_id = params["opponent_id"]
-    user_id = params["user_id"]
-
-    topic = "tournament:" <> to_string(tournament_id)
-
-    @db_domain_url <> @api_url <> @tournament_url <> @claim_lose
-    |> send_json(params)
-    ~> response
-
-    unless response.body["validated"] do
-      @db_domain_url <> @api_url <> @get_tournament_info_url
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
-      ~> response
-
-      push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
-    end
-
-    if response.body["completed"] do
-      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-
-      updated_match_list = response.body["updated_match_list"]
-      if is_integer(updated_match_list) do
-        @db_domain_url <> @api_url <> @tournament_url <> @finish
-        |> send_json(%{"tournament_id" => tournament_id, "user_id" => opponent_id})
-        ~> response
-
-        if response.body["result"] do
-          topic = "tournament:" <> to_string(params["tournament_id"])
-          PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-        end
-      end
-    end
-
-    conn
-    |> put_status(response.status_code)
-    |> json(response.body)
-  end
-
-  @doc """
-  Claims score.
-  """
-  def claim_score(conn, params) do
-    tournament_id = params["tournament_id"]
-    opponent_id = params["opponent_id"]
-    user_id = params["user_id"]
-
-    topic = "tournament:" <> to_string(tournament_id)
-
-    @db_domain_url <> @api_url <> @tournament_url <> @claim_score
-    |> send_json(params)
-    ~> response
-
-    unless response.body["validated"] do
-      @db_domain_url <> @api_url <> @get_tournament_info_url
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
-      ~> response
-
-      push_notification_on_game_masters(tournament_id)
-      PappapWeb.Endpoint.broadcast(topic, "duplicate_claim", %{tournament_id: tournament_id, opponent_id: opponent_id, user_id: user_id, master_id: response.body["data"]["master_id"]})
-    end
-
-    if response.body["completed"] do
-      PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
-
-      if response.body["is_finished"] do
-        topic = "tournament:" <> to_string(params["tournament_id"])
-        PappapWeb.Endpoint.broadcast(topic, "tournament_finished", %{msg: "tournament finished"})
-      end
-    end
 
     conn
     |> put_status(response.status_code)

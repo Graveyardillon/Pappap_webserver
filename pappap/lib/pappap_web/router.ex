@@ -52,11 +52,6 @@ defmodule PappapWeb.Router do
 
     post "/tournament", TournamentController, :create
     options "/tournament", PreflightController, :preflight
-    post "/tournament/start", TournamentController, :start
-    post "/tournament/start_match", TournamentController, :start_match
-    post "/tournament/claim_win", TournamentController, :claim_win
-    post "/tournament/claim_lose", TournamentController, :claim_lose
-    post "/tournament/claim_score", TournamentController, :claim_score
     post "/tournament/defeat", TournamentController, :force_to_defeat
     post "/tournament/finish", TournamentController, :finish
     get "/tournament/home/:string", TournamentController, :pass_home_request
