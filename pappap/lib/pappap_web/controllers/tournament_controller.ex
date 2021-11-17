@@ -54,11 +54,11 @@ defmodule PappapWeb.TournamentController do
     if response.body["result"] do
       case path do
         "start"       -> on_start(response.body["user_id_list"], params["tournament_id"])
-        "start_match" -> on_interaction("match_started", response.body["messages"], params["tournament_id"])
-        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], params["tournament_id"])
-        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], params["tournament_id"])
-        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], params["tournament_id"])
-        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], params["tournament_id"])
+        "start_match" -> on_interaction("match_started", response.body["messages"], params["tournament_id"], response.body["rule"])
+        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], params["tournament_id"], response.body["rule"])
+        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], params["tournament_id"], response.body["rule"])
+        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], params["tournament_id"], response.body["rule"])
+        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], params["tournament_id"], response.body["rule"])
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
@@ -82,21 +82,22 @@ defmodule PappapWeb.TournamentController do
   end
   defp on_start(_, _), do: :error
 
-  defp on_interaction(msg, messages, tournament_id) when is_list(messages) and is_integer(tournament_id) do
+  defp on_interaction(msg, messages, tournament_id, rule) when is_list(messages) and is_integer(tournament_id) do
     Enum.each(messages, fn message ->
       topic = "user:#{message["user_id"]}"
       payload = %{
         msg: msg,
         tournament_id: tournament_id,
-        state: message["state"]
+        state: message["state"],
+        rule: rule
       }
       Endpoint.broadcast(topic, msg, payload)
     end)
   end
-  defp on_interaction(_, _, _), do: :error
+  defp on_interaction(_, _, _, _), do: :error
 
   defp on_claim(
-    %{"validated" => validated, "completed" => completed,  "is_finished" => is_finished, "messages" => messages},
+    %{"validated" => validated, "completed" => completed,  "is_finished" => is_finished, "messages" => messages, "rule" => rule},
     %{"user_id" => user_id, "opponent_id" => opponent_id, "tournament_id" => tournament_id}
   )
   do
@@ -111,16 +112,20 @@ defmodule PappapWeb.TournamentController do
 
       push_notification_on_game_masters(tournament_id)
 
-      payload = %{
-        tournament_id: tournament_id,
-        opponent_id:   opponent_id,
-        user_id:       user_id,
-        master_id:     master_id
-      }
       msg = "duplicate_claim"
 
       Enum.each(messages, fn message ->
         topic = "user:#{message["user_id"]}"
+        payload = %{
+          tournament_id: tournament_id,
+          opponent_id:   opponent_id,
+          user_id:       user_id,
+          master_id:     master_id,
+          msg:           msg,
+          state:         message["state"],
+          rule:          rule
+        }
+
         Endpoint.broadcast(topic, msg, payload)
       end)
     end
@@ -128,10 +133,17 @@ defmodule PappapWeb.TournamentController do
     # NOTE: マッチ完了時
     if completed do
       msg = "match_finished"
-      payload = %{msg: msg}
 
       Enum.each(messages, fn message ->
         topic = "user:#{message["user_id"]}"
+        payload = %{
+          tournament_id: tournament_id,
+          opponent_id:   opponent_id,
+          user_id:       user_id,
+          msg:           msg,
+          state:         message["state"],
+          rule:          rule
+        }
         Endpoint.broadcast(topic, msg, payload)
       end)
     end
@@ -139,10 +151,17 @@ defmodule PappapWeb.TournamentController do
     # NOTE: 大会終了時
     if is_finished do
       msg = "tournament_finished"
-      payload = %{msg: msg}
 
       Enum.each(messages, fn message ->
         topic = "user:#{message["user_id"]}"
+        payload = %{
+          tournament_id: tournament_id,
+          opponent_id:   opponent_id,
+          user_id:       user_id,
+          msg:           msg,
+          state:         message["state"],
+          rule:          rule
+        }
         Endpoint.broadcast(topic, msg, payload)
       end)
     end
