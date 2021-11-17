@@ -49,11 +49,13 @@ defmodule PappapWeb.TournamentController do
 
     @db_domain_url <> "/api/tournament/" <> path
     |> send_json(params)
+    |> IO.inspect(label: :response)
     ~> response
 
     if response.body["result"] do
+      IO.inspect(path, label: :path)
       case path do
-        "start"       -> on_start(response.body["user_id_list"], params["tournament_id"])
+        "start"       -> on_start(response.body["data"]["user_id_list"], params["tournament"]["tournament_id"])
         "start_match" -> on_interaction("match_started", response.body["messages"], params["tournament_id"], response.body["rule"])
         "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], params["tournament_id"], response.body["rule"])
         "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], params["tournament_id"], response.body["rule"])
@@ -62,6 +64,7 @@ defmodule PappapWeb.TournamentController do
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
+      |> IO.inspect()
     end
 
     conn
@@ -70,6 +73,7 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
+    IO.inspect(user_id_list, label: :asdf)
     Enum.each(user_id_list, fn user_id ->
       topic ="user:#{user_id}"
       msg = "tournament_started"
