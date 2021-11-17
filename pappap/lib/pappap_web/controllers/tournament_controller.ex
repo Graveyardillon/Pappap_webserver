@@ -7,7 +7,10 @@ defmodule PappapWeb.TournamentController do
 
   import Common.Sperm
 
-  alias Common.FileUtils
+  alias Common.{
+    FileUtils,
+    Tools
+  }
   alias Pappap.{
     Accounts,
     Notifications
@@ -55,12 +58,12 @@ defmodule PappapWeb.TournamentController do
     if response.body["result"] do
       IO.inspect(path, label: :path)
       case path do
-        "start"       -> on_start(response.body["data"]["user_id_list"], params["tournament"]["tournament_id"])
-        "start_match" -> on_interaction("match_started", response.body["messages"], params["tournament_id"], response.body["rule"])
-        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], params["tournament_id"], response.body["rule"])
-        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], params["tournament_id"], response.body["rule"])
-        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], params["tournament_id"], response.body["rule"])
-        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], params["tournament_id"], response.body["rule"])
+        "start"       -> on_start(response.body["data"]["user_id_list"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]))
+        "start_match" -> on_interaction("match_started", response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
+        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
+        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
+        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
+        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
@@ -105,6 +108,7 @@ defmodule PappapWeb.TournamentController do
     %{"user_id" => user_id, "opponent_id" => opponent_id, "tournament_id" => tournament_id}
   )
   do
+    tournament_id = Tools.to_integer_as_needed(tournament_id)
     # NOTE: 重複報告時
     unless validated do
       @db_domain_url <> @api_url <> @get_tournament_info_url
