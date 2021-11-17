@@ -129,6 +129,7 @@ defmodule PappapWeb.TournamentController do
       end)
     end
 
+    # NOTE: マッチ完了時
     if completed do
       msg = "match_finished"
       payload = %{msg: msg}
@@ -139,6 +140,7 @@ defmodule PappapWeb.TournamentController do
       end)
     end
 
+    # NOTE: 大会終了時
     if is_finished do
       msg = "tournament_finished"
       payload = %{msg: msg}
