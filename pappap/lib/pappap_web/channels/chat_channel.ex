@@ -3,9 +3,11 @@ defmodule PappapWeb.ChatChannel do
 
   require Logger
 
-  alias Pappap.Chat
-  alias Pappap.Notifications
-  alias Pappap.Accounts
+  alias Pappap.{
+    Accounts,
+    Chat,
+    Notifications
+  }
 
   def join("chat:" <> _room_id, _payload, socket) do
     {:ok, socket}

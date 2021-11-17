@@ -49,6 +49,7 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Pass a post request to database server.
   """
+  # TODO: ban_mapsとかの場合の処理をここでなんとかする
   def pass_post_request(conn, params) do
     path = params["string"]
 
@@ -120,65 +121,6 @@ defmodule PappapWeb.TournamentController do
     |> json(response.body)
   end
 
-  defp notify_followers_tournament_plans(followers) do
-    # followers
-    # |> Enum.each(fn follower ->
-    #   follower["id"]
-    #   |> Accounts.get_devices_by_user_id()
-    #   |> Enum.each(fn device ->
-    #     Notifications.push(follower["name"]<>"さんが大会を予定しました。", device.device_id, 5)
-    #   end)
-    # end)
-  end
-
-  defp notify_entrants_on_tournament_start(map) do
-    # event_time =
-    #   map["data"]["event_date"]
-    #   |> IO.inspect(label: :event_date)
-    #   |> Timex.parse!("{ISO:Extended}")
-    #   |> DateTime.to_unix()
-
-    # now =
-    #   DateTime.utc_now()
-    #   |> DateTime.to_unix()
-
-    # Process.sleep((event_time - now)*1000)
-
-    # url = @db_domain_url <> @api_url <> @get_tournament_info_url
-    # content_type = [{"Content-Type", "application/json"}]
-
-    # p = Poison.encode!(%{"tournament_id" => map["data"]["id"]})
-
-    # HTTPoison.post(url, p, content_type)
-    # |> case do
-    #   {:ok, response} ->
-    #     res = Poison.decode!(response.body)
-
-    #     res["data"]["entrants"]
-    #     |> Enum.each(fn entrant ->
-    #       entrant["id"]
-    #       |> Accounts.get_devices_by_user_id()
-    #       |> IO.inspect(label: :device)
-    #       |> Enum.each(fn device ->
-    #         Notifications.push(res["data"]["name"]<>"の開始時刻になりました。", device.device_id, 6)
-    #       end)
-    #     end)
-    #   {:error, reason} ->
-    #     IO.inspect(reason, label: :reason)
-    # end
-  end
-
-  defp register_pid(pid, tournament_id) do
-    params = %{"pid" => pid, "tournament_id" => tournament_id}
-    map =
-      @db_domain_url <> @api_url <> @register_url
-      |> send_json(params)
-
-    if map["result"] do
-      Logger.info("pid has been stored")
-    end
-  end
-
   @doc """
   Starts a tournament.
   """
@@ -197,24 +139,6 @@ defmodule PappapWeb.TournamentController do
     conn
     |> put_status(response.status_code)
     |> json(response.body)
-  end
-
-  defp cancel_notification(tournament_id) do
-    params = %{"tournament_id" => tournament_id}
-    map =
-      @db_domain_url <> @api_url <> @get_pid
-      |> get_parammed_request(params)
-
-    unless is_nil(map["pid"]) do
-      pid_str = map["pid"]
-      {pid_charlist, _} = Code.eval_string(pid_str)
-      pid = :erlang.list_to_pid(pid_charlist)
-
-      Process.monitor(pid)
-      Process.exit(pid, :kill)
-    end
-
-    Logger.info("tournament notification " <> to_string(tournament_id) <> " is canceled")
   end
 
   @doc """
@@ -272,11 +196,6 @@ defmodule PappapWeb.TournamentController do
     end
 
     if response.body["completed"] do
-      # FIXME: ここのdelete_loserはいらなくなる
-      @db_domain_url <> @api_url <> @tournament_url <> @delete_loser_url
-      |> send_json(%{"tournament" => %{"tournament_id" => tournament_id, "loser_list" => [params["opponent_id"]]}})
-      ~> response
-
       PappapWeb.Endpoint.broadcast(topic, "match_finished", %{msg: "match finished"})
 
       updated_match_list = response.body["updated_match_list"]
