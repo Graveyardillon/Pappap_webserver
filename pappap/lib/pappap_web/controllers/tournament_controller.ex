@@ -226,9 +226,8 @@ defmodule PappapWeb.TournamentController do
         master["id"]
         |> Accounts.get_devices_by_user_id()
         |> IO.inspect()
-        |> Enum.each(fn device ->
-          users_str = get_duplicate_users(tournament_id)
-          Notifications.push("勝敗報告にズレが生じています！ : " <> users_str, device.device_id, 7)
+        |> Enum.each(fn _device ->
+          _users_str = get_duplicate_users(tournament_id)
         end)
       end)
     end
