@@ -11,10 +11,7 @@ defmodule PappapWeb.TournamentController do
     FileUtils,
     Tools
   }
-  alias Pappap.{
-    Accounts,
-    Notifications
-  }
+  alias Pappap.Accounts
   alias PappapWeb.Endpoint
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)

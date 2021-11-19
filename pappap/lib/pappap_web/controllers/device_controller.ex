@@ -4,13 +4,7 @@ defmodule PappapWeb.DeviceController do
 
   import Common.Sperm
 
-  alias Pappap.{
-    Accounts,
-    Notifications
-  }
-
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
-  @api_url "/api"
 
   def pass_post_request(conn, params) do
     path = params["string"]
@@ -25,8 +19,8 @@ defmodule PappapWeb.DeviceController do
   end
 
   # 通知送信DEBUG
-  def force_notify(conn, params) do
-    Notifications.push("強制通知が送信されました！", params["device_id"], 4)
+  def force_notify(conn, _params) do
+    #Notifications.push("強制通知が送信されました！", params["device_id"], 4)
 
     json(conn, %{msg: "sent notification"})
   end
