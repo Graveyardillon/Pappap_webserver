@@ -3,15 +3,9 @@ defmodule Pappap.Notifications do
 
   require Logger
 
-  alias Pappap.{
-    Notifications,
-    Accounts
-  }
-
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @create_notif "/notification/create"
-  @create_log "/notification_log/create"
 
   def topic, do: "PapillonKK.e-players"
 
