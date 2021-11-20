@@ -19,9 +19,7 @@ defmodule Pappap.Application do
       #Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
       PappapWeb.Presence,
       {Task, fn ->
-        IO.inspect("uainspector will be downloaded")
         UAInspector.Downloader.download()
-        |> IO.inspect()
       end}
     ]
 

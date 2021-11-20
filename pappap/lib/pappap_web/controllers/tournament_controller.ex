@@ -49,11 +49,9 @@ defmodule PappapWeb.TournamentController do
 
     @db_domain_url <> "/api/tournament/" <> path
     |> send_json(params)
-    |> IO.inspect(label: :response)
     ~> response
 
     if response.body["result"] do
-      IO.inspect(path, label: :path)
       case path do
         "start"       -> on_start(response.body["data"]["user_id_list"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]))
         "start_match" -> on_interaction("match_started", response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
@@ -64,7 +62,6 @@ defmodule PappapWeb.TournamentController do
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
-      |> IO.inspect()
     end
 
     conn
@@ -73,7 +70,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
-    IO.inspect(user_id_list, label: :asdf)
     Enum.each(user_id_list, fn user_id ->
       topic ="user:#{user_id}"
       msg = "tournament_started"
@@ -191,7 +187,9 @@ defmodule PappapWeb.TournamentController do
   Creates a tournament.
   """
   def create(conn, params) do
-    unless params["image"] == "" do
+    is_image_nil? = params["image"] == "" or is_nil(params["image"])
+
+    if !is_image_nil? do
       uuid = SecureRandom.uuid()
       FileUtils.copy(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/"<>uuid<>".jpg"
@@ -204,7 +202,7 @@ defmodule PappapWeb.TournamentController do
     |> send_tournament_multipart(params, file_path)
     ~> response
 
-    unless params["image"] == "", do: File.rm(file_path)
+    unless is_image_nil?, do: File.rm(file_path)
 
     conn
     |> put_status(response.status_code)
@@ -218,11 +216,9 @@ defmodule PappapWeb.TournamentController do
 
     if is_list(response.body["data"]) do
       response.body["data"]
-      |> IO.inspect()
       |> Enum.each(fn master ->
         master["id"]
         |> Accounts.get_devices_by_user_id()
-        |> IO.inspect()
         |> Enum.each(fn _device ->
           _users_str = get_duplicate_users(tournament_id)
         end)
@@ -299,7 +295,6 @@ defmodule PappapWeb.TournamentController do
 
   # DEBUG:
   def debug_tournament_ws(conn, %{"tournament_id" => id, "state" => state}) do
-    IO.inspect(conn, label: :state_conn)
     id = unless is_binary(id), do: to_string(id)
 
     #PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
@@ -309,7 +304,6 @@ defmodule PappapWeb.TournamentController do
   end
 
   def debug_tournament_ws(conn, %{"tournament_id" => id}) do
-    IO.inspect(conn, label: :conn)
     id = unless is_binary(id), do: to_string(id)
 
     PappapWeb.Endpoint.broadcast("tournament:"<>id, "DEBUG", %{msg: "debug notification"})
@@ -328,12 +322,9 @@ defmodule PappapWeb.TournamentController do
     end)
     |> hd()
     |> elem(1)
-    |> IO.inspect()
     |> UAInspector.parse()
-    |> IO.inspect()
     |> Map.get(:os)
     |> Map.get(:name)
-    |> IO.inspect()
     ~> os_name
 
     path = params["url"]
@@ -350,7 +341,6 @@ defmodule PappapWeb.TournamentController do
         |> put_status(response.status_code)
         |> json(response.body)
       map ->
-        IO.inspect(map)
         url = map["url"]
         redirect(conn, external: url)
     end

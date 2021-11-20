@@ -40,7 +40,6 @@ defmodule PappapWeb.ImageController do
       {:ok, response} ->
         response
         |> Map.get(:headers)
-        # |> IO.inspect(label: :image_headers)
         |> Enum.map(fn header ->
           if elem(header, 0) == "Content-Type" || elem(header, 0) == "content-type" do
             elem(header, 1)
@@ -48,7 +47,6 @@ defmodule PappapWeb.ImageController do
         end)
         |> Enum.filter(& !is_nil(&1))
         |> List.first()
-        # |> IO.inspect(label: :image_type)
         |> case do
           "image/jpg" ->
             conn
