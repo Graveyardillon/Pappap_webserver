@@ -19,7 +19,7 @@ defmodule PappapWeb.UserChannel do
   end
 
   # TODO: ここにトークンによる認証処理を書く。
-  defp authorized?(_token) do
-    true
+  defp authorized?(token) do
+    token == Application.get_env(:pappap, :user_ws_token)
   end
 end

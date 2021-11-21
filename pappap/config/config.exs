@@ -26,6 +26,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :pappap, :user_ws_token, "uN2fNqpmt65bgXjZ"
+
 # remote_database = "https://raw.githubusercontent.com/matomo-org/device-detector/3.13.1/regexes"
 # remote_shortcode = "https://raw.githubusercontent.com/matomo-org/device-detector/3.13.1"
 
