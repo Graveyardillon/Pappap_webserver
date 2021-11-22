@@ -7,11 +7,8 @@ defmodule PappapWeb.ChatController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @chats_url "/chat"
-  @chats_log_url "/chat_log"
   @chat_room_url "/chat_room"
-  @chat_room_log_url "/chat_room_log"
   @chat_member_url "/chat_member"
-  @chat_member_log_url "/chat_member_log"
   @private_rooms "/chat_room/private_rooms"
   @delete "/chat"
 
