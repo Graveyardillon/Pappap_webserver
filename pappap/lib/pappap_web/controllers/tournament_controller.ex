@@ -42,8 +42,6 @@ defmodule PappapWeb.TournamentController do
   @doc """
   Pass a post request to database server.
   """
-  # TODO: ban_mapsとかの場合の処理をここでなんとかする
-  # TODO: startとかclaim_scoreここに含めて、defp内で処理を分ける。
   def pass_post_request(conn, params) do
     path = params["string"]
 
@@ -192,7 +190,7 @@ defmodule PappapWeb.TournamentController do
     if !is_image_nil? do
       uuid = SecureRandom.uuid()
       FileUtils.copy(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
-      "./static/image/tmp/"<>uuid<>".jpg"
+      "./static/image/tmp/#{uuid}.jpg"
     else
       "./static/image/default_BG.png"
     end
