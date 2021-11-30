@@ -50,9 +50,8 @@ defmodule PappapWeb.TournamentController do
     ~> response
 
     if response.body["result"] do
-      IO.inspect(response.body["data"]["messages"])
       case path do
-        "start"       -> on_interaction("tournament_started", response.body["data"]["messages"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]), response.body["rule"])
+        "start"       -> on_interaction("tournament_started", response.body["data"]["messages"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]), response.body["data"]["rule"])
         "start_match" -> on_interaction("match_started",      response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
         "flip_coin"   -> on_interaction("flip_coin",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
         "ban_maps"    -> on_interaction("banned_map",         response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
@@ -61,7 +60,6 @@ defmodule PappapWeb.TournamentController do
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
-      |> IO.inspect()
     end
 
     conn
