@@ -50,16 +50,18 @@ defmodule PappapWeb.TournamentController do
     ~> response
 
     if response.body["result"] do
+      IO.inspect(response.body["data"]["messages"])
       case path do
-        "start"       -> on_start(response.body["data"]["user_id_list"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]))
-        "start_match" -> on_interaction("match_started", response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
-        "flip_coin"   -> on_interaction("flip_coin",     response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
-        "ban_maps"    -> on_interaction("banned_map",    response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
-        "choose_map"  -> on_interaction("chose_map",     response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
-        "choose_ad"   -> on_interaction("chose_ad",      response.body["messages"], Tools.to_integer_as_needed(params["tournament_id"]), response.body["rule"])
+        "start"       -> on_interaction("tournament_started", response.body["data"]["messages"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]), response.body["rule"])
+        "start_match" -> on_interaction("match_started",      response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "flip_coin"   -> on_interaction("flip_coin",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "ban_maps"    -> on_interaction("banned_map",         response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "choose_map"  -> on_interaction("chose_map",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "choose_ad"   -> on_interaction("chose_ad",           response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
         "claim" <> _  -> on_claim(response.body, params)
         _             -> nil
       end
+      |> IO.inspect()
     end
 
     conn
@@ -67,20 +69,21 @@ defmodule PappapWeb.TournamentController do
     |> json(response.body)
   end
 
-  defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
-    Enum.each(user_id_list, fn user_id ->
-      topic ="user:#{user_id}"
-      msg = "tournament_started"
-      payload = %{
-        msg: msg,
-        tournament_id: tournament_id
-      }
-      Endpoint.broadcast(topic, msg, payload)
-    end)
-  end
-  defp on_start(_, _), do: :error
+  # defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
+  #   Enum.each(user_id_list, fn user_id ->
+  #     topic ="user:#{user_id}"
+  #     msg = "tournament_started"
+  #     payload = %{
+  #       msg: msg,
+  #       tournament_id: tournament_id
+  #     }
+  #     Endpoint.broadcast(topic, msg, payload)
+  #   end)
+  # end
+  # defp on_start(_, _), do: :error
 
   defp on_interaction(msg, messages, tournament_id, rule) when is_list(messages) and is_integer(tournament_id) do
+    IO.inspect(messages, label: :messages)
     Enum.each(messages, fn message ->
       topic = "user:#{message["user_id"]}"
       payload = %{
