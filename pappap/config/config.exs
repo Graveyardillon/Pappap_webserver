@@ -7,9 +7,6 @@
 # General application configuration
 use Mix.Config
 
-config :pappap,
-  ecto_repos: [Pappap.Repo]
-
 # Configures the endpoint
 config :pappap, PappapWeb.Endpoint,
   url: [host: "localhost"],

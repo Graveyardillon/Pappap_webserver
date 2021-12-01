@@ -7,7 +7,6 @@ defmodule PappapWeb.AssistantController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @assistant_url "/assistant"
-  @assistant_log_url "/assistant_log"
 
   def create_assistant(conn, params) do
     @db_domain_url <> @api_url <> @assistant_url

@@ -15,23 +15,7 @@ config :pappap, PappapWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :pappap, Pappap.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "pappapdb",
-  socket_dir: "/tmp/cloudsql/e-players6814:asia-northeast1:pappapdb",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
-
-#config :pappap, Pappap.Repo,
-#  username: "postgres",
-#  password: "postgres",
-#  database: "pappap",
-#  hostname: "db",
-#  show_sensitive_data_on_connection_error: true,
-#  pool_size: 10
 
 # ## SSL Support
 #
