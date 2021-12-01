@@ -3,11 +3,7 @@ defmodule PappapWeb.ChatChannel do
 
   require Logger
 
-  alias Pappap.{
-    Accounts,
-    Chat,
-    Notifications
-  }
+  alias Pappap.Chat
 
   def join("chat:" <> _room_id, _payload, socket) do
     {:ok, socket}
@@ -27,7 +23,7 @@ defmodule PappapWeb.ChatChannel do
       {:noreply, socket}
     else
       # Map.has_key?/1 が chatじゃなかった場合（直接のメッセージという保証なし）
-      with {:ok, response} <- Chat.send_chat(payload) do
+      with {:ok, _} <- Chat.send_chat(payload) do
         broadcast!(socket, "new_chat", %{payload: payload})
       else
         {:error, _} -> Logger.error("Error on sending group chat")
@@ -36,12 +32,5 @@ defmodule PappapWeb.ChatChannel do
 
       {:noreply, socket}
     end
-  end
-
-  defp notify(device_list, message, user_id) do
-    # device_list
-    # |> Enum.each(fn device ->
-    #   Notifications.push(message, device.device_id, 4, user_id)
-    # end)
   end
 end

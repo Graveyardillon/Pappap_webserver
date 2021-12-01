@@ -11,7 +11,6 @@ defmodule PappapWeb.TournamentController do
     FileUtils,
     Tools
   }
-  alias Pappap.Accounts
   alias PappapWeb.Endpoint
 
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
@@ -19,8 +18,6 @@ defmodule PappapWeb.TournamentController do
   @tournament_url "/tournament"
   @get_tournament_info_url "/tournament/get"
   @force_to_defeat "/defeat"
-  @masters "/masters"
-  @duplicate_users "/duplicate_claims"
   @report "/tournament_report"
   @finish "/finish"
 
@@ -67,21 +64,7 @@ defmodule PappapWeb.TournamentController do
     |> json(response.body)
   end
 
-  # defp on_start(user_id_list, tournament_id) when is_list(user_id_list) and is_integer(tournament_id) do
-  #   Enum.each(user_id_list, fn user_id ->
-  #     topic ="user:#{user_id}"
-  #     msg = "tournament_started"
-  #     payload = %{
-  #       msg: msg,
-  #       tournament_id: tournament_id
-  #     }
-  #     Endpoint.broadcast(topic, msg, payload)
-  #   end)
-  # end
-  # defp on_start(_, _), do: :error
-
   defp on_interaction(msg, messages, tournament_id, rule) when is_list(messages) and is_integer(tournament_id) do
-    IO.inspect(messages, label: :messages)
     Enum.each(messages, fn message ->
       topic = "user:#{message["user_id"]}"
       payload = %{
@@ -109,8 +92,6 @@ defmodule PappapWeb.TournamentController do
       |> Map.get("data")
       |> Map.get("master_id")
       ~> master_id
-
-      push_notification_on_game_masters(tournament_id)
 
       msg = "duplicate_claim"
 
@@ -206,39 +187,6 @@ defmodule PappapWeb.TournamentController do
     conn
     |> put_status(response.status_code)
     |> json(response.body)
-  end
-
-  defp push_notification_on_game_masters(tournament_id) do
-    @db_domain_url <> @api_url <> @tournament_url <> @masters
-    |> get_parammed_request(%{"tournament_id" => tournament_id})
-    ~> response
-
-    if is_list(response.body["data"]) do
-      response.body["data"]
-      |> Enum.each(fn master ->
-        master["id"]
-        |> Accounts.get_devices_by_user_id()
-        |> Enum.each(fn _device ->
-          _users_str = get_duplicate_users(tournament_id)
-        end)
-      end)
-    end
-  end
-
-  defp get_duplicate_users(tournament_id) do
-    @db_domain_url <> @api_url <> @tournament_url <> @duplicate_users
-    |> get_parammed_request(%{"tournament_id" => tournament_id})
-    |> Map.get(:body)
-    |> Map.get("data")
-    ~> data
-
-    unless is_nil(data) do
-      Enum.reduce(data, "", fn user, acc ->
-        acc <> user["name"] <> " "
-      end)
-    else
-      ""
-    end
   end
 
   @doc """

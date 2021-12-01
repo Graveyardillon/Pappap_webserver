@@ -8,7 +8,6 @@ defmodule PappapWeb.EntrantController do
   @entrant_url "/entrant"
   @entrant_log_url "/entrant_log"
   @rank_url "/rank"
-  @entrant_delete_url "/entrant/delete"
 
   @doc """
   Pass a get request to database server.

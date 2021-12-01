@@ -140,10 +140,6 @@ defmodule PappapWeb.Router do
 
     post "/sync", SyncController, :sync
     options "/sync", PreflightController, :preflight
-
-    post "/online/all", OnlineController, :get_online_users
-    options  "/online/all", PreflightController, :preflight
-    get  "/online/entrants", OnlineController, :get_online_entrants
   end
 
   # DEBUG
