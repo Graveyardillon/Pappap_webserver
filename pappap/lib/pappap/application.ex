@@ -7,8 +7,6 @@ defmodule Pappap.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Pappap.Repo,
       # Start the Telemetry supervisor
       PappapWeb.Telemetry,
       # Start the PubSub system
@@ -18,9 +16,8 @@ defmodule Pappap.Application do
       # Start a worker by calling: Pappap.Worker.start_link(arg)
       #Supervisor.child_spec({Task, fn -> Pappap.connect() end}, id: :connector),
       PappapWeb.Presence,
-      {Task, fn ->
-        UAInspector.Downloader.download()
-      end}
+      # os情報辞書
+      {Task, fn -> UAInspector.Downloader.download() end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
