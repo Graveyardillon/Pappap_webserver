@@ -16,7 +16,6 @@ defmodule PappapWeb.TournamentController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
-  @get_tournament_info_url "/tournament/get"
   @force_to_defeat "/defeat"
   @report "/tournament_report"
   @finish "/finish"
@@ -79,19 +78,27 @@ defmodule PappapWeb.TournamentController do
   defp on_interaction(_, _, _, _), do: :error
 
   defp on_claim(
-    %{"validated" => validated, "completed" => completed,  "is_finished" => is_finished, "messages" => messages, "rule" => rule},
-    %{"user_id" => user_id, "opponent_id" => opponent_id, "tournament_id" => tournament_id}
+    %{
+      "validated" => validated,
+      "completed" => completed,
+      "is_finished" => is_finished,
+      "messages" => messages,
+      "opponent_user_id" => opponent_user_id,
+      "rule" => rule,
+      "user_id" => user_id
+    },
+    %{"tournament_id" => tournament_id}
   )
   do
     tournament_id = Tools.to_integer_as_needed(tournament_id)
     # NOTE: 重複報告時
     unless validated do
-      @db_domain_url <> @api_url <> @get_tournament_info_url
-      |> get_parammed_request(%{"tournament_id" => tournament_id})
-      |> Map.get(:body)
-      |> Map.get("data")
-      |> Map.get("master_id")
-      ~> master_id
+      # @db_domain_url <> @api_url <> @get_tournament_info_url
+      # |> get_parammed_request(%{"tournament_id" => tournament_id})
+      # |> Map.get(:body)
+      # |> Map.get("data")
+      # |> Map.get("master_id")
+      # ~> master_id
 
       msg = "duplicate_claim"
 
@@ -99,9 +106,9 @@ defmodule PappapWeb.TournamentController do
         topic = "user:#{message["user_id"]}"
         payload = %{
           tournament_id: tournament_id,
-          opponent_id:   opponent_id,
+          opponent_id:   opponent_user_id,
           user_id:       user_id,
-          master_id:     master_id,
+          master_id:     nil,
           msg:           msg,
           state:         message["state"],
           rule:          rule
@@ -110,6 +117,9 @@ defmodule PappapWeb.TournamentController do
         Endpoint.broadcast(topic, msg, payload)
       end)
     end
+    # NOTE: ここからのopponent_user_idはすべて対戦相手のチームの代表
+    # NOTE: user_idは自身のチームの代表
+    # NOTE: 個人戦の場合はそのまま個人
 
     # NOTE: マッチ完了時
     if completed do
@@ -119,7 +129,7 @@ defmodule PappapWeb.TournamentController do
         topic = "user:#{message["user_id"]}"
         payload = %{
           tournament_id: tournament_id,
-          opponent_id:   opponent_id,
+          opponent_id:   opponent_user_id,
           user_id:       user_id,
           msg:           msg,
           state:         message["state"],
@@ -137,7 +147,7 @@ defmodule PappapWeb.TournamentController do
         topic = "user:#{message["user_id"]}"
         payload = %{
           tournament_id: tournament_id,
-          opponent_id:   opponent_id,
+          opponent_id:   opponent_user_id,
           user_id:       user_id,
           msg:           msg,
           state:         message["state"],
