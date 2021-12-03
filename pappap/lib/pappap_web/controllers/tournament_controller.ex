@@ -16,7 +16,6 @@ defmodule PappapWeb.TournamentController do
   @db_domain_url Application.get_env(:pappap, :db_domain_url)
   @api_url "/api"
   @tournament_url "/tournament"
-  @get_tournament_info_url "/tournament/get"
   @force_to_defeat "/defeat"
   @report "/tournament_report"
   @finish "/finish"
