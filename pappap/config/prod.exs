@@ -15,7 +15,8 @@ config :pappap, PappapWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
+#config :pappap, :db_domain_url, "https://dbserver-dot-e-players6814.an.r.appspot.com"
+config :pappap, :db_domain_url, "https://e-players6814.an.r.appspot.com"
 
 # ## SSL Support
 #
