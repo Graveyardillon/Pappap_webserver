@@ -14,7 +14,7 @@ config :pappap, PappapWeb.Endpoint,
 
 config :pigeon, :apns,
   apns_default: %{
-    key: "lib/pappap-2.0.18/priv/cert/AuthKey_MHN824H499.p8",
+    key: "lib/pappap-2.2.1/priv/cert/AuthKey_MHN824H499.p8",
     key_identifier: "MHN824H499",
     team_id: "6ZMC8WKZZQ",
     mode: :prod
