@@ -93,13 +93,6 @@ defmodule PappapWeb.TournamentController do
     tournament_id = Tools.to_integer_as_needed(tournament_id)
     # NOTE: 重複報告時
     unless validated do
-      # @db_domain_url <> @api_url <> @get_tournament_info_url
-      # |> get_parammed_request(%{"tournament_id" => tournament_id})
-      # |> Map.get(:body)
-      # |> Map.get("data")
-      # |> Map.get("master_id")
-      # ~> master_id
-
       msg = "duplicate_claim"
 
       Enum.each(messages, fn message ->

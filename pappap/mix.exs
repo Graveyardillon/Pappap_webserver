@@ -4,7 +4,7 @@ defmodule Pappap.MixProject do
   def project do
     [
       app: :pappap,
-      version: "2.0.18",
+      version: "2.2.1",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
