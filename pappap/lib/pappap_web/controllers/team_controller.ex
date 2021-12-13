@@ -17,7 +17,6 @@ defmodule PappapWeb.TeamController do
     |> json(response.body)
   end
 
-
   @doc """
   Pass a get request to database server.
   """

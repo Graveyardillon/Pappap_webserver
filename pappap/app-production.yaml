@@ -9,6 +9,6 @@ beta_settings:
 network:
   name: default
   session_affinity: true
-instance_class: b2
+instance_class: b1
 manual_scaling:
   instances: 1
