@@ -27,6 +27,8 @@ defmodule PappapWeb.Router do
     post "/check/data_for_web", ConnectionCheckController, :data_for_web
     options "/check/data_for_web", PreflightController, :preflight
 
+    get "/image/user_icon/:string", ImageController, :user_icon
+    get "/image/tournament_thumbnail/:string", ImageController, :tournament_thumbnail
     get  "/load/image", ImageController, :load
     post "/upload/image", ImageController, :upload
     get "/image/:string", ImageController, :pass_get_image_by_path_request
