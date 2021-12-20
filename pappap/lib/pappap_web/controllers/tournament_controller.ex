@@ -177,7 +177,7 @@ defmodule PappapWeb.TournamentController do
       FileUtils.copy(params["image"].path, "./static/image/tmp/#{uuid}.jpg")
       "./static/image/tmp/#{uuid}.jpg"
     else
-      "./static/image/default_BG.png"
+      ""
     end
     ~> file_path
 
