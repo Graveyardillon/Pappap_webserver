@@ -66,7 +66,14 @@ defmodule Common.Tools do
         content_type = [{"Content-Type", "application/json"}]
 
         with {:ok, attrs} <- Poison.encode(params),
-          {:ok, response} <- HTTPoison.post(url, attrs, content_type, [ssl: [{:versions, [:'tlsv1.2']}]]),
+          {:ok, response} <- HTTPoison.post(
+              url,
+              attrs,
+              content_type,
+              ssl: [{:versions, [:'tlsv1.2']}],
+              timeout: 5000,
+              recv_timeout: 10_000
+            ),
           {:ok, body} <- Poison.decode(response.body) do
             Map.put(response, :body, body)
         else
