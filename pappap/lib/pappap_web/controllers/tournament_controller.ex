@@ -167,6 +167,28 @@ defmodule PappapWeb.TournamentController do
   end
 
   @doc """
+  Pass a request of browse to database server
+  """
+  def pass_get_browse_request(conn, params) do
+    @db_domain_url <> "/api/tournament/browse"
+    |> get_parammed_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+  def pass_post_browse_request(conn, params) do
+    @db_domain_url <> "/api/tournament/browse"
+    |> send_json(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
+  @doc """
   Creates a tournament.
   """
   def create(conn, params) do
