@@ -7,12 +7,12 @@ defmodule PappapWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug CORSPlug, origin: ["https://e-players-web.web.app"]
+    plug CORSPlug, origin: ["https://e-players-web.web.app", "https://epbeta.papillon.co.jp/"]
   end
 
   pipeline :api do
     plug :accepts, ["json", "jpeg", "png"]
-    plug CORSPlug, origin: ["https://e-players-web.web.app"]
+    plug CORSPlug, origin: ["https://e-players-web.web.app", "https://epbeta.papillon.co.jp/"]
   end
 
   scope "/", PappapWeb do
