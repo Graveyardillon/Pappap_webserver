@@ -47,14 +47,15 @@ defmodule PappapWeb.TournamentController do
 
     if response.body["result"] do
       case path do
-        "start"       -> on_interaction("tournament_started", response.body["data"]["messages"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]), response.body["data"]["rule"])
-        "start_match" -> on_interaction("match_started",      response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
-        "flip_coin"   -> on_interaction("flip_coin",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
-        "ban_maps"    -> on_interaction("banned_map",         response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
-        "choose_map"  -> on_interaction("chose_map",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
-        "choose_ad"   -> on_interaction("chose_ad",           response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
-        "claim" <> _  -> on_claim(response.body, params)
-        _             -> nil
+        "start"            -> on_interaction("tournament_started", response.body["data"]["messages"], Tools.to_integer_as_needed(params["tournament"]["tournament_id"]), response.body["data"]["rule"])
+        "start_match"      -> on_interaction("match_started",      response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "flip_coin"        -> on_interaction("flip_coin",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "ban_maps"         -> on_interaction("banned_map",         response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "choose_map"       -> on_interaction("chose_map",          response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "choose_ad"        -> on_interaction("chose_ad",           response.body["messages"],         Tools.to_integer_as_needed(params["tournament_id"]),               response.body["rule"])
+        "ffa_claim_scores" -> on_ffa_claim(response.body, params)
+        "claim" <> _       -> on_claim(response.body, params)
+        _                  -> nil
       end
     end
 
@@ -150,6 +151,23 @@ defmodule PappapWeb.TournamentController do
       end)
     end
   end
+
+  defp on_ffa_claim(%{"is_finished" => true, "messages" => messages, "name" => name}, %{"tournament_id" => tournament_id}) do
+    msg = "ffa_tournament_finished"
+
+    Enum.each(messages, fn message ->
+      topic = "user:#{message["user_id"]}"
+      payload = %{
+        msg: msg,
+        tournament_id: tournament_id,
+        name: name
+      }
+
+      Endpoint.broadcast(topic, msg, payload)
+    end)
+  end
+
+  defp on_ffa_claim(_, _), do: :error
 
   @doc """
   Pass a request of home to database server
