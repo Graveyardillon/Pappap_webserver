@@ -7,7 +7,11 @@ defmodule PappapWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug CORSPlug, origin: ["https://e-players-web.web.app", "https://epbeta.papillon.co.jp"]
+    plug CORSPlug, origin: [
+      "https://e-players-web.web.app",
+      "https://epbeta.papillon.co.jp",
+      "https://eplayers.co.jp"
+    ]
   end
 
   pipeline :api do
@@ -61,7 +65,7 @@ defmodule PappapWeb.Router do
     get "/tournament/home/:string", TournamentController, :pass_home_request
     get "/tournament/url/:url", TournamentController, :redirect_by_url
 
-    get  "/tournament/:string", TournamentController, :pass_get_request
+    get "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request
     options "/tournament/:string", PreflightController, :preflight
     # get  "/tournament/get_game", TournamentController, :get_game
