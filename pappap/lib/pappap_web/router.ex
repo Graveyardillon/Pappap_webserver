@@ -12,7 +12,11 @@ defmodule PappapWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json", "jpeg", "png"]
-    plug CORSPlug, origin: ["https://e-players-web.web.app", "https://epbeta.papillon.co.jp"]
+    plug CORSPlug, origin: [
+      "https://e-players-web.web.app",
+      "https://epbeta.papillon.co.jp",
+      "https://eplayers.co.jp"
+    ]
   end
 
   scope "/", PappapWeb do
