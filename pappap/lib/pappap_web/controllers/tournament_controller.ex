@@ -162,6 +162,7 @@ defmodule PappapWeb.TournamentController do
         tournament_id: tournament_id,
         name: name
       }
+      |> IO.inspect(label: :on_ffa_claim)
 
       Endpoint.broadcast(topic, msg, payload)
     end)
