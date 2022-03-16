@@ -67,6 +67,7 @@ defmodule PappapWeb.Router do
 
     get "/tournament/:string", TournamentController, :pass_get_request
     post "/tournament/:string", TournamentController, :pass_post_request
+    delete "/tournament/:string", TournamentController, :pass_delete_request
     options "/tournament/:string", PreflightController, :preflight
     # get  "/tournament/get_game", TournamentController, :get_game
     # TODO: 画像なのでwebserverでもいろいろしないといけない

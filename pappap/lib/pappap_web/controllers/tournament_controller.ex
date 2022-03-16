@@ -64,7 +64,20 @@ defmodule PappapWeb.TournamentController do
     |> json(response.body)
   end
 
+  def pass_delete_request(conn, params) do
+    path = params["string"]
+
+    @db_domain_url <> "/api/tournament/" <> path
+    |> delete_parammed_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
   defp on_interaction(msg, messages, tournament_id, rule) when is_list(messages) and is_integer(tournament_id) do
+    IO.inspect(messages, label: :messages)
     Enum.each(messages, fn message ->
       topic = "user:#{message["user_id"]}"
       payload = %{
@@ -73,6 +86,7 @@ defmodule PappapWeb.TournamentController do
         state: message["state"],
         rule: rule
       }
+      |> IO.inspect(label: :on_interaction!)
       Endpoint.broadcast(topic, msg, payload)
     end)
   end
