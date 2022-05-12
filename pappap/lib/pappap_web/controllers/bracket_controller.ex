@@ -37,6 +37,21 @@ defmodule PappapWeb.BracketController do
   end
 
   @doc """
+  Pass a delete request to database server.
+  """
+  def delete(conn, params) do
+    path = params["string"]
+
+    @db_domain_url <> "/api/bracket"
+    |> delete_request(params)
+    ~> response
+
+    conn
+    |> put_status(response.status_code)
+    |> json(response.body)
+  end
+
+  @doc """
   Show chat room.
   """
   def show(conn, params) do

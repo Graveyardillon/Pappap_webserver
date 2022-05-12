@@ -103,6 +103,7 @@ defmodule PappapWeb.Router do
     get "/bracket/:string", BracketController, :pass_get_request
     post "/bracket", BracketController, :create
     post "/bracket/:string", BracketController, :pass_post_request
+    delete "/bracket", BracketController, :delete
     options "/bracket/:string", PreflightController, :preflight
 
     get "/discord/:string", DiscordController, :pass_get_request
