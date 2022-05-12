@@ -99,6 +99,12 @@ defmodule PappapWeb.Router do
     post "/chat_room/:string", ChatRoomController, :pass_post_request
     options "/chat_room/:string", PreflightController, :preflight
 
+    get "/bracket", BracketController, :show
+    get "/bracket/:string", BracketController, :pass_get_request
+    post "/bracket", BracketController, :create
+    post "/bracket/:string", BracketController, :pass_post_request
+    options "/bracket/:string", PreflightController, :preflight
+
     get "/discord/:string", DiscordController, :pass_get_request
     post "/discord/:string", DiscordController, :pass_post_request
     delete "/discord/:string", DiscordController, :pass_delete_request
