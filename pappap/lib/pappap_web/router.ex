@@ -102,6 +102,7 @@ defmodule PappapWeb.Router do
     get "/bracket", BracketController, :show
     get "/bracket/:string", BracketController, :pass_get_request
     post "/bracket", BracketController, :create
+    options "/bracket", PreflightController, :preflight
     post "/bracket/:string", BracketController, :pass_post_request
     delete "/bracket", BracketController, :delete
     delete "/bracket/:string", BracketController, :pass_delete_request
